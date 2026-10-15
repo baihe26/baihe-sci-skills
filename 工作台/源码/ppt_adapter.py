@@ -1,6 +1,7 @@
 from paths import *
 from core import writable,GateError,source
 import asyncio,zipfile,shutil,contextlib
+from coordination import single_writer
 sys.path.insert(0,str(STUDIO/'03_POC/source'))
 from live_studio import with_backend
 from manifest_contract import validate
@@ -21,6 +22,7 @@ def native_verify(path,out):
     import native_audit
     native_audit.PROJECT=writable(out)
     return native_audit.verify(path,'原生检查')
+@single_writer
 def build(manifest_path,out,mode='FAST'):
     m=read(manifest_path);validate(m);out=writable(out)
     if out.exists():raise FileExistsError(out)
@@ -77,6 +79,7 @@ def references(path):
                 if asset:out.append(dict(reference_id=Path(path).stem+':'+s.Tags.Item('STUDIO_SLIDE_ID')+':'+v.Tags.Item('STUDIO_ID'),deck=str(path),slide_id=s.Tags.Item('STUDIO_SLIDE_ID'),native_slide_id=s.SlideID,object_id=v.Tags.Item('STUDIO_ID'),asset_id=asset,revision=v.Tags.Item('ASSET_REVISION'),semantic_sha256=v.Tags.Item('SEMANTIC_SHA256') or None,object_digest=digest(shape_state(v)),manual_override=False))
     finally:p.Close()
     return out
+@single_writer
 def local_edit(path,out,slide_id,object_id,operation,value,expected_digest=None):
     """SaveCopyAs new revision. Never writes the input deck or changes unrelated objects."""
     a=ensure_owned(path);out=writable(out)
@@ -99,6 +102,7 @@ def local_edit(path,out,slide_id,object_id,operation,value,expected_digest=None)
             if b!=a_:changed.append(b['name'])
     if changed!=[object_id]:raise GateError('UNEXPECTED_LOCAL_SCOPE: '+str(changed))
     return dict(changed=changed,source=source(path),output=source(out),media_unchanged=media(path)==media(out))
+@single_writer
 def propagate(refs,new_asset,new_revision,out,semantic_contract=None):
     """Actual picture replacement by stable tags, compare native fingerprints before writing."""
     out=writable(out)

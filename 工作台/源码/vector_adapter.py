@@ -4,6 +4,7 @@ No redraw of scientific images; source-guided reconstructions require a separate
 from paths import *
 from core import writable,source,GateError
 import html,xml.etree.ElementTree as ET,subprocess
+from coordination import single_writer
 def scene_svg(graph):
     # Keep group identity and hierarchy. Reject unsupported assets rather than flattening them.
     from designer_adapter import replay
@@ -34,16 +35,21 @@ def scene_svg(graph):
     output=f'<svg xmlns="http://www.w3.org/2000/svg" width="{w*scale}pt" height="{h*scale}pt" viewBox="0 0 {w} {h}"><rect width="100%" height="100%" fill="white"/>'
     output+=''.join(emit(k) for k in allids if k not in parents)+'</svg>'
     return output
+@single_writer
 def produce(scene_path,out,source_image=None,mode='approved_design'):
+    scene_path=Path(scene_path).resolve();source_image=Path(source_image).resolve() if source_image else None
     out=writable(out)
     if out.exists():raise FileExistsError(out)
     graph=read(scene_path)
+    from scientific_gate import validate_pack
+    consistency=validate_pack(scene_path)
     import jsonschema
     jsonschema.validate(graph,read(HANDOFF/'schemas/illustrator_scene_graph.schema.json'))
-    for p in DESKTOP_LOCKS:
-        if p.exists():raise GateError('DESKTOP_BUSY: '+str(p))
     if mode=='faithful_reconstruction' and not source_image:raise GateError('SOURCE_IMAGE_REQUIRED')
     out.mkdir(parents=True);svg=out/'施工输入.svg'
+    save(out/'跨合同一致性检查.json',consistency)
+    from processing_ledger import from_scene
+    save(out/'元素处理清单.json',from_scene(graph))
     subprocess.run([str(PLOT_PY),__file__,'--svg-only',str(scene_path),str(svg)],check=True,env=dict(os.environ,PYTHONUTF8='1'))
     save(out/'生产来源.json',dict(scene=source(scene_path),mode=mode,source_image=source(source_image) if source_image else None,
       scientific_binding_sidecar='required alongside SceneGraph',redesign=False,limits=['仅矩形/椭圆/路径/文字/关系与层级映射；复杂资产和clip安全转交旧入口','源图语义由宿主根据可见内容记录，遮挡与不清楚的字不猜测']))

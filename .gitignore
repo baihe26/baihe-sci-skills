@@ -8,6 +8,7 @@ baihe-sci.local.json
 工作台/共同记录/
 工作台/未配置依赖/
 工作台/产物/
+工作台/桌面生产.lock
 本地输出/
 __pycache__/
 *.pyc

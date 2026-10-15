@@ -8,6 +8,8 @@ def main():
     p.add_argument('--module',choices=['plot','designer','vector','ppt']);p.add_argument('--target',choices=['illustrator','ppt'],default='illustrator');p.add_argument('--out');p.add_argument('--bundle');p.add_argument('--spec');p.add_argument('--plan');p.add_argument('--binding');p.add_argument('--scene');p.add_argument('--source-image');p.add_argument('--manifest');p.add_argument('--mode',choices=['FAST','LIVE'],default='FAST')
     p.add_argument('--catalog',action='store_true');p.add_argument('--doctor',action='store_true');p.add_argument('--check-protection',action='store_true')
     a=p.parse_args()
+    for key in ('bundle','spec','plan','binding','scene','source_image','manifest'):
+        if getattr(a,key):setattr(a,key,str(Path(getattr(a,key)).resolve()))
     if a.doctor:
         from doctor import report
         print(json.dumps(report(),ensure_ascii=False,indent=2));return

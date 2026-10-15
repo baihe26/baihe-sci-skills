@@ -1,6 +1,8 @@
 from paths import *
 from core import writable,source,GateError
 import shutil,subprocess
+from coordination import single_writer
+@single_writer
 def render_bundle(bundle,out):
     """Existing approved Phase2C bundle only; no new statistics or inferred mapping."""
     bundle=Path(bundle).resolve();out=writable(out)

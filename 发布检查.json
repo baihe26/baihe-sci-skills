@@ -1,78 +1,72 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "date": "2026-10-15",
   "publication": {
     "repository": "baihe26/baihe-sci-skills",
     "visibility": "public",
-    "contains": "Five skills, thin adapters, local configuration template, self-authored synthetic fixture",
     "private_engines_bundled": false,
-    "research_data_or_existing_results_bundled": false,
-    "old_history_bundled": false
+    "research_data_or_existing_results_bundled": false
+  },
+  "previous_release": {
+    "version": "0.1.0",
+    "commit": "edf943250bff2f4755e33b5eb2bdafec34a22a49"
   },
   "skills": [
     {
       "name": "baihe-sci",
-      "passed": true,
-      "result": "Skill is valid!"
+      "passed": true
     },
     {
       "name": "baihe-sci-design",
-      "passed": true,
-      "result": "Skill is valid!"
+      "passed": true
     },
     {
       "name": "baihe-sci-plot",
-      "passed": true,
-      "result": "Skill is valid!"
+      "passed": true
     },
     {
       "name": "baihe-sci-slides",
-      "passed": true,
-      "result": "Skill is valid!"
+      "passed": true
     },
     {
       "name": "baihe-sci-vector",
-      "passed": true,
-      "result": "Skill is valid!"
+      "passed": true
     }
   ],
   "python_syntax": {
     "status": "PASS",
     "files": [
-      "tests/test_workbench.py",
-      "工作台/源码/core.py",
-      "工作台/源码/designer_adapter.py",
-      "工作台/源码/display_variant.py",
-      "工作台/源码/doctor.py",
-      "工作台/源码/illustrator_native.py",
-      "工作台/源码/ledger.py",
-      "工作台/源码/origin_worker.py",
-      "工作台/源码/paths.py",
-      "工作台/源码/plot_adapter.py",
-      "工作台/源码/ppt_adapter.py",
-      "工作台/源码/recovery_journal.py",
-      "工作台/源码/scene_ppt_adapter.py",
-      "工作台/源码/vector_adapter.py",
-      "工作台/源码/workbench.py"
+      "coordination.py",
+      "core.py",
+      "designer_adapter.py",
+      "display_variant.py",
+      "doctor.py",
+      "illustrator_native.py",
+      "ledger.py",
+      "native_connectors.py",
+      "origin_worker.py",
+      "paths.py",
+      "plot_adapter.py",
+      "ppt_adapter.py",
+      "processing_ledger.py",
+      "recovery_journal.py",
+      "scene_ppt_adapter.py",
+      "scientific_gate.py",
+      "vector_adapter.py",
+      "workbench.py"
     ]
   },
   "unit_tests": {
     "status": "PASS",
-    "test_cases": 11,
-    "scientific_mutation_subcases": 7,
+    "test_cases": 21,
     "native_calls": false
   },
-  "privacy": {
-    "status": "PASS",
-    "files": 44,
-    "bytes": 147138,
-    "findings": [],
-    "scope": "Exact Git staging blobs only; untracked local configuration and runtime outputs excluded. PNG has only dpi metadata."
+  "scientific_gate": {
+    "legal_synthetic_pack": "PASS",
+    "bad_binding_actual_designer_and_ppt": "REJECTED_BEFORE_OUTPUT",
+    "scientific_truth": "NOT_ASSESSED"
   },
-  "synthetic_design": {
-    "status": "DESIGN_HANDOFF_READY_PENDING_REVIEW",
-    "production_started": false
-  },
-  "new_native_verification": {
+  "current_native": {
     "illustrator": {
       "status": "NATIVE_SAVED_REOPENED",
       "counts": {
@@ -89,19 +83,47 @@
       "contract_checks": true,
       "independent_client_checks": true,
       "application_restart": false,
-      "edit_probes": "Prior bounded native evidence; not repeated for packaging"
+      "all_historical_edit_probes_repeated": false
     },
     "ppt": {
-      "status": "NATIVE_COMPLETE_PENDING_EDIT_VISUAL",
-      "native": {
-        "sha256": "4ccf6e442ecc9c6b53d327c718a62b6fe6c4261c5f170cfe4e246003d24ba556",
-        "label": "原生检查",
-        "native_snapshot_equal_after_reopen": true,
-        "pixel_equal_after_reopen": true,
-        "elapsed_seconds": 3.639606400000048,
-        "office_read_only": true
-      }
+      "native_snapshot_equal_after_reopen": true,
+      "pixel_equal_after_reopen": true,
+      "counts": {
+        "slides": 1,
+        "textboxes": 6,
+        "autoshapes": 3,
+        "groups": 2,
+        "connectors": 1,
+        "charts": 0,
+        "tables": 0,
+        "pictures_including_svg": 0,
+        "svgs": 0,
+        "animations_effect_nodes": 0,
+        "transitions": 0,
+        "smartart_parts": 0,
+        "embedded_workbooks": 0
+      },
+      "native_bound_connectors": [
+        "AI_R1"
+      ],
+      "free_paths": [
+        "AI_R2"
+      ],
+      "edits": {
+        "edits": true,
+        "source_unchanged": true,
+        "true_ooxml_connector": true
+      },
+      "manual_mouse_drag": false,
+      "application_restart": false
     }
+  },
+  "visual": {
+    "status": "NO_NEW_VISIBLE_ISSUES",
+    "scope": "Known simple synthetic scene only",
+    "separate_read_only_review": true,
+    "issues": [],
+    "native_binding_inferred_from_pixels": false
   },
   "journal_provenance": {
     "source": "User-owned Live PowerPoint Studio recovery_journal module",
@@ -111,9 +133,18 @@
     "change": "LF newline normalization only"
   },
   "limitations": [
-    "Native engines and commercial software/licenses are external dependencies.",
-    "Current environment tested; another machine full installation/native production not tested.",
-    "Native edit history and frozen evidence stay local.",
-    "Author scientific/aesthetic acceptance pending."
-  ]
+    "External local engines and commercial software/licenses are not bundled.",
+    "Another machine complete installation and native production not tested.",
+    "Only exact rectangle-center straight connector scope tested; complex paths remain free paths.",
+    "No Norman same-image blinded benchmark or cost/quality ranking.",
+    "Optional handoff/review helpers do not imply a fully automated multi-agent state machine.",
+    "Scientific truth and author acceptance remain separate and pending."
+  ],
+  "privacy": {
+    "status": "PASS",
+    "files": 53,
+    "bytes": 203684,
+    "findings": [],
+    "scope": "Exact Git staging blobs only; untracked local configuration and runtime outputs excluded. PNG has only dpi metadata."
+  }
 }
