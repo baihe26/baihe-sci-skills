@@ -14,4 +14,4 @@ def require(module,target='illustrator'):
     r=check(module,target)
     if r['missing']:raise GateError(json.dumps(r,ensure_ascii=False))
 def report():
-    return dict(version='0.1.0',config_present=CONFIG_FILE.is_file(),native_platform='WINDOWS' if os.name=='nt' else 'NOT_WINDOWS_NATIVE_EXECUTION_UNTESTED',routes=[check(m,t) for m,t in [('plot','origin'),('designer','contract'),('vector','illustrator'),('vector','ppt'),('ppt','ppt')]],scope='Only dependency-file presence. Does not start software, install packages, verify licenses, or assert render success.')
+    return dict(version='0.2.0',config_present=CONFIG_FILE.is_file(),native_platform='WINDOWS' if os.name=='nt' else 'NOT_WINDOWS_NATIVE_EXECUTION_UNTESTED',routes=[check(m,t) for m,t in [('plot','origin'),('designer','contract'),('vector','illustrator'),('vector','ppt'),('ppt','ppt')]],scope='Only dependency-file presence. Does not start software, install packages, verify licenses, or assert render success.')
