@@ -1,0 +1,11 @@
+name: 基础检查
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  portable-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 可移植协调逻辑测试（不运行原生软件）
+        run: python3 -m unittest discover -s tests -v

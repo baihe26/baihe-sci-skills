@@ -1,0 +1,6 @@
+interface:
+  display_name: "baihe-sci · 科研图与汇报总入口"
+  short_description: "按用户目标协调科研数据图、科学图设计、可编辑矢量生产及科研汇报，支持单模块和跨模块任务。"
+  default_prompt: "使用 $baihe-sci，根据我的文件和目的选择合适模块并完成交付。"
+policy:
+  allow_implicit_invocation: true

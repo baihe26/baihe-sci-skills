@@ -1,0 +1,67 @@
+{
+  "source_file": {
+    "path": "合成来源.txt",
+    "sha256": "5a1a0c659a74ea03263a094fad7ac2b14ce94b4c9b4b21e1b1dec4015774a7d2"
+  },
+  "claims": [
+    {
+      "id": "C1",
+      "statement": "Module A supplies Module B.",
+      "claim_kind": "context",
+      "evidence_level": "DIRECTLY_SUPPORTED",
+      "source_span": {
+        "quote": "Module A supplies Module B.",
+        "start": 39,
+        "end": 66
+      },
+      "supporting_source_ids": [
+        "INPUT_TEXT"
+      ],
+      "entity_ids": [
+        "fig_A",
+        "fig_B"
+      ]
+    },
+    {
+      "id": "C2",
+      "statement": "Feedback from B to A is a hypothesis.",
+      "claim_kind": "hypothesis",
+      "evidence_level": "HYPOTHESIZED",
+      "source_span": {
+        "quote": "Feedback from B to A is a hypothesis.",
+        "start": 67,
+        "end": 104
+      },
+      "supporting_source_ids": [
+        "INPUT_TEXT"
+      ],
+      "entity_ids": [
+        "fig_A",
+        "fig_B"
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "id": "R1",
+      "source": "fig_A",
+      "target": "fig_B",
+      "relation_type": "association",
+      "direction": "forward",
+      "certainty": "DIRECTLY_SUPPORTED",
+      "visual_encoding": "solid_arrow",
+      "claim_id": "C1"
+    },
+    {
+      "id": "R2",
+      "source": "fig_B",
+      "target": "fig_A",
+      "relation_type": "proposed_effect",
+      "direction": "forward",
+      "certainty": "HYPOTHESIZED",
+      "visual_encoding": "dashed_arrow",
+      "claim_id": "C2"
+    }
+  ],
+  "status": "SYNTHETIC_TEST_NOT_SCIENTIFIC_EVIDENCE"
+}

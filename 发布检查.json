@@ -1,0 +1,119 @@
+{
+  "version": "0.1.0",
+  "publication": {
+    "repository": "baihe26/baihe-sci-skills",
+    "visibility": "public",
+    "contains": "Five skills, thin adapters, local configuration template, self-authored synthetic fixture",
+    "private_engines_bundled": false,
+    "research_data_or_existing_results_bundled": false,
+    "old_history_bundled": false
+  },
+  "skills": [
+    {
+      "name": "baihe-sci",
+      "passed": true,
+      "result": "Skill is valid!"
+    },
+    {
+      "name": "baihe-sci-design",
+      "passed": true,
+      "result": "Skill is valid!"
+    },
+    {
+      "name": "baihe-sci-plot",
+      "passed": true,
+      "result": "Skill is valid!"
+    },
+    {
+      "name": "baihe-sci-slides",
+      "passed": true,
+      "result": "Skill is valid!"
+    },
+    {
+      "name": "baihe-sci-vector",
+      "passed": true,
+      "result": "Skill is valid!"
+    }
+  ],
+  "python_syntax": {
+    "status": "PASS",
+    "files": [
+      "tests/test_workbench.py",
+      "工作台/源码/core.py",
+      "工作台/源码/designer_adapter.py",
+      "工作台/源码/display_variant.py",
+      "工作台/源码/doctor.py",
+      "工作台/源码/illustrator_native.py",
+      "工作台/源码/ledger.py",
+      "工作台/源码/origin_worker.py",
+      "工作台/源码/paths.py",
+      "工作台/源码/plot_adapter.py",
+      "工作台/源码/ppt_adapter.py",
+      "工作台/源码/recovery_journal.py",
+      "工作台/源码/scene_ppt_adapter.py",
+      "工作台/源码/vector_adapter.py",
+      "工作台/源码/workbench.py"
+    ]
+  },
+  "unit_tests": {
+    "status": "PASS",
+    "test_cases": 11,
+    "scientific_mutation_subcases": 7,
+    "native_calls": false
+  },
+  "privacy": {
+    "status": "PASS",
+    "files": 44,
+    "bytes": 147138,
+    "findings": [],
+    "scope": "Exact Git staging blobs only; untracked local configuration and runtime outputs excluded. PNG has only dpi metadata."
+  },
+  "synthetic_design": {
+    "status": "DESIGN_HANDOFF_READY_PENDING_REVIEW",
+    "production_started": false
+  },
+  "new_native_verification": {
+    "illustrator": {
+      "status": "NATIVE_SAVED_REOPENED",
+      "counts": {
+        "paths": 70,
+        "texts": 6,
+        "groups": 13,
+        "raster": 0,
+        "placed": 0,
+        "mesh": 0,
+        "gradients": 0,
+        "nodes": 150,
+        "gradientFills": 0
+      },
+      "contract_checks": true,
+      "independent_client_checks": true,
+      "application_restart": false,
+      "edit_probes": "Prior bounded native evidence; not repeated for packaging"
+    },
+    "ppt": {
+      "status": "NATIVE_COMPLETE_PENDING_EDIT_VISUAL",
+      "native": {
+        "sha256": "4ccf6e442ecc9c6b53d327c718a62b6fe6c4261c5f170cfe4e246003d24ba556",
+        "label": "原生检查",
+        "native_snapshot_equal_after_reopen": true,
+        "pixel_equal_after_reopen": true,
+        "elapsed_seconds": 3.639606400000048,
+        "office_read_only": true
+      }
+    }
+  },
+  "journal_provenance": {
+    "source": "User-owned Live PowerPoint Studio recovery_journal module",
+    "source_version": "9203b53",
+    "source_sha256": "a9bd3d01ee8d196bb9a289d6ffcc161db3dc0d1a8771ab3c9507d33629cacc09",
+    "published_sha256": "75fefcb635dae5fad209a539f9e218d6946c42f02a5db793299f348abfe0e43c",
+    "change": "LF newline normalization only"
+  },
+  "limitations": [
+    "Native engines and commercial software/licenses are external dependencies.",
+    "Current environment tested; another machine full installation/native production not tested.",
+    "Native edit history and frozen evidence stay local.",
+    "Author scientific/aesthetic acceptance pending."
+  ]
+}

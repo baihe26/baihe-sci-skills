@@ -1,0 +1,1 @@
+Synthetic test, not a research result. Module A supplies Module B. Feedback from B to A is a hypothesis. Geometry is conceptual; no measured dimensions.

@@ -1,0 +1,6 @@
+interface:
+  display_name: "baihe-sci-design · 科学图设计"
+  short_description: "从有来源的科学内容设计机制图、构型图与多面板表达，交付FigureSpec、预览和施工合同，可设计到此为止。"
+  default_prompt: "使用 $baihe-sci-design，先设计科学图并保留事实、假说与来源边界。"
+policy:
+  allow_implicit_invocation: true

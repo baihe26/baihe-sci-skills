@@ -1,0 +1,284 @@
+{
+  "schema_version": "1.0.0",
+  "metadata": {
+    "title": "Synthetic modules",
+    "compiler_version": "frozen-v1+integration-0.1",
+    "input_sha256": "5a1a0c659a74ea03263a094fad7ac2b14ce94b4c9b4b21e1b1dec4015774a7d2",
+    "input_text": "Synthetic test, not a research result. Module A supplies Module B. Feedback from B to A is a hypothesis. Geometry is conceptual; no measured dimensions.",
+    "sources": [
+      {
+        "id": "INPUT_TEXT",
+        "path": "合成来源.txt",
+        "sha256": "5a1a0c659a74ea03263a094fad7ac2b14ce94b4c9b4b21e1b1dec4015774a7d2",
+        "epistemic_status": "SYNTHETIC",
+        "derived_from": "SELF_AUTHORED_TEST"
+      }
+    ],
+    "design_status": "DRAFT_NEEDS_REVIEW"
+  },
+  "figure_type": "MECHANISM_FIGURE",
+  "central_message": "A supplied connection and a hypothetical feedback remain distinct.",
+  "supporting_messages": [],
+  "omissions": [],
+  "scientific_claims": [
+    {
+      "id": "C1",
+      "statement": "Module A supplies Module B.",
+      "claim_kind": "context",
+      "evidence_level": "DIRECTLY_SUPPORTED",
+      "source_span": {
+        "quote": "Module A supplies Module B.",
+        "start": 39,
+        "end": 66
+      },
+      "supporting_source_ids": [
+        "INPUT_TEXT"
+      ],
+      "entity_ids": [
+        "fig_A",
+        "fig_B"
+      ]
+    },
+    {
+      "id": "C2",
+      "statement": "Feedback from B to A is a hypothesis.",
+      "claim_kind": "hypothesis",
+      "evidence_level": "HYPOTHESIZED",
+      "source_span": {
+        "quote": "Feedback from B to A is a hypothesis.",
+        "start": 67,
+        "end": 104
+      },
+      "supporting_source_ids": [
+        "INPUT_TEXT"
+      ],
+      "entity_ids": [
+        "fig_A",
+        "fig_B"
+      ]
+    }
+  ],
+  "evidence_levels": [
+    "DIRECTLY_SUPPORTED",
+    "HYPOTHESIZED"
+  ],
+  "story_direction": "left_to_right",
+  "stages": [],
+  "panels": [
+    {
+      "id": "P1",
+      "title": "Synthetic modules",
+      "zone_ids": [
+        "Z1"
+      ],
+      "role": "hero"
+    }
+  ],
+  "layout_zones": [
+    {
+      "id": "Z1",
+      "name": "Conceptual module relation",
+      "bbox": [
+        70,
+        140,
+        780,
+        300
+      ],
+      "role": "hero"
+    }
+  ],
+  "entities": [
+    {
+      "id": "fig_A",
+      "canonical_name": "Module A",
+      "display_label": "Module A",
+      "entity_type": "equipment",
+      "scientific_role": "E_A",
+      "visual_role": "hero",
+      "importance": 3,
+      "preferred_representation": "native_vector",
+      "repeat_consistency_key": "A",
+      "source_spans": [
+        {
+          "quote": "Module A",
+          "start": 39,
+          "end": 47
+        }
+      ],
+      "zone_id": "Z1",
+      "bbox": [
+        100,
+        170,
+        200,
+        100
+      ],
+      "color_role": "material"
+    },
+    {
+      "id": "fig_B",
+      "canonical_name": "Module B",
+      "display_label": "Module B",
+      "entity_type": "equipment",
+      "scientific_role": "E_B",
+      "visual_role": "support",
+      "importance": 2,
+      "preferred_representation": "native_vector",
+      "repeat_consistency_key": "B",
+      "source_spans": [
+        {
+          "quote": "Module B",
+          "start": 57,
+          "end": 65
+        }
+      ],
+      "zone_id": "Z1",
+      "bbox": [
+        600,
+        170,
+        200,
+        100
+      ],
+      "color_role": "material"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "R1",
+      "source": "fig_A",
+      "target": "fig_B",
+      "relation_type": "association",
+      "direction": "forward",
+      "certainty": "DIRECTLY_SUPPORTED",
+      "visual_encoding": "solid_arrow",
+      "claim_id": "C1"
+    },
+    {
+      "id": "R2",
+      "source": "fig_B",
+      "target": "fig_A",
+      "relation_type": "proposed_effect",
+      "direction": "forward",
+      "certainty": "HYPOTHESIZED",
+      "visual_encoding": "dashed_arrow",
+      "claim_id": "C2"
+    }
+  ],
+  "routes": [
+    {
+      "id": "route_R1",
+      "relationship_id": "R1",
+      "waypoints": [
+        [
+          300,
+          220
+        ],
+        [
+          600,
+          220
+        ]
+      ],
+      "encoding": "solid_arrow"
+    },
+    {
+      "id": "route_R2",
+      "relationship_id": "R2",
+      "waypoints": [
+        [
+          700,
+          280
+        ],
+        [
+          700,
+          370
+        ],
+        [
+          200,
+          370
+        ],
+        [
+          200,
+          280
+        ]
+      ],
+      "encoding": "dashed_arrow"
+    }
+  ],
+  "labels": [
+    {
+      "id": "label_fig_A",
+      "entity_id": "fig_A",
+      "text": "Module A",
+      "native_required": true
+    },
+    {
+      "id": "label_fig_B",
+      "entity_id": "fig_B",
+      "text": "Module B",
+      "native_required": true
+    }
+  ],
+  "semantic_color_roles": {
+    "material": "#477e9d",
+    "prp": "UNUSED_NO_PRP_IN_CASE",
+    "cell": "#5b9479",
+    "tissue": "#e5e7e6",
+    "molecule": "#987294",
+    "stage": "#596b75",
+    "outcome": "#5b9479",
+    "uncertainty": "#ab8050",
+    "text": "#293a46"
+  },
+  "visual_hierarchy": {
+    "hero_entity_ids": [
+      "fig_A"
+    ],
+    "support_entity_ids": [
+      "fig_B"
+    ],
+    "reading_order": [
+      "Z1"
+    ],
+    "label_font_pt": 16,
+    "title_font_pt": 24
+  },
+  "asset_requirements": [],
+  "render_preferences": {
+    "prefer_direct": true,
+    "allow_image_guided": false,
+    "explore_visual_directions": false,
+    "organic_scene_complexity": "low",
+    "allow_generated_asset": false,
+    "fallback": "schematic_preview"
+  },
+  "editability_requirements": {
+    "text": "native",
+    "routes": "native",
+    "complex_asset": "move_scale_replace_or_path_if_validated"
+  },
+  "scientific_constraints": [
+    "Synthetic test only",
+    "Do not upgrade feedback to a measured causal effect",
+    "No measured scale or physical contact inferred"
+  ],
+  "uncertainties": [
+    "Feedback remains hypothetical"
+  ],
+  "unresolved_items": [],
+  "style": {
+    "profile": "internal_draft",
+    "journal_compliance": "NOT_ASSESSED",
+    "canvas_width_mm": 183,
+    "canvas_height_mm": 101.7,
+    "viewbox": [
+      0,
+      0,
+      900,
+      500
+    ],
+    "background": "#FFFFFF",
+    "forbidden_effects": [
+      "glow",
+      "decorative_3d"
+    ]
+  }
+}

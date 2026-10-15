@@ -1,0 +1,6 @@
+interface:
+  display_name: "baihe-sci-plot · 科研数据图"
+  short_description: "分析本地科研数值数据，核对实验单位与统计语义，生成保留来源绑定和可编辑工程的科学数据图。"
+  default_prompt: "使用 $baihe-sci-plot，核对数据语义后制作可编辑科研图。"
+policy:
+  allow_implicit_invocation: true

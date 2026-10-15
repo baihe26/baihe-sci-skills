@@ -1,0 +1,521 @@
+{
+  "schema_version": "1.0",
+  "canvas": {
+    "width": 900,
+    "height": 500,
+    "unit": "px",
+    "origin": "TOP_LEFT"
+  },
+  "layers": [
+    {
+      "id": "L_context",
+      "name": "Context and owned placeholder",
+      "z_order": 0
+    },
+    {
+      "id": "L_science",
+      "name": "Scientific objects",
+      "z_order": 1
+    },
+    {
+      "id": "L_relations",
+      "name": "Semantic relations",
+      "z_order": 2
+    },
+    {
+      "id": "L_text",
+      "name": "Live labels",
+      "z_order": 3
+    }
+  ],
+  "objects": [
+    {
+      "id": "AI_box_A",
+      "layer_id": "L_science",
+      "group_id": "AI_fig_A",
+      "bbox": [
+        100,
+        170,
+        300,
+        270
+      ],
+      "z_order": 0,
+      "style_token": "style_box_A",
+      "geometry": {
+        "kind": "RECT",
+        "data": {
+          "x": 100,
+          "y": 170,
+          "width": 200,
+          "height": 100,
+          "dash": null
+        }
+      },
+      "render_method": "NATIVE_VECTOR",
+      "editability_level": "FULL_NATIVE",
+      "scientific_refs": [
+        "E_A"
+      ]
+    },
+    {
+      "id": "AI_box_B",
+      "layer_id": "L_science",
+      "group_id": "AI_fig_B",
+      "bbox": [
+        600,
+        170,
+        800,
+        270
+      ],
+      "z_order": 1,
+      "style_token": "style_box_B",
+      "geometry": {
+        "kind": "RECT",
+        "data": {
+          "x": 600,
+          "y": 170,
+          "width": 200,
+          "height": 100,
+          "dash": null
+        }
+      },
+      "render_method": "NATIVE_VECTOR",
+      "editability_level": "FULL_NATIVE",
+      "scientific_refs": [
+        "E_B"
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "id": "AI_fig_A",
+      "layer_id": "L_science",
+      "name": "AI_E_A__fig_A",
+      "bbox": [
+        100,
+        170,
+        300,
+        270
+      ],
+      "z_order": 0
+    },
+    {
+      "id": "AI_fig_B",
+      "layer_id": "L_science",
+      "name": "AI_E_B__fig_B",
+      "bbox": [
+        600,
+        170,
+        800,
+        270
+      ],
+      "z_order": 0
+    }
+  ],
+  "geometry": {
+    "coordinate_transform": {
+      "from_unit": "px",
+      "to_illustrator_unit": "pt",
+      "scale_pt_per_px": 0.5763779527559055,
+      "y_axis": "TOP_LEFT to Illustrator artboard coordinates; adapter must test"
+    }
+  },
+  "bbox": [
+    0,
+    0,
+    900,
+    500
+  ],
+  "z_order": [
+    "AI_fig_A",
+    "AI_fig_B",
+    "AI_box_A",
+    "AI_box_B",
+    "AI_R1",
+    "AI_R2",
+    "AI_text_A",
+    "AI_text_B",
+    "AI_title",
+    "AI_supply",
+    "AI_hyp",
+    "AI_scope"
+  ],
+  "parent_child": [
+    {
+      "parent_id": "AI_fig_A",
+      "child_id": "AI_box_A"
+    },
+    {
+      "parent_id": "AI_fig_A",
+      "child_id": "AI_text_A"
+    },
+    {
+      "parent_id": "AI_fig_B",
+      "child_id": "AI_box_B"
+    },
+    {
+      "parent_id": "AI_fig_B",
+      "child_id": "AI_text_B"
+    }
+  ],
+  "clipping": [],
+  "style_tokens": {
+    "style_box_A": {
+      "fill": "#DCE8F2",
+      "stroke": "#526873",
+      "stroke_width": 2,
+      "opacity": 1
+    },
+    "style_box_B": {
+      "fill": "#F5E0CE",
+      "stroke": "#526873",
+      "stroke_width": 2,
+      "opacity": 1
+    },
+    "style_text_A": {
+      "fill": "#263238",
+      "stroke": null,
+      "stroke_width": 0,
+      "opacity": 1
+    },
+    "style_text_B": {
+      "fill": "#263238",
+      "stroke": null,
+      "stroke_width": 0,
+      "opacity": 1
+    },
+    "style_title": {
+      "fill": "#526873",
+      "stroke": null,
+      "stroke_width": 0,
+      "opacity": 1
+    },
+    "style_supply": {
+      "fill": "#526873",
+      "stroke": null,
+      "stroke_width": 0,
+      "opacity": 1
+    },
+    "style_hyp": {
+      "fill": "#526873",
+      "stroke": null,
+      "stroke_width": 0,
+      "opacity": 1
+    },
+    "style_scope": {
+      "fill": "#526873",
+      "stroke": null,
+      "stroke_width": 0,
+      "opacity": 1
+    },
+    "style_R1": {
+      "fill": null,
+      "stroke": "#526873",
+      "stroke_width": 2.2,
+      "opacity": 1
+    },
+    "style_R2": {
+      "fill": null,
+      "stroke": "#ab8050",
+      "stroke_width": 2.2,
+      "opacity": 1
+    }
+  },
+  "text_objects": [
+    {
+      "id": "AI_text_A",
+      "layer_id": "L_text",
+      "group_id": "AI_fig_A",
+      "bbox": [
+        120,
+        196,
+        280,
+        238
+      ],
+      "z_order": 4,
+      "style_token": "style_text_A",
+      "geometry": {
+        "kind": "TEXT",
+        "data": {
+          "x": 200,
+          "y": 228,
+          "font_size": 28,
+          "anchor": "middle",
+          "text": "Module A",
+          "dash": null
+        }
+      },
+      "render_method": "NATIVE_VECTOR",
+      "editability_level": "FULL_NATIVE",
+      "scientific_refs": [
+        "E_A"
+      ],
+      "text": "Module A",
+      "font_family": "Arial",
+      "font_size": 28,
+      "live_text_required": true
+    },
+    {
+      "id": "AI_text_B",
+      "layer_id": "L_text",
+      "group_id": "AI_fig_B",
+      "bbox": [
+        620,
+        196,
+        780,
+        238
+      ],
+      "z_order": 5,
+      "style_token": "style_text_B",
+      "geometry": {
+        "kind": "TEXT",
+        "data": {
+          "x": 700,
+          "y": 228,
+          "font_size": 28,
+          "anchor": "middle",
+          "text": "Module B",
+          "dash": null
+        }
+      },
+      "render_method": "NATIVE_VECTOR",
+      "editability_level": "FULL_NATIVE",
+      "scientific_refs": [
+        "E_B"
+      ],
+      "text": "Module B",
+      "font_family": "Arial",
+      "font_size": 28,
+      "live_text_required": true
+    },
+    {
+      "id": "AI_title",
+      "layer_id": "L_text",
+      "group_id": null,
+      "bbox": [
+        80,
+        30,
+        820,
+        70
+      ],
+      "z_order": 6,
+      "style_token": "style_title",
+      "geometry": {
+        "kind": "TEXT",
+        "data": {
+          "x": 450,
+          "y": 60,
+          "font_size": 27,
+          "anchor": "middle",
+          "text": "Synthetic test - not a research result",
+          "dash": null
+        }
+      },
+      "render_method": "NATIVE_VECTOR",
+      "editability_level": "FULL_NATIVE",
+      "scientific_refs": [
+        "C2"
+      ],
+      "text": "Synthetic test - not a research result",
+      "font_family": "Arial",
+      "font_size": 27,
+      "live_text_required": true
+    },
+    {
+      "id": "AI_supply",
+      "layer_id": "L_text",
+      "group_id": null,
+      "bbox": [
+        80,
+        166,
+        820,
+        206
+      ],
+      "z_order": 7,
+      "style_token": "style_supply",
+      "geometry": {
+        "kind": "TEXT",
+        "data": {
+          "x": 450,
+          "y": 196,
+          "font_size": 20,
+          "anchor": "middle",
+          "text": "Supplied connection",
+          "dash": null
+        }
+      },
+      "render_method": "NATIVE_VECTOR",
+      "editability_level": "FULL_NATIVE",
+      "scientific_refs": [
+        "C1"
+      ],
+      "text": "Supplied connection",
+      "font_family": "Arial",
+      "font_size": 20,
+      "live_text_required": true
+    },
+    {
+      "id": "AI_hyp",
+      "layer_id": "L_text",
+      "group_id": null,
+      "bbox": [
+        80,
+        390,
+        820,
+        430
+      ],
+      "z_order": 8,
+      "style_token": "style_hyp",
+      "geometry": {
+        "kind": "TEXT",
+        "data": {
+          "x": 450,
+          "y": 420,
+          "font_size": 20,
+          "anchor": "middle",
+          "text": "Hypothesis: feedback",
+          "dash": null
+        }
+      },
+      "render_method": "NATIVE_VECTOR",
+      "editability_level": "FULL_NATIVE",
+      "scientific_refs": [
+        "C2"
+      ],
+      "text": "Hypothesis: feedback",
+      "font_family": "Arial",
+      "font_size": 20,
+      "live_text_required": true
+    },
+    {
+      "id": "AI_scope",
+      "layer_id": "L_text",
+      "group_id": null,
+      "bbox": [
+        80,
+        440,
+        820,
+        480
+      ],
+      "z_order": 9,
+      "style_token": "style_scope",
+      "geometry": {
+        "kind": "TEXT",
+        "data": {
+          "x": 450,
+          "y": 470,
+          "font_size": 18,
+          "anchor": "middle",
+          "text": "Conceptual geometry; no measured dimensions",
+          "dash": null
+        }
+      },
+      "render_method": "NATIVE_VECTOR",
+      "editability_level": "FULL_NATIVE",
+      "scientific_refs": [
+        "C2"
+      ],
+      "text": "Conceptual geometry; no measured dimensions",
+      "font_family": "Arial",
+      "font_size": 18,
+      "live_text_required": true
+    }
+  ],
+  "arrow_objects": [
+    {
+      "id": "AI_R1",
+      "layer_id": "L_relations",
+      "group_id": null,
+      "bbox": [
+        300,
+        220,
+        600,
+        220
+      ],
+      "z_order": 2,
+      "style_token": "style_R1",
+      "geometry": {
+        "kind": "POLYLINE",
+        "data": {
+          "points": [
+            [
+              300,
+              220
+            ],
+            [
+              600,
+              220
+            ]
+          ],
+          "encoding": "solid_arrow",
+          "dash": null
+        }
+      },
+      "render_method": "NATIVE_VECTOR",
+      "editability_level": "FULL_NATIVE",
+      "scientific_refs": [
+        "R1",
+        "C1"
+      ],
+      "source_id": "AI_fig_A",
+      "target_id": "AI_fig_B",
+      "relation_id": "R1",
+      "arrow_semantics": "association",
+      "epistemic_status": "DIRECTLY_SUPPORTED",
+      "negated": false
+    },
+    {
+      "id": "AI_R2",
+      "layer_id": "L_relations",
+      "group_id": null,
+      "bbox": [
+        200,
+        280,
+        700,
+        370
+      ],
+      "z_order": 3,
+      "style_token": "style_R2",
+      "geometry": {
+        "kind": "POLYLINE",
+        "data": {
+          "points": [
+            [
+              700,
+              280
+            ],
+            [
+              700,
+              370
+            ],
+            [
+              200,
+              370
+            ],
+            [
+              200,
+              280
+            ]
+          ],
+          "encoding": "dashed_arrow",
+          "dash": "6 5"
+        }
+      },
+      "render_method": "NATIVE_VECTOR",
+      "editability_level": "FULL_NATIVE",
+      "scientific_refs": [
+        "R2",
+        "C2"
+      ],
+      "source_id": "AI_fig_B",
+      "target_id": "AI_fig_A",
+      "relation_id": "R2",
+      "arrow_semantics": "proposed_effect",
+      "epistemic_status": "HYPOTHESIZED",
+      "negated": false
+    }
+  ],
+  "asset_refs": [],
+  "render_method": "NATIVE_VECTOR",
+  "editability_level": "FULL_NATIVE"
+}

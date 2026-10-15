@@ -1,0 +1,6 @@
+interface:
+  display_name: "baihe-sci-slides · 科研汇报"
+  short_description: "将已确认的科研图与内容制作成可编辑汇报，支持V03风格、媒体完整性、局部修订及总稿小稿稳定引用更新。"
+  default_prompt: "使用 $baihe-sci-slides，将已确认的图和内容排成科研汇报并验证可编辑性。"
+policy:
+  allow_implicit_invocation: true

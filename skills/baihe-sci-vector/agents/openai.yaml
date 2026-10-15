@@ -1,0 +1,6 @@
+interface:
+  display_name: "baihe-sci-vector · 可编辑矢量生产"
+  short_description: "忠实重建源图，或按批准SceneGraph制作可编辑Illustrator/PPT原生对象，验证文字、分组、关系与局部编辑。"
+  default_prompt: "使用 $baihe-sci-vector，按我的源图或已批准设计制作可编辑原生对象。"
+policy:
+  allow_implicit_invocation: true
