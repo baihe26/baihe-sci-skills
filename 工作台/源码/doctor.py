@@ -1,5 +1,14 @@
 from paths import *
 from core import GateError
+def portable_check():
+    import subprocess
+    if not PORTABLE_PY.is_file():return dict(status='DEPENDENCY_NOT_CONFIGURED_OR_MISSING',missing=['portable_python'])
+    code="import importlib.util,json;print(json.dumps({x:importlib.util.find_spec(x) is not None for x in ['pptx','PIL']}))"
+    result=subprocess.run([str(PORTABLE_PY),'-c',code],capture_output=True,text=True,encoding='utf-8',timeout=20)
+    try:modules=json.loads(result.stdout) if result.returncode==0 else {}
+    except ValueError:modules={}
+    missing=[key for key in ('pptx','PIL') if not modules.get(key)]
+    return dict(status='PACKAGES_READY_OFFICE_NOT_REQUIRED' if not missing else 'DEPENDENCY_NOT_CONFIGURED_OR_MISSING',missing=missing,native_probe=False)
 def requirements(module,target='illustrator'):
     common=[PYTHON]
     if module=='plot':return common+[PLOT_PY,ORIGIN_PY,PLOT/'phase2c/native.py',PLOT/'phase2c/semantics.py',PLOT/'phase2c_1/qa.py',PLOT/'src/figure_system/persistence.py']
@@ -14,4 +23,4 @@ def require(module,target='illustrator'):
     r=check(module,target)
     if r['missing']:raise GateError(json.dumps(r,ensure_ascii=False))
 def report():
-    return dict(version='0.2.0',config_present=CONFIG_FILE.is_file(),native_platform='WINDOWS' if os.name=='nt' else 'NOT_WINDOWS_NATIVE_EXECUTION_UNTESTED',routes=[check(m,t) for m,t in [('plot','origin'),('designer','contract'),('vector','illustrator'),('vector','ppt'),('ppt','ppt')]],scope='Only dependency-file presence. Does not start software, install packages, verify licenses, or assert render success.')
+    return dict(version='0.3.0',config_present=CONFIG_FILE.is_file(),native_platform='WINDOWS' if os.name=='nt' else 'NOT_WINDOWS_NATIVE_EXECUTION_UNTESTED',routes=[check(m,t) for m,t in [('plot','origin'),('designer','contract'),('vector','illustrator'),('vector','ppt'),('ppt','ppt')]],portable=portable_check(),scope='Native routes: file presence only. Optional portable route: Python package availability. No software start, install, license or render assertion.')

@@ -13,7 +13,9 @@ def produce(scene_path,out,source_png=None):
     scene_path=Path(scene_path).resolve();source_png=Path(source_png).resolve() if source_png else None
     graph=read(scene_path);out=writable(out)
     if out.exists():raise FileExistsError(out)
-    consistency=validate_pack(scene_path)
+    from preflight import inspect_pack
+    inspection=inspect_pack(scene_path);consistency=inspection['consistency']
+    if inspection['retained_assets']['assets']:raise GateError('RETAINED_ASSETS_REQUIRE_SUPPORTED_PORTABLE_PPT_OR_LEGACY_ROUTE')
     if graph['asset_refs'] or graph['clipping']:raise GateError('COMPLEX_SCENE_SAFE_LEGACY_HANDOFF_REQUIRED')
     if graph['canvas']['unit']!='px' or graph['canvas']['origin']!='TOP_LEFT':raise GateError('COORDINATE_CONTRACT_UNSUPPORTED')
     import jsonschema
@@ -24,6 +26,7 @@ def produce(scene_path,out,source_png=None):
     connectors=rectangle_connector_plan(graph);binding_results=[]
     out.mkdir(parents=True);target=out/'可编辑示意图.pptx';journal=Journal(out/'恢复日志.jsonl',sha(scene_path))
     save(out/'跨合同一致性检查.json',consistency)
+    save(out/'生产前检查.json',inspection)
     ensure_owned(target)
     async def run(b):
         await b.create(target);a=connect();p=get_presentation(a,target);p.PageSetup.SlideWidth=w;p.PageSetup.SlideHeight=h

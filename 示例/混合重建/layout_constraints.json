@@ -1,0 +1,40 @@
+{
+  "constraints": [
+    {
+      "id": "L1",
+      "kind": "disjoint",
+      "object_ids": [
+        "AI_fig_A",
+        "AI_fig_B"
+      ]
+    },
+    {
+      "id": "L2",
+      "kind": "aligned",
+      "edge": "top",
+      "object_ids": [
+        "AI_fig_A",
+        "AI_fig_B"
+      ]
+    },
+    {
+      "id": "L3",
+      "kind": "min_gap",
+      "axis": "x",
+      "minimum_px": 250,
+      "object_ids": [
+        "AI_fig_A",
+        "AI_fig_B"
+      ]
+    },
+    {
+      "id": "L4",
+      "kind": "min_font_pt",
+      "minimum_pt": 9,
+      "object_ids": [
+        "AI_text_A",
+        "AI_text_B"
+      ]
+    }
+  ]
+}

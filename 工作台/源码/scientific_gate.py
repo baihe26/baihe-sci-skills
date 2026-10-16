@@ -1,6 +1,7 @@
 """Cross-artifact identity checks. Consistency is separate from scientific truth."""
 from paths import read, sha, digest, Path
 from core import GateError
+import math
 
 
 def fail(code, detail):
@@ -106,7 +107,26 @@ def validate_design(spec, plan, binding, spec_base, binding_base):
 def validate_scene(spec, plan, graph):
     """Check frozen compiler output against the explicit plan ID mapping."""
     entities = indexed(spec['entities'])
+    same(plan['canvas'],[graph['canvas']['width'],graph['canvas']['height']],'SCENE_CANVAS_CONFLICT')
+    same(('px','TOP_LEFT'),(graph['canvas']['unit'],graph['canvas']['origin']),'SCENE_COORDINATE_CONFLICT')
+    scale=graph['geometry']['coordinate_transform']['scale_pt_per_px']
+    expected_scale=spec['style']['canvas_width_mm']/graph['canvas']['width']*72/25.4
+    if not isinstance(scale,(int,float)) or not math.isfinite(scale) or abs(scale-expected_scale)>1e-10:
+        fail('SCENE_PHYSICAL_SCALE_CONFLICT',scale)
     groups = indexed(graph['groups'])
+    all_objects=indexed([*graph['objects'],*graph['text_objects'],*graph['arrow_objects'],*graph['groups']])
+    parents={}
+    for link in graph['parent_child']:
+        child,parent=link['child_id'],link['parent_id']
+        if child not in all_objects or parent not in groups or child in parents:fail('SCENE_PARENT_UNRESOLVED_OR_DUPLICATE',link)
+        parents[child]=parent
+    for key in all_objects:
+        trail=set();current=key
+        while current in parents:
+            if current in trail:fail('SCENE_PARENT_CYCLE',key)
+            trail.add(current);current=parents[current]
+    for row in [*graph['objects'],*graph['text_objects'],*graph['arrow_objects']]:
+        same(row.get('group_id'),parents.get(row['id']),'SCENE_PARENT_DECLARATION_CONFLICT')
     mapping = {}
     for identity, e in entities.items():
         expected_name = 'AI_' + e['scientific_role'] + '__' + identity

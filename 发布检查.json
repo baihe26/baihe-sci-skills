@@ -1,16 +1,7 @@
 {
-  "version": "0.2.0",
-  "date": "2026-10-15",
-  "publication": {
-    "repository": "baihe26/baihe-sci-skills",
-    "visibility": "public",
-    "private_engines_bundled": false,
-    "research_data_or_existing_results_bundled": false
-  },
-  "previous_release": {
-    "version": "0.1.0",
-    "commit": "edf943250bff2f4755e33b5eb2bdafec34a22a49"
-  },
+  "version": "0.3.0",
+  "date": "2026-10-16",
+  "baseline_commit": "9bf55c239e72d6e18ff3dab2eadc143a338ece33",
   "skills": [
     {
       "name": "baihe-sci",
@@ -33,42 +24,23 @@
       "passed": true
     }
   ],
-  "python_syntax": {
-    "status": "PASS",
-    "files": [
-      "coordination.py",
-      "core.py",
-      "designer_adapter.py",
-      "display_variant.py",
-      "doctor.py",
-      "illustrator_native.py",
-      "ledger.py",
-      "native_connectors.py",
-      "origin_worker.py",
-      "paths.py",
-      "plot_adapter.py",
-      "ppt_adapter.py",
-      "processing_ledger.py",
-      "recovery_journal.py",
-      "scene_ppt_adapter.py",
-      "scientific_gate.py",
-      "vector_adapter.py",
-      "workbench.py"
-    ]
-  },
   "unit_tests": {
     "status": "PASS",
-    "test_cases": 21,
-    "native_calls": false
+    "test_cases": 36,
+    "skipped": 0,
+    "environment": "New isolated optional backend environment"
   },
-  "scientific_gate": {
-    "legal_synthetic_pack": "PASS",
-    "bad_binding_actual_designer_and_ppt": "REJECTED_BEFORE_OUTPUT",
-    "scientific_truth": "NOT_ASSESSED"
-  },
-  "current_native": {
+  "default_regression": {
+    "origin": {
+      "source_unchanged": true,
+      "values_equal": true,
+      "semantic_checks": true,
+      "persistence": true,
+      "native_edit": true
+    },
     "illustrator": {
-      "status": "NATIVE_SAVED_REOPENED",
+      "contracts": true,
+      "independent_client_reopen": true,
       "counts": {
         "paths": 70,
         "texts": 6,
@@ -80,50 +52,41 @@
         "nodes": 150,
         "gradientFills": 0
       },
-      "contract_checks": true,
-      "independent_client_checks": true,
-      "application_restart": false,
-      "all_historical_edit_probes_repeated": false
+      "application_restart": false
     },
     "ppt": {
-      "native_snapshot_equal_after_reopen": true,
-      "pixel_equal_after_reopen": true,
-      "counts": {
-        "slides": 1,
-        "textboxes": 6,
-        "autoshapes": 3,
-        "groups": 2,
-        "connectors": 1,
-        "charts": 0,
-        "tables": 0,
-        "pictures_including_svg": 0,
-        "svgs": 0,
-        "animations_effect_nodes": 0,
-        "transitions": 0,
-        "smartart_parts": 0,
-        "embedded_workbooks": 0
-      },
-      "native_bound_connectors": [
-        "AI_R1"
-      ],
-      "free_paths": [
-        "AI_R2"
-      ],
-      "edits": {
-        "edits": true,
-        "source_unchanged": true,
-        "true_ooxml_connector": true
-      },
-      "manual_mouse_drag": false,
-      "application_restart": false
+      "native_snapshot_equal": true,
+      "pixels_equal_after_reopen": true,
+      "comparison_with_0_2_in_current_environment": "EXACT_PIXELS_EQUAL"
     }
   },
-  "visual": {
-    "status": "NO_NEW_VISIBLE_ISSUES",
-    "scope": "Known simple synthetic scene only",
-    "separate_read_only_review": true,
-    "issues": [],
-    "native_binding_inferred_from_pixels": false
+  "optional_backend": {
+    "library": "python-pptx",
+    "version": "1.0.2",
+    "license": "MIT",
+    "packages_installed_in_new_environment": true,
+    "private_engines_required": false,
+    "office_required_for_generation": false,
+    "native_reopen_cases": 2,
+    "edited_native_objects": true,
+    "retained_image_bytes_equal_after_move_resize_save_reopen": true,
+    "same_contract_default_vs_optional_pixels_different": 2882,
+    "default_replaced": false,
+    "visual": {
+      "first_blind_review": "Inherited theme shadow detected; unresolved source text omission disclosed",
+      "fixed_review": "NO_NEW_SUBSTANTIVE_VISUAL_ISSUES",
+      "unresolved_source_text": "omitted_pending_review; not all-text reconstruction",
+      "author_acceptance": "PENDING"
+    },
+    "studio_tags_compatible": false,
+    "application_restart": false
+  },
+  "publication": {
+    "repository": "baihe26/baihe-sci-skills",
+    "visibility": "public",
+    "research_materials_bundled": false,
+    "private_engines_bundled": false,
+    "software_environment_bundled": false
   },
   "journal_provenance": {
     "source": "User-owned Live PowerPoint Studio recovery_journal module",
@@ -133,17 +96,20 @@
     "change": "LF newline normalization only"
   },
   "limitations": [
-    "External local engines and commercial software/licenses are not bundled.",
-    "Another machine complete installation and native production not tested.",
-    "Only exact rectangle-center straight connector scope tested; complex paths remain free paths.",
-    "No Norman same-image blinded benchmark or cost/quality ranking.",
-    "Optional handoff/review helpers do not imply a fully automated multi-agent state machine.",
-    "Scientific truth and author acceptance remain separate and pending."
+    "Scientific truth, author acceptance and unresolved source text remain pending.",
+    "No Norman same-model quality/cost ranking, paid generation or macro-security changes.",
+    "Optional backend covers documented simple geometry/rectangular crops only; default multi-page Studio/media workflows remain external.",
+    "Portable IDs use shape names/descriptions; Studio Tags are not synthesized.",
+    "Current Windows native validation and isolated dependency installation do not prove another machine native setup."
   ],
+  "python_syntax": {
+    "status": "PASS",
+    "files": 31
+  },
   "privacy": {
     "status": "PASS",
-    "files": 53,
-    "bytes": 203684,
+    "files": 78,
+    "bytes": 384988,
     "findings": [],
     "scope": "Exact Git staging blobs only; untracked local configuration and runtime outputs excluded. PNG has only dpi metadata."
   }

@@ -39,10 +39,10 @@ def single_writer(function):
     return call
 
 
-def append_checkpoint(folder, stage, inputs, expected_parent, semantic_sha256, writer):
+def append_checkpoint(folder, stage, inputs, expected_parent, semantic_sha256, writer, semantic_kind='HOST_DECLARED'):
     """Host calls this at real milestones. No synthesized review or automatic rerun."""
     folder = writable(folder)
-    if stage not in ('INPUT_BOUND', 'DESIGN_READY', 'NATIVE_RECORDED', 'REVIEW_RECORDED'):
+    if stage not in ('INPUT_BOUND', 'DESIGN_READY', 'NATIVE_RECORDED', 'PRODUCTION_RECORDED', 'REVIEW_RECORDED'):
         raise GateError('UNKNOWN_CHECKPOINT_STAGE')
     if not re.fullmatch(r'[0-9a-f]{64}', semantic_sha256) or not writer:
         raise GateError('CHECKPOINT_IDENTITY_REQUIRED')
@@ -61,6 +61,7 @@ def append_checkpoint(folder, stage, inputs, expected_parent, semantic_sha256, w
             chain_parent = sha(previous)
         row = dict(schema_version='handoff-0.1', revision=len(paths)+1, stage=stage,
                    expected_parent=parent, semantic_sha256=semantic_sha256, writer=writer,
+                   semantic_kind=semantic_kind,
                    inputs=[source(p) for p in inputs], automatic_retry=False,
                    scientific_review='PENDING', author_acceptance='PENDING')
         destination = folder / ('交接_%06d.json' % row['revision'])

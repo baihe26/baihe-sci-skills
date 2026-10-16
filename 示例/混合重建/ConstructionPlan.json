@@ -1,0 +1,287 @@
+{
+  "canvas": [
+    900,
+    500
+  ],
+  "instances": [
+    {
+      "id": "fig_A",
+      "entity_id": "E_A",
+      "bbox": [
+        100,
+        170,
+        200,
+        100
+      ],
+      "shape": "rect"
+    },
+    {
+      "id": "fig_B",
+      "entity_id": "E_B",
+      "bbox": [
+        600,
+        170,
+        200,
+        100
+      ],
+      "shape": "rect"
+    }
+  ],
+  "elements": [
+    {
+      "id": "box_A",
+      "owner": "fig_A",
+      "kind": "RECT",
+      "data": {
+        "x": 100,
+        "y": 170,
+        "width": 200,
+        "height": 100
+      },
+      "bbox": [
+        100,
+        170,
+        200,
+        100
+      ],
+      "fill": "#DCE8F2",
+      "stroke": "#526873",
+      "stroke_width": 2,
+      "scientific_refs": [
+        "E_A"
+      ],
+      "role": "object"
+    },
+    {
+      "id": "text_A",
+      "owner": "fig_A",
+      "kind": "TEXT",
+      "data": {
+        "x": 200,
+        "y": 228,
+        "font_size": 28,
+        "anchor": "middle",
+        "text": "Module A"
+      },
+      "bbox": [
+        120,
+        196,
+        160,
+        42
+      ],
+      "fill": "#263238",
+      "stroke": "#526873",
+      "stroke_width": 0,
+      "scientific_refs": [
+        "E_A"
+      ],
+      "role": "object"
+    },
+    {
+      "id": "box_B",
+      "owner": "fig_B",
+      "kind": "RECT",
+      "data": {
+        "x": 600,
+        "y": 170,
+        "width": 200,
+        "height": 100
+      },
+      "bbox": [
+        600,
+        170,
+        200,
+        100
+      ],
+      "fill": "#F5E0CE",
+      "stroke": "#526873",
+      "stroke_width": 2,
+      "scientific_refs": [
+        "E_B"
+      ],
+      "role": "object"
+    },
+    {
+      "id": "text_B",
+      "owner": "fig_B",
+      "kind": "TEXT",
+      "data": {
+        "x": 700,
+        "y": 228,
+        "font_size": 28,
+        "anchor": "middle",
+        "text": "Module B"
+      },
+      "bbox": [
+        620,
+        196,
+        160,
+        42
+      ],
+      "fill": "#263238",
+      "stroke": "#526873",
+      "stroke_width": 0,
+      "scientific_refs": [
+        "E_B"
+      ],
+      "role": "object"
+    },
+    {
+      "id": "title",
+      "owner": null,
+      "kind": "TEXT",
+      "data": {
+        "x": 450,
+        "y": 60,
+        "font_size": 27,
+        "anchor": "middle",
+        "text": "Synthetic test - not a research result"
+      },
+      "bbox": [
+        80,
+        30,
+        740,
+        40
+      ],
+      "fill": "#526873",
+      "stroke": "#526873",
+      "stroke_width": 0,
+      "scientific_refs": [
+        "C2"
+      ],
+      "role": "object"
+    },
+    {
+      "id": "supply",
+      "owner": null,
+      "kind": "TEXT",
+      "data": {
+        "x": 450,
+        "y": 196,
+        "font_size": 20,
+        "anchor": "middle",
+        "text": "Supplied connection"
+      },
+      "bbox": [
+        80,
+        166,
+        740,
+        40
+      ],
+      "fill": "#526873",
+      "stroke": "#526873",
+      "stroke_width": 0,
+      "scientific_refs": [
+        "C1"
+      ],
+      "role": "object"
+    },
+    {
+      "id": "hyp",
+      "owner": null,
+      "kind": "TEXT",
+      "data": {
+        "x": 450,
+        "y": 420,
+        "font_size": 20,
+        "anchor": "middle",
+        "text": "Hypothesis: feedback"
+      },
+      "bbox": [
+        80,
+        390,
+        740,
+        40
+      ],
+      "fill": "#526873",
+      "stroke": "#526873",
+      "stroke_width": 0,
+      "scientific_refs": [
+        "C2"
+      ],
+      "role": "object"
+    },
+    {
+      "id": "scope",
+      "owner": null,
+      "kind": "TEXT",
+      "data": {
+        "x": 450,
+        "y": 470,
+        "font_size": 18,
+        "anchor": "middle",
+        "text": "Conceptual geometry; no measured dimensions"
+      },
+      "bbox": [
+        80,
+        440,
+        740,
+        40
+      ],
+      "fill": "#526873",
+      "stroke": "#526873",
+      "stroke_width": 0,
+      "scientific_refs": [
+        "C2"
+      ],
+      "role": "object"
+    }
+  ],
+  "relations": [
+    {
+      "id": "R1",
+      "relation_id": "R1",
+      "source": "fig_A",
+      "target": "fig_B",
+      "predicate": "association",
+      "epistemic_status": "DIRECTLY_SUPPORTED",
+      "encoding": "solid_arrow",
+      "points": [
+        [
+          300,
+          220
+        ],
+        [
+          600,
+          220
+        ]
+      ],
+      "claim_ids": [
+        "C1"
+      ],
+      "negated": false
+    },
+    {
+      "id": "R2",
+      "relation_id": "R2",
+      "source": "fig_B",
+      "target": "fig_A",
+      "predicate": "proposed_effect",
+      "epistemic_status": "HYPOTHESIZED",
+      "encoding": "dashed_arrow",
+      "points": [
+        [
+          700,
+          280
+        ],
+        [
+          700,
+          370
+        ],
+        [
+          200,
+          370
+        ],
+        [
+          200,
+          280
+        ]
+      ],
+      "claim_ids": [
+        "C2"
+      ],
+      "negated": false
+    }
+  ],
+  "parent_semantics": []
+}

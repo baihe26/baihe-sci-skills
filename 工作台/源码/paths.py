@@ -14,6 +14,7 @@ def configured(key,fallback=None):
 PLOT=configured('plot_root');DESIGN=configured('designer_root');HANDOFF=configured('designer_contract_root')
 VECTOR=configured('vector_root');STUDIO=configured('studio_root');BACKEND=configured('ppt_backend_root')
 PYTHON=configured('python',sys.executable);PLOT_PY=configured('plot_python',PYTHON);ORIGIN_PY=configured('origin_python',PLOT_PY)
+PORTABLE_PY=configured('portable_python',PYTHON)
 VECTOR_HELPERS=configured('illustrator_helpers')
 DESKTOP_LOCKS=[ROOT/'桌面生产.lock',*[(Path(p).expanduser() if Path(p).expanduser().is_absolute() else CONFIG_FILE.parent/Path(p).expanduser()).resolve() for p in CONFIG.get('desktop_locks',[])]]
 for name in ('TEMP','TMP','MPLCONFIGDIR'):

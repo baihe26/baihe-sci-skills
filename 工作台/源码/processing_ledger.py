@@ -9,7 +9,8 @@ def validate_ledger(ledger):
     if not required <= set(rows):
         raise GateError('REQUIRED_ELEMENTS_UNACCOUNTED')
     for row in rows.values():
-        if not row.get('source_ref') or not row.get('output_ids'):
+        omitted=row.get('treatment')=='omitted_pending_review' and row.get('uncertain') and row.get('review_status')=='PENDING'
+        if not row.get('source_ref') or (not row.get('output_ids') and not omitted):
             raise GateError('ELEMENT_PROVENANCE_OR_OUTPUT_MISSING')
         if row.get('uncertain') and row.get('review_status') == 'APPROVED':
             raise GateError('UNCERTAINTY_SILENTLY_APPROVED')
@@ -21,15 +22,16 @@ def validate_ledger(ledger):
                 raise GateError('CROP_BOX_INVALID')
             if row.get('content_kind') not in ('scientific_image', 'photograph', 'texture'):
                 raise GateError('RASTER_SUBSTITUTE_FOR_SEMANTIC_OBJECT')
-        elif row['treatment'] not in ('native_text', 'native_geometry', 'editable_path', 'native_bound_connector'):
+        elif row['treatment'] not in ('native_text', 'native_geometry', 'editable_path', 'native_bound_connector') and not omitted:
             raise GateError('UNKNOWN_ELEMENT_TREATMENT')
     # Semantic rectangles/arrows/text must be separately accounted; overlapping crops do not earn native credit.
     native_required = set(ledger.get('native_required_ids', []))
     if any(rows[key]['treatment'] == 'retained_pixels' for key in native_required):
         raise GateError('REQUIRED_NATIVE_ELEMENT_RASTERIZED')
     return dict(status='PASS', required=len(required), accounted=len(rows),
-                native_count=sum(r['treatment'] != 'retained_pixels' for r in rows.values()),
+                native_count=sum(r['treatment'] in ('native_text','native_geometry','editable_path','native_bound_connector') for r in rows.values()),
                 retained_pixel_count=sum(r['treatment'] == 'retained_pixels' for r in rows.values()),
+                omitted_pending_review_count=sum(r['treatment']=='omitted_pending_review' for r in rows.values()),
                 scope='ACCOUNTING_ONLY_NOT_VISUAL_OR_SCIENTIFIC_ACCEPTANCE')
 
 
@@ -47,6 +49,17 @@ def from_scene(graph):
                   native_required_ids=[r['id'] for r in rows], elements=rows,
                   source='APPROVED_SCENE_CONTRACT', scientific_review='PENDING', visual_review='PENDING')
     ledger['check'] = validate_ledger(ledger)
+    return ledger
+
+
+def add_unresolved(ledger,inspection):
+    reconstruction=inspection['reconstruction']
+    for row in reconstruction.get('unresolved_elements',[]):
+        if not row.get('output_ids'):
+            ledger['required_ids'].append(row['id'])
+            ledger['elements'].append(dict(id=row['id'],source_ref=dict(source_sha256=reconstruction['source_sha256'],source_boxes_px=row.get('source_boxes_px',[row.get('source_box_px')])),output_ids=[],
+                                          treatment='omitted_pending_review',editability='NOT_RECONSTRUCTED',uncertain=True,review_status='PENDING'))
+    ledger['check']=validate_ledger(ledger)
     return ledger
 
 

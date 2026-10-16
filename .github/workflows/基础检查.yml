@@ -7,5 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 安装可选生成后端的测试依赖
+        run: python -m pip install -r requirements-portable.txt
       - name: 可移植协调逻辑测试（不运行原生软件）
         run: python3 -m unittest discover -s tests -v

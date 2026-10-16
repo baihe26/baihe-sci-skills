@@ -17,3 +17,5 @@ description: 从有来源的科学内容设计机制图、构型图与多面板�
 入口为 `baihe-sci.cmd --module designer --spec <FigureSpec> --plan <ConstructionPlan> --binding <科学绑定>`。用户说“先设计/暂不画”时到设计交付为止。简单DIRECT、复杂HYBRID及可选IMAGE_GUIDED须有理由；没有当前费用与外传授权时不调用远程生成。
 
 设计质量、施工质量、编辑性、科学正确性分开检查。所有必需科学要素要么在图中可见，要么在实际图注明示，要么记录经过同意的省略；内部计划包含不等于交付可见。作者接受待本人确认。
+
+0.3可先`--preflight`核对科学骨架而不启动施工。需要时用evidence_map连接已有来源块、E证据和C主张；limits/contradicts/mixed保持待审，不自动采纳。布局可声明contains/disjoint/间隔/对齐/最终字号约束，程序只检查不自动重排；不要用这些检查替代视觉理解。相对引用的裁图、证据与区域地图随设计新交接复制。未知字可留omitted_pending_review草稿项，不能据此宣称正式图内容完整。接口例子见`文档/可选后端与任务操作.md`。

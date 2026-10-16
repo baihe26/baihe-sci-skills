@@ -24,7 +24,13 @@ def compile_design(spec_path,plan_path,binding_path,out):
     if {r['id'] for r in plan['relations']}!={r['id'] for r in spec['relationships']}:raise GateError('PLAN_RELATIONS_DIFFER')
     # Carry relative source files into this new output, without rewriting source contracts.
     source_copies={}
-    for base,ref in [(Path(spec_path).parent,v['path']) for v in spec['metadata']['sources']]+[(Path(binding_path).parent,binding['source_file']['path'])]:
+    extra_names=('retained_assets.json','reconstruction_map.json','layout_constraints.json','evidence_map.json')
+    extras={name:Path(spec_path).parent/name for name in extra_names if (Path(spec_path).parent/name).is_file()}
+    references=[(Path(spec_path).parent,v['path']) for v in spec['metadata']['sources']]+[(Path(binding_path).parent,binding['source_file']['path'])]
+    if 'retained_assets.json' in extras:references.extend((Path(spec_path).parent,r['source']['path']) for r in read(extras['retained_assets.json'])['assets'])
+    if 'reconstruction_map.json' in extras:references.append((Path(spec_path).parent,read(extras['reconstruction_map.json'])['source']['path']))
+    if 'evidence_map.json' in extras:references.extend((Path(spec_path).parent,r['path']) for r in read(extras['evidence_map.json'])['source_blocks'])
+    for base,ref in references:
         relative=Path(ref)
         if relative.is_absolute():continue
         if '..' in relative.parts:raise GateError('RELATIVE_SOURCE_PARENT_TRAVERSAL_USE_ABSOLUTE_REFERENCE')
@@ -36,6 +42,7 @@ def compile_design(spec_path,plan_path,binding_path,out):
     for relative,src in source_copies.items():
         (out/relative).parent.mkdir(parents=True,exist_ok=True);shutil.copy2(src,out/relative)
     for p,n in [(spec_path,'FigureSpec.json'),(plan_path,'ConstructionPlan.json'),(binding_path,'scientific_binding.json')]:shutil.copy2(p,out/n)
+    for name,path in extras.items():shutil.copy2(path,out/name)
     replayer=replay();preview=replayer.svg(plan,spec)
     (out/'设计预览.svg').write_text(preview,encoding='utf-8');replayer.raster(preview,out/'设计预览.png')
     graph=replayer.make_scene(spec,plan,out)
@@ -53,6 +60,18 @@ def compile_design(spec_path,plan_path,binding_path,out):
         save(out/'物理尺寸兼容映射.json',dict(parent=source(archive/'IllustratorSceneGraph.json'),original_scale=old_scale,corrected_scale=scale,reason='新画布宽度不是冻结helper的1200px；从FigureSpec物理宽度推导，不改科学内容或几何',frozen_source_modified=False))
     jsonschema.validate(graph,read(HANDOFF/'schemas/illustrator_scene_graph.schema.json'))
     scene_consistency=validate_scene(spec,plan,graph)
+    from preflight import inspect_pack
+    inspection=inspect_pack(out/'IllustratorSceneGraph.json');save(out/'生产前检查.json',inspection)
+    if inspection['retained_assets']['assets']:
+        import base64
+        images=[]
+        for asset in inspection['retained_assets']['assets']:
+            left,top,right,bottom=asset['source_box_px'];x0,y0,x1,y1=asset['bbox'];width,height=asset['source']['size_px']
+            mime='image/png' if asset['source_format']=='PNG' else 'image/jpeg'
+            encoded=base64.b64encode(Path(asset['source_path']).read_bytes()).decode('ascii')
+            images.append(f'<svg x="{x0}" y="{y0}" width="{x1-x0}" height="{y1-y0}" viewBox="{left} {top} {right-left} {bottom-top}" overflow="hidden"><image width="{width}" height="{height}" href="data:{mime};base64,{encoded}"/></svg>')
+        prefix,suffix=preview.rsplit('</svg>',1);preview=prefix+''.join(images)+'</svg>'+suffix
+        (out/'设计预览.svg').write_text(preview,encoding='utf-8');replayer.raster(preview,out/'设计预览.png')
     save(out/'跨合同一致性检查.json',dict(design=consistency,scene=scene_consistency))
     from processing_ledger import from_scene
     save(out/'元素处理清单.json',from_scene(graph))

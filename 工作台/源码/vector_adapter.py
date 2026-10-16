@@ -42,12 +42,15 @@ def produce(scene_path,out,source_image=None,mode='approved_design'):
     if out.exists():raise FileExistsError(out)
     graph=read(scene_path)
     from scientific_gate import validate_pack
-    consistency=validate_pack(scene_path)
+    from preflight import inspect_pack
+    inspection=inspect_pack(scene_path);consistency=inspection['consistency']
+    if inspection['retained_assets']['assets']:raise GateError('RETAINED_ASSETS_REQUIRE_SUPPORTED_PORTABLE_PPT_OR_LEGACY_ROUTE')
     import jsonschema
     jsonschema.validate(graph,read(HANDOFF/'schemas/illustrator_scene_graph.schema.json'))
     if mode=='faithful_reconstruction' and not source_image:raise GateError('SOURCE_IMAGE_REQUIRED')
     out.mkdir(parents=True);svg=out/'施工输入.svg'
     save(out/'跨合同一致性检查.json',consistency)
+    save(out/'生产前检查.json',inspection)
     from processing_ledger import from_scene
     save(out/'元素处理清单.json',from_scene(graph))
     subprocess.run([str(PLOT_PY),__file__,'--svg-only',str(scene_path),str(svg)],check=True,env=dict(os.environ,PYTHONUTF8='1'))

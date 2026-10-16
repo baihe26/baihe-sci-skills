@@ -1,0 +1,204 @@
+{
+  "schema_version": "reconstruction-map-0.1",
+  "source": {
+    "path": "合成原图.png",
+    "sha256": "556a908e04cba13b78c2e1ba57d54648d42ee9a8b0fd16a6fa88b2cf3823133c",
+    "size_px": [
+      900,
+      500
+    ]
+  },
+  "required_ids": [
+    "AI_box_A",
+    "AI_box_B",
+    "AI_text_A",
+    "AI_text_B",
+    "AI_title",
+    "AI_supply",
+    "AI_hyp",
+    "AI_scope",
+    "AI_R1",
+    "AI_R2",
+    "source_unclear_note"
+  ],
+  "elements": [
+    {
+      "id": "AI_box_A",
+      "output_ids": [
+        "AI_box_A"
+      ],
+      "native_required": true,
+      "uncertain": false,
+      "source_box_px": [
+        100,
+        170,
+        300,
+        270
+      ]
+    },
+    {
+      "id": "AI_box_B",
+      "output_ids": [
+        "AI_box_B"
+      ],
+      "native_required": true,
+      "uncertain": false,
+      "source_box_px": [
+        600,
+        170,
+        800,
+        270
+      ]
+    },
+    {
+      "id": "AI_text_A",
+      "output_ids": [
+        "AI_text_A"
+      ],
+      "native_required": true,
+      "uncertain": false,
+      "source_box_px": [
+        120,
+        196,
+        280,
+        238
+      ],
+      "observed_text": "Module A"
+    },
+    {
+      "id": "AI_text_B",
+      "output_ids": [
+        "AI_text_B"
+      ],
+      "native_required": true,
+      "uncertain": false,
+      "source_box_px": [
+        620,
+        196,
+        780,
+        238
+      ],
+      "observed_text": "Module B"
+    },
+    {
+      "id": "AI_title",
+      "output_ids": [
+        "AI_title"
+      ],
+      "native_required": true,
+      "uncertain": false,
+      "source_box_px": [
+        80,
+        30,
+        820,
+        70
+      ],
+      "observed_text": "Synthetic test - not a research result"
+    },
+    {
+      "id": "AI_supply",
+      "output_ids": [
+        "AI_supply"
+      ],
+      "native_required": true,
+      "uncertain": false,
+      "source_box_px": [
+        80,
+        166,
+        820,
+        206
+      ],
+      "observed_text": "Supplied connection"
+    },
+    {
+      "id": "AI_hyp",
+      "output_ids": [
+        "AI_hyp"
+      ],
+      "native_required": true,
+      "uncertain": false,
+      "source_box_px": [
+        80,
+        390,
+        820,
+        430
+      ],
+      "observed_text": "Hypothesis: feedback"
+    },
+    {
+      "id": "AI_scope",
+      "output_ids": [
+        "AI_scope"
+      ],
+      "native_required": true,
+      "uncertain": false,
+      "source_box_px": [
+        80,
+        440,
+        820,
+        480
+      ],
+      "observed_text": "Conceptual geometry; no measured dimensions"
+    },
+    {
+      "id": "AI_R1",
+      "output_ids": [
+        "AI_R1"
+      ],
+      "native_required": true,
+      "uncertain": false,
+      "source_boxes_px": [
+        [
+          296,
+          216,
+          604,
+          224
+        ]
+      ]
+    },
+    {
+      "id": "AI_R2",
+      "output_ids": [
+        "AI_R2"
+      ],
+      "native_required": true,
+      "uncertain": false,
+      "source_boxes_px": [
+        [
+          696,
+          276,
+          704,
+          374
+        ],
+        [
+          196,
+          366,
+          704,
+          374
+        ],
+        [
+          196,
+          276,
+          204,
+          374
+        ]
+      ]
+    },
+    {
+      "id": "source_unclear_note",
+      "source_box_px": [
+        20,
+        470,
+        65,
+        490
+      ],
+      "output_ids": [],
+      "native_required": false,
+      "uncertain": true,
+      "observed_text": null,
+      "resolved_text": null,
+      "disposition": "omitted_pending_review",
+      "review_status": "PENDING"
+    }
+  ]
+}

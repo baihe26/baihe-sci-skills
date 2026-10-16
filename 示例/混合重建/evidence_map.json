@@ -1,0 +1,54 @@
+{
+  "schema_version": "evidence-map-0.1",
+  "source_blocks": [
+    {
+      "id": "S1",
+      "path": "合成来源.txt",
+      "sha256": "5a1a0c659a74ea03263a094fad7ac2b14ce94b4c9b4b21e1b1dec4015774a7d2",
+      "source_kind": "text",
+      "quote": "Module A supplies Module B."
+    },
+    {
+      "id": "S2",
+      "path": "合成来源.txt",
+      "sha256": "5a1a0c659a74ea03263a094fad7ac2b14ce94b4c9b4b21e1b1dec4015774a7d2",
+      "source_kind": "text",
+      "quote": "Feedback from B to A is a hypothesis."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E1",
+      "source_block_ids": [
+        "S1"
+      ]
+    },
+    {
+      "id": "E2",
+      "source_block_ids": [
+        "S2"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "links": [
+        {
+          "evidence_id": "E1",
+          "relation": "supports"
+        }
+      ]
+    },
+    {
+      "id": "C2",
+      "links": [
+        {
+          "evidence_id": "E2",
+          "relation": "limits"
+        }
+      ]
+    }
+  ],
+  "decisions": []
+}

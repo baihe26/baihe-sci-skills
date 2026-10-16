@@ -1,0 +1,34 @@
+{
+  "schema_version": "retained-assets-0.1",
+  "assets": [
+    {
+      "id": "texture_inset",
+      "source": {
+        "path": "合成原图.png",
+        "sha256": "556a908e04cba13b78c2e1ba57d54648d42ee9a8b0fd16a6fa88b2cf3823133c",
+        "size_px": [
+          900,
+          500
+        ]
+      },
+      "source_box_px": [
+        360,
+        245,
+        540,
+        345
+      ],
+      "bbox": [
+        360,
+        245,
+        540,
+        345
+      ],
+      "content_kind": "texture",
+      "editability": "MOVE_SCALE_REPLACE",
+      "reason": "自制纹理用于验证真实像素保留；不是科研实验图像",
+      "source_ref": "SYNTHETIC_SOURCE_TEXTURE",
+      "group_id": null,
+      "z_order": 2
+    }
+  ]
+}
