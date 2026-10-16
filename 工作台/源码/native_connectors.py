@@ -1,12 +1,31 @@
-"""Select only exact straight rectangle-edge bindings; preserve other path geometry."""
+"""Exact straight rectangle bindings through nested groups, without rerouting paths."""
 
 
 def rectangle_connector_plan(graph, tolerance=1e-6):
     objects = {o['id']: o for o in graph['objects']}
     links = graph['parent_child']
     def candidates(owner):
-        ids = {owner} | {x['child_id'] for x in links if x['parent_id'] == owner}
+        ids = set(); pending = [owner]
+        while pending:
+            current = pending.pop()
+            if current in ids: continue
+            ids.add(current)
+            pending.extend(x['child_id'] for x in links if x['parent_id'] == current)
         return [objects[key] for key in ids if key in objects and objects[key]['geometry']['kind'] == 'RECT']
+    def straight(points):
+        if len(points) < 2: return False
+        begin,end=points[0],points[-1];dx,dy=end[0]-begin[0],end[1]-begin[1]
+        length2=dx*dx+dy*dy
+        if length2 <= tolerance*tolerance: return False
+        previous=-tolerance
+        for point in points:
+            x,y=point[0]-begin[0],point[1]-begin[1]
+            # The intermediate nodes must lie on, and progress along, the same segment.
+            if abs(x*dy-y*dx)>tolerance*length2**.5:return False
+            progress=(x*dx+y*dy)/length2
+            if progress < previous-tolerance or not -tolerance <= progress <= 1+tolerance:return False
+            previous=progress
+        return True
     def anchor(owner, point):
         matches = []
         for obj in candidates(owner):
@@ -18,7 +37,7 @@ def rectangle_connector_plan(graph, tolerance=1e-6):
     result = {}
     for arrow in graph['arrow_objects']:
         data = arrow['geometry']['data']; points = data.get('points', [])
-        if len(points) != 2 or data.get('encoding') not in ('solid_arrow','dashed_arrow'):
+        if not straight(points) or data.get('encoding') not in ('solid_arrow','dashed_arrow'):
             continue
         source = anchor(arrow['source_id'], points[0]); target = anchor(arrow['target_id'], points[-1])
         if source and target:

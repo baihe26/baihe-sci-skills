@@ -15,6 +15,8 @@ def produce(scene_path,out,source_png=None):
     if out.exists():raise FileExistsError(out)
     from preflight import inspect_pack
     inspection=inspect_pack(scene_path);consistency=inspection['consistency']
+    from provenance import scene_trace,object_tags,record_trace
+    trace_contract=scene_trace(scene_path,inspection);occurrences=[]
     if inspection['retained_assets']['assets']:raise GateError('RETAINED_ASSETS_REQUIRE_SUPPORTED_PORTABLE_PPT_OR_LEGACY_ROUTE')
     if graph['asset_refs'] or graph['clipping']:raise GateError('COMPLEX_SCENE_SAFE_LEGACY_HANDOFF_REQUIRED')
     if graph['canvas']['unit']!='px' or graph['canvas']['origin']!='TOP_LEFT':raise GateError('COORDINATE_CONTRACT_UNSUPPORTED')
@@ -56,6 +58,7 @@ def produce(scene_path,out,source_png=None):
                 for side in ('MarginLeft','MarginRight','MarginTop','MarginBottom'):setattr(q.TextFrame,side,0)
                 q.TextFrame.TextRange.ParagraphFormat.Alignment={'start':1,'middle':2,'end':3}.get(d.get('anchor','start'),1)
             q.Tags.Add('SCIENTIFIC_REFS',','.join(o['scientific_refs']));q.Tags.Add('SCENE_SHA256',sha(scene_path))
+            for key,value in object_tags(trace_contract,o['id']).items():q.Tags.Add(key,value)
             if kind!='TEXT':
                 q.Line.Visible=-1 if style.get('stroke') else 0
                 if style.get('stroke'):q.Line.ForeColor.RGB=color(style['stroke'].lstrip('#'));q.Line.Weight=style['stroke_width']*scale
@@ -76,6 +79,18 @@ def produce(scene_path,out,source_png=None):
                 pending.pop(gid);done.add(gid);progress=True
             if not progress:raise GateError('SCENE_PARENT_CYCLE')
         binding_results.extend(bind_native(s,connectors,children))
+        native={q.Name:q for q in children(s.Shapes)}
+        for row in trace_contract['objects']:
+            identity=row['object_id'];native_id=identity
+            if identity not in native:
+                kids=[v['child_id'] for v in links if v['parent_id']==identity]
+                if len(kids)!=1 or kids[0] not in native:raise GateError('TRACE_NATIVE_GROUP_UNRESOLVED')
+                native_id=kids[0]
+            q=native[native_id]
+            if identity==native_id:
+                for key,value in object_tags(trace_contract,identity).items():q.Tags.Add(key,value)
+            occurrences.append(dict(slide_id='SCENE',object_id=identity,native_object_id=native_id,native_id=q.Id,
+                                    location_mode='EXACT_NATIVE_OBJECT' if identity==native_id else 'SINGLE_CHILD_SEMANTIC_PARENT'))
         await b.checkpoint();await b.finish()
     prior=os.getcwd()
     try:os.chdir(BACKEND);result=asyncio.run(with_backend('ykuwai',run,out/'原生调用.jsonl'))
@@ -86,6 +101,7 @@ def produce(scene_path,out,source_png=None):
         raise
     finally:os.chdir(prior)
     verification=native_verify(target,out/'证据')
+    record_trace(out,trace_contract,target,occurrences)
     elements=from_scene(graph)
     for row in elements['elements']:
         if row['id'] in connectors:row.update(treatment='native_bound_connector',editability='NATIVE_RECTANGLE_ENDPOINTS_MOVE_RESIZE')

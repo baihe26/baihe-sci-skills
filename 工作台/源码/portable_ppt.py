@@ -18,17 +18,82 @@ def produce(scene_path,out,source_image=None):
     scene_path=Path(scene_path).resolve();out=writable(out)
     if out.exists():raise FileExistsError(out)
     checked=inspect_pack(scene_path);g=read(scene_path)
+    validate_supported(g)
+    scale=g['geometry']['coordinate_transform']['scale_pt_per_px']
+    out.mkdir(parents=True)
+    prs=Presentation();prs.slide_width=Pt(g['canvas']['width']*scale);prs.slide_height=Pt(g['canvas']['height']*scale)
+    slide,shapes,plans=draw_scene(prs,g,checked,scene_path)
+    contract=tag_scene(slide,shapes,scene_path,checked,'SCENE')
+    from provenance import record_trace,verify_trace
+    target=out/'可编辑示意图.pptx';prs.save(str(target))
+    # Reload via the same open library, distinct from an Office render/reopen.
+    loaded=Presentation(str(target))
+    def walk(collection):
+        for shape in collection:
+            yield shape
+            if shape.shape_type==6:yield from walk(shape.shapes)
+    loaded_shapes={s.name:s for s in walk(loaded.slides[0].shapes)}
+    if set(loaded_shapes)!=set(shapes):raise GateError('PORTABLE_SAVED_ID_SET_CONFLICT')
+    for obj in g['text_objects']:
+        if loaded_shapes[obj['id']].text!=obj['geometry']['data']['text']:raise GateError('PORTABLE_SAVED_TEXT_CONFLICT')
+    with zipfile.ZipFile(target) as z:
+        media_hashes={__import__('hashlib').sha256(z.read(name)).hexdigest() for name in z.namelist() if name.startswith('ppt/media/')}
+    if any(row['source_sha256'] not in media_hashes for row in checked['retained_assets']['assets']):raise GateError('SOURCE_IMAGE_BYTES_CHANGED')
+    record_trace(out,contract,target,[dict(slide_id='SCENE',object_id=identity,native_id=shape.shape_id) for identity,shape in shapes.items()])
+    verify_trace(out/'来源与引用链.json')
+    ledger=from_scene(g)
+    for row in ledger['elements']:
+        if row['id'] in plans:row.update(treatment='native_bound_connector',editability='NATIVE_RECTANGLE_ENDPOINTS')
+    for asset in checked['retained_assets']['assets']:
+        ledger['required_ids'].append(asset['id']);ledger['elements'].append(dict(id=asset['id'],source_ref=asset['source_ref'],output_ids=[asset['id']],treatment='retained_pixels',editability='MOVE_SCALE_REPLACE',content_kind=asset['content_kind'],source_sha256=asset['source_sha256'],crop_box_normalized=asset['crop_box_normalized'],uncertain=False,review_status='PENDING'))
+    add_unresolved(ledger,checked);save(out/'元素处理清单.json',ledger);save(out/'生产前检查.json',checked)
+    unresolved=checked['reconstruction'].get('uncertain_ids',[])
+    if unresolved:
+        (out/'待核对事项.md').write_text('# 待核对事项\n\n以下源图元素未重建，保留待核对，不补猜文字：\n\n'+''.join('- '+identity+'\n' for identity in unresolved)+'\n坐标与来源哈希见元素处理清单和生产前检查。本文件不是正式图或作者接受证明。\n',encoding='utf-8')
+    result=dict(status='GENERATED_RELOADED_PENDING_NATIVE_VISUAL_REVIEW',backend='python-pptx',file=source(target),scene=source(scene_path),
+                generated_without_office=True,office_native_reopen='NOT_PERFORMED_BY_THIS_BACKEND',visual='PENDING',author_acceptance='PENDING',
+                native_bound_connectors=plans,retained_assets=len(checked['retained_assets']['assets']),source_pixels_preserved=True,
+                stable_ids='PresentationML Tags: STUDIO_SLIDE_ID / STUDIO_ID / ASSET_ID plus provenance contract hash',source_image=source(source_image) if source_image else None)
+    result['unresolved_reconstruction_ids']=unresolved;result['release_ready']=False
+    save(out/'生产验收.json',result);return result
+
+
+def validate_supported(g):
     if g['asset_refs'] or g['clipping']:raise GateError('PORTABLE_GRAPH_ASSET_OR_CLIP_UNSUPPORTED_USE_EXPLICIT_RETAINED_ASSETS')
     if g['canvas']['unit']!='px' or g['canvas']['origin']!='TOP_LEFT':raise GateError('PORTABLE_COORDINATE_UNSUPPORTED')
-    scale=g['geometry']['coordinate_transform']['scale_pt_per_px']
     items=sorted([*g['objects'],*g['arrow_objects'],*g['text_objects']],key=lambda o:o['z_order'])
     if any(o['geometry']['kind'] not in ('RECT','ELLIPSE','TEXT','POLYLINE') for o in items):raise GateError('PORTABLE_GEOMETRY_UNSUPPORTED_USE_EXISTING_NATIVE_ROUTE')
     for obj in items:
         d=obj['geometry']['data'];style=g['style_tokens'][obj['style_token']]
         if style.get('opacity',1) not in (1,None):raise GateError('PORTABLE_OPACITY_UNSUPPORTED')
         if obj in g['arrow_objects'] and d.get('encoding') not in ('solid_arrow','dashed_arrow','line'):raise GateError('PORTABLE_ARROW_SEMANTICS_UNSUPPORTED')
-    plans=rectangle_connector_plan(g);out.mkdir(parents=True)
-    prs=Presentation();prs.slide_width=Pt(g['canvas']['width']*scale);prs.slide_height=Pt(g['canvas']['height']*scale)
+
+
+def tag_scene(slide,shapes,scene_path,checked,slide_id):
+    from provenance import scene_trace, object_tags
+    from pptx_tags import attach_tags, shape_nv
+    contract=scene_trace(scene_path,checked)
+    attach_tags(slide,slide.element.find('{http://schemas.openxmlformats.org/presentationml/2006/main}cSld'),dict(STUDIO_SLIDE_ID=slide_id))
+    retained={a['id']:a for a in checked['retained_assets']['assets']}
+    for identity,shape in shapes.items():
+        tags=dict(STUDIO_ID=identity,**object_tags(contract,identity))
+        if identity in retained:
+            asset=retained[identity];tags.update(ASSET_ID=asset.get('asset_id',identity),ASSET_REVISION=asset.get('asset_revision','r1'),SEMANTIC_SHA256=contract['binding']['sha256'])
+        attach_tags(slide,shape_nv(shape),tags)
+    return contract
+
+
+def draw_scene(prs, g, checked, scene_path):
+    from pptx import Presentation
+    from pptx.util import Pt
+    from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE, MSO_CONNECTOR
+    from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
+    from pptx.enum.dml import MSO_LINE_DASH_STYLE
+    from pptx.dml.color import RGBColor
+    from pptx.oxml.xmlchemy import OxmlElement
+    plans=rectangle_connector_plan(g)
+    scale=g['geometry']['coordinate_transform']['scale_pt_per_px']
+    items=sorted([*g['objects'],*g['arrow_objects'],*g['text_objects']],key=lambda o:o['z_order'])
     slide=prs.slides.add_slide(prs.slide_layouts[6]);slide.background.fill.solid();slide.background.fill.fore_color.rgb=RGBColor(255,255,255)
     shapes={};z_orders={o['id']:o['z_order'] for o in items}
     def color(value):return RGBColor.from_string(value.lstrip('#'))
@@ -96,35 +161,7 @@ def produce(scene_path,out,source_image=None):
     for identity,plan in plans.items():
         connector=shapes[identity];connector.begin_connect(shapes[plan['source']['object_id']],plan['source']['site']-1);connector.end_connect(shapes[plan['target']['object_id']],plan['target']['site']-1)
     for shape in sorted(list(slide.shapes),key=lambda s:z_orders[s.name]):slide.shapes._spTree.append(shape.element)
-    target=out/'可编辑示意图.pptx';prs.save(str(target))
-    # Reload via the same open library, distinct from an Office render/reopen.
-    loaded=Presentation(str(target))
-    def walk(collection):
-        for shape in collection:
-            yield shape
-            if shape.shape_type==6:yield from walk(shape.shapes)
-    loaded_shapes={s.name:s for s in walk(loaded.slides[0].shapes)}
-    if set(loaded_shapes)!=set(shapes):raise GateError('PORTABLE_SAVED_ID_SET_CONFLICT')
-    for obj in g['text_objects']:
-        if loaded_shapes[obj['id']].text!=obj['geometry']['data']['text']:raise GateError('PORTABLE_SAVED_TEXT_CONFLICT')
-    with zipfile.ZipFile(target) as z:
-        media_hashes={__import__('hashlib').sha256(z.read(name)).hexdigest() for name in z.namelist() if name.startswith('ppt/media/')}
-    if any(row['source_sha256'] not in media_hashes for row in checked['retained_assets']['assets']):raise GateError('SOURCE_IMAGE_BYTES_CHANGED')
-    ledger=from_scene(g)
-    for row in ledger['elements']:
-        if row['id'] in plans:row.update(treatment='native_bound_connector',editability='NATIVE_RECTANGLE_ENDPOINTS')
-    for asset in checked['retained_assets']['assets']:
-        ledger['required_ids'].append(asset['id']);ledger['elements'].append(dict(id=asset['id'],source_ref=asset['source_ref'],output_ids=[asset['id']],treatment='retained_pixels',editability='MOVE_SCALE_REPLACE',content_kind=asset['content_kind'],source_sha256=asset['source_sha256'],crop_box_normalized=asset['crop_box_normalized'],uncertain=False,review_status='PENDING'))
-    add_unresolved(ledger,checked);save(out/'元素处理清单.json',ledger);save(out/'生产前检查.json',checked)
-    unresolved=checked['reconstruction'].get('uncertain_ids',[])
-    if unresolved:
-        (out/'待核对事项.md').write_text('# 待核对事项\n\n以下源图元素未重建，保留待核对，不补猜文字：\n\n'+''.join('- '+identity+'\n' for identity in unresolved)+'\n坐标与来源哈希见元素处理清单和生产前检查。本文件不是正式图或作者接受证明。\n',encoding='utf-8')
-    result=dict(status='GENERATED_RELOADED_PENDING_NATIVE_VISUAL_REVIEW',backend='python-pptx',file=source(target),scene=source(scene_path),
-                generated_without_office=True,office_native_reopen='NOT_PERFORMED_BY_THIS_BACKEND',visual='PENDING',author_acceptance='PENDING',
-                native_bound_connectors=plans,retained_assets=len(checked['retained_assets']['assets']),source_pixels_preserved=True,
-                stable_ids='Native shape names and description metadata; Studio Tags not synthesized',source_image=source(source_image) if source_image else None)
-    result['unresolved_reconstruction_ids']=unresolved;result['release_ready']=False
-    save(out/'生产验收.json',result);return result
+    return slide, shapes, plans
 
 
 if __name__=='__main__':

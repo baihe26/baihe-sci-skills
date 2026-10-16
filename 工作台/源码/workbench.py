@@ -5,14 +5,32 @@ def main():
     p=argparse.ArgumentParser(description='baihe-sci skills：只作图 / 只设计 / 忠实重建 / 按设计生产 / 只PPT。自然语言由当前Codex宿主理解，程序负责合同与原生调用。')
     p.add_argument('intent',nargs='?',default='')
     p.add_argument('--project',default='baihe-sci-local');p.add_argument('--request-id');p.add_argument('--input',action='append',default=[])
-    p.add_argument('--module',choices=['plot','designer','vector','ppt']);p.add_argument('--target',choices=['illustrator','ppt'],default='illustrator');p.add_argument('--out');p.add_argument('--bundle');p.add_argument('--spec');p.add_argument('--plan');p.add_argument('--binding');p.add_argument('--scene');p.add_argument('--source-image');p.add_argument('--manifest');p.add_argument('--mode',choices=['FAST','LIVE'],default='FAST')
+    p.add_argument('--module',choices=['plot','designer','vector','ppt']);p.add_argument('--target',choices=['illustrator','ppt'],default='illustrator');p.add_argument('--out');p.add_argument('--bundle');p.add_argument('--spec');p.add_argument('--plan');p.add_argument('--binding');p.add_argument('--scene');p.add_argument('--scene-deck');p.add_argument('--source-image');p.add_argument('--manifest');p.add_argument('--mode',choices=['FAST','LIVE'],default='FAST')
     p.add_argument('--catalog',action='store_true');p.add_argument('--doctor',action='store_true');p.add_argument('--check-protection',action='store_true')
     p.add_argument('--backend',choices=['native','portable'],default='native')
     p.add_argument('--preflight',action='store_true');p.add_argument('--status',action='store_true');p.add_argument('--revise')
     p.add_argument('--compare-images',action='store_true');p.add_argument('--baseline');p.add_argument('--candidate');p.add_argument('--baseline-environment');p.add_argument('--candidate-environment')
+    p.add_argument('--verify-trace');p.add_argument('--reference-index',action='append',default=[]);p.add_argument('--propagate')
     a=p.parse_args()
-    for key in ('bundle','spec','plan','binding','scene','source_image','manifest'):
+    for key in ('bundle','spec','plan','binding','scene','scene_deck','source_image','manifest'):
         if getattr(a,key):setattr(a,key,str(Path(getattr(a,key)).resolve()))
+    if a.scene and a.scene_deck:raise GateError('ONE_SCENE_OR_SCENE_DECK_REQUIRED')
+    if a.verify_trace or a.reference_index or a.propagate:
+        if sum(bool(v) for v in (a.verify_trace,a.reference_index,a.propagate,a.preflight,a.revise,a.compare_images))!=1 or not a.out:raise GateError('ONE_OPERATION_AND_NEW_OUTPUT_REQUIRED')
+        out=writable(a.out)
+        if out.exists():raise FileExistsError(out)
+        if a.verify_trace:
+            from provenance import verify_trace
+            result=verify_trace(a.verify_trace);save(out/'溯源核对.json',result)
+        elif a.reference_index:
+            from reference_update import index_references
+            refs=[row for deck in a.reference_index for row in index_references(deck)]
+            result=dict(status='SAVED_FILE_REFERENCES_INDEXED',references=refs,unsaved_application_state='NOT_INSPECTED_SAVED_FILES_ONLY')
+            save(out/'引用索引.json',result)
+        else:
+            from reference_update import propagate_request
+            result=propagate_request(a.propagate,out)
+        print(json.dumps(result,ensure_ascii=False,indent=2));return
     if a.doctor:
         from doctor import report
         print(json.dumps(report(),ensure_ascii=False,indent=2));return
@@ -40,19 +58,25 @@ def main():
         print(json.dumps(result,ensure_ascii=False,indent=2));return
     if not a.intent and not a.module:p.print_help();return
     intent=a.intent or dict(plot='只作图',designer='只设计',vector='按已批准SceneGraph生产',ppt='制作PPT')[a.module]
-    refs=[*a.input,*[x for x in [a.spec,a.plan,a.binding,a.scene,a.source_image,a.manifest] if x]]
+    refs=[*a.input,*[x for x in [a.spec,a.plan,a.binding,a.scene,a.scene_deck,a.source_image,a.manifest] if x]]
     if a.scene:
         from refinement import dependency_paths
         refs.extend(str(p) for p in dependency_paths(a.scene))
+    if a.scene_deck:
+        from portable_deck import scene_inputs
+        from pack_files import dependency_paths
+        for item in scene_inputs(a.scene_deck):refs.extend(str(p) for p in dependency_paths(item['scene_path']))
     refs=list(dict.fromkeys(str(Path(p).resolve()) for p in refs))
     if a.bundle:refs.extend(str(p) for p in Path(a.bundle).iterdir() if p.is_file() and p.name in ('figure_spec.json','PLOT_SEMANTICS_CONTRACT.json','plot_data.csv','analysis_manifest.json','observations.csv'))
     state=new_task(intent,a.project,refs,a.request_id);folder=ROOT/'任务'/state['task_id']
     module=a.module or (state['modules'][0] if len(state['modules'])==1 else None)
     out=writable(a.out or folder/'产物')
     if a.module and a.module not in state['modules']:raise GateError('EXPLICIT_INTENT_MODULE_CONFLICT')
-    if a.backend=='portable' and not(module=='vector' and a.target=='ppt' and a.scene):raise GateError('PORTABLE_BACKEND_ONLY_FOR_APPROVED_VECTOR_PPT')
+    if a.backend=='portable' and not(module=='vector' and a.target=='ppt' and (a.scene or a.scene_deck)):raise GateError('PORTABLE_BACKEND_ONLY_FOR_APPROVED_VECTOR_PPT')
+    if a.scene_deck and a.backend!='portable':raise GateError('SCENE_DECK_REQUIRES_EXPLICIT_PORTABLE_BACKEND')
     if module=='plot' and a.bundle:cmd=[str(PLOT_PY),str(ROOT/'源码/plot_adapter.py'),a.bundle,str(out)]
     elif module=='designer' and all([a.spec,a.plan,a.binding]):cmd=[str(PLOT_PY),str(ROOT/'源码/designer_adapter.py'),a.spec,a.plan,a.binding,str(out)]
+    elif module=='vector' and a.scene_deck:cmd=[str(PORTABLE_PY),str(ROOT/'源码/portable_deck.py'),a.scene_deck,str(out)]
     elif module=='vector' and a.scene:cmd=[str(PORTABLE_PY if a.backend=='portable' else PYTHON),str(ROOT/('源码/portable_ppt.py' if a.backend=='portable' else '源码/scene_ppt_adapter.py' if a.target=='ppt' else '源码/vector_adapter.py')),a.scene,str(out),*([a.source_image] if a.source_image else [])]
     elif module=='ppt' and a.manifest:cmd=[str(PYTHON),str(ROOT/'源码/ppt_adapter.py'),a.manifest,str(out),a.mode]
     else:

@@ -23,4 +23,4 @@ def require(module,target='illustrator'):
     r=check(module,target)
     if r['missing']:raise GateError(json.dumps(r,ensure_ascii=False))
 def report():
-    return dict(version='0.3.0',config_present=CONFIG_FILE.is_file(),native_platform='WINDOWS' if os.name=='nt' else 'NOT_WINDOWS_NATIVE_EXECUTION_UNTESTED',routes=[check(m,t) for m,t in [('plot','origin'),('designer','contract'),('vector','illustrator'),('vector','ppt'),('ppt','ppt')]],portable=portable_check(),scope='Native routes: file presence only. Optional portable route: Python package availability. No software start, install, license or render assertion.')
+    return dict(version='0.4.0',config_present=CONFIG_FILE.is_file(),native_platform='WINDOWS' if os.name=='nt' else 'NOT_WINDOWS_NATIVE_EXECUTION_UNTESTED',routes=[check(m,t) for m,t in [('plot','origin'),('designer','contract'),('vector','illustrator'),('vector','ppt'),('ppt','ppt')]],portable=portable_check(),scope='Native routes: file presence only. Optional portable route: Python package availability. No software start, install, license or render assertion.')

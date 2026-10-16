@@ -1,0 +1,15 @@
+{
+  "schema_version": "scene-deck-0.1",
+  "slides": [
+    {
+      "id": "SIMPLE",
+      "scene_path": "../简单科学关系/IllustratorSceneGraph.json",
+      "expected_scene_sha256": "51bffbad73dc9ac1b77560b9733efdded3d40a4fc85efbc39102435691fed745"
+    },
+    {
+      "id": "MIXED",
+      "scene_path": "../混合重建/IllustratorSceneGraph.json",
+      "expected_scene_sha256": "51bffbad73dc9ac1b77560b9733efdded3d40a4fc85efbc39102435691fed745"
+    }
+  ]
+}
