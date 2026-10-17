@@ -1,0 +1,907 @@
+{
+  "schema_version": 2,
+  "registry_name": "CORE_11_ARCHETYPE_REGISTRY",
+  "date": "2026-10-08T00:00:48.710638",
+  "phase2a": "PASSED_RETAINED",
+  "phase2c": "PARTIAL_AWAITING_HUMAN_REVIEW",
+  "style": "STYLE_V0_1_SELECTED",
+  "direction": "Candidate B HUMAN_SELECTED_MANUSCRIPT_DIRECTION",
+  "environment": {
+    "product": "OriginPro",
+    "python": "3.12.10",
+    "required_baseline": "2026 SR0 x64 build 180",
+    "target_machine_acceptance": "PENDING"
+  },
+  "state_owner": "FigureState; semantic contract index references immutable B style",
+  "status_scope": "PRODUCTION_VALIDATED means recorded synthetic fixture/variant + exact native baseline only, not all family variants or publication acceptance",
+  "core": [
+    {
+      "archetype": "grouped_raw_summary",
+      "title": "Grouped raw + summary",
+      "status": "PRODUCTION_VALIDATED",
+      "validated_scope": "independent units per categorical group; approved mean/sample SD",
+      "primary_evidence": {
+        "status": "PRODUCTION_VALIDATED",
+        "path": "artifacts/bundles/phase2c_legacy_FigA_20261007",
+        "qa": "artifacts/bundles/phase2c_legacy_FigA_20261007/QA_REPORT.json"
+      },
+      "board_case": "FigA",
+      "human_accepted": false,
+      "variants": {
+        "nested_animal_summary": {
+          "status": "PRODUCTION_VALIDATED",
+          "path": "phase2c/runs/20261007_194020/nested_animals",
+          "qa": "phase2c/runs/20261007_194020/nested_animals/QA_REPORT.json",
+          "semantic_native_acceptance": "phase2c/runs/20261007_194020/nested_animals/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+          "failures": [],
+          "native_identity": {
+            "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+            "case": "nested_animals",
+            "pass": true
+          }
+        },
+        "secondary_cell_overlay": "MISSING",
+        "mixed_model_estimates": "SUPPORTED_UNVALIDATED",
+        "SEM_symmetric": "SUPPORTED_UNVALIDATED",
+        "asymmetric_CI": "MISSING",
+        "animal_summary_with_faint_field_overlay": {
+          "status": "PRODUCTION_VALIDATED",
+          "path": "phase2c/runs/closure_20261007_231722/nested_overlay",
+          "qa": "phase2c/runs/closure_20261007_231722/nested_overlay/QA_REPORT.json",
+          "qa_sha256": "865ccc4a290c67afd9ac892528005a6b3cad444d332eec5bbf7b864be233345c",
+          "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+          "human_accepted": false,
+          "native_semantic_acceptance": "phase2c/runs/closure_20261007_231722/nested_overlay/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+          "source_sha256": "a01ea4c8f2a98a0548a33388f62cc6b6e2840b8c199e617aa878642bf1b8f186",
+          "analysis_sha256": "074bc46dc071f6acf8bdfd95c5d8f8d0b89639da78302c201f8a0e0236573536",
+          "contract_sha256": "4c9f9e077c8271fa93346bd8c0432afe2e83174e3b06743634ab2a7334de4c04"
+        }
+      },
+      "prior_validated_scope_retained": true
+    },
+    {
+      "archetype": "longitudinal_summary",
+      "title": "Longitudinal summary",
+      "status": "PRODUCTION_VALIDATED",
+      "validated_scope": "Legacy summary retained; repeated n=8 animals/group and independent-by-time n=8/time/group; positive synthetic schedule linear/log10/categorical modes",
+      "primary_evidence": {
+        "status": "PRODUCTION_VALIDATED",
+        "path": "artifacts/bundles/phase2c_legacy_FigB_20261007",
+        "qa": "artifacts/bundles/phase2c_legacy_FigB_20261007/QA_REPORT.json"
+      },
+      "board_case": "FigB",
+      "human_accepted": false,
+      "variants": {
+        "repeated_individual_traces": {
+          "status": "PRODUCTION_VALIDATED",
+          "path": "phase2c/runs/closure_20261007_225434/repeated",
+          "qa": "phase2c/runs/closure_20261007_225434/repeated/QA_REPORT.json",
+          "qa_sha256": "8cd6187b6096eae71f81dd86b9167b56cc9ea6d2780e17695a485ff69c2e982c",
+          "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+          "human_accepted": false,
+          "native_semantic_acceptance": "phase2c/runs/closure_20261007_225434/repeated/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+          "source_sha256": "9aeb8d532a3b26f7191a1849439b93198b0b81c73a7b5133132e61953ef6fd5a",
+          "analysis_sha256": "dc9f2ee7af4472193021d3a0942e62180779ef90f99ec5d8fa4d397ab6226b5f",
+          "contract_sha256": "38e65b0cc4387c278bb50dd2eb1480579171474f81582994ca1883685e89ce59",
+          "coordinate_oracle": "phase2c_1/evidence/repeated_RENDERED_COORDINATES_FINAL.json"
+        },
+        "independent_by_irregular_time": {
+          "status": "PRODUCTION_VALIDATED",
+          "path": "phase2c/runs/closure_20261007_225734/independent_time",
+          "qa": "phase2c/runs/closure_20261007_225734/independent_time/QA_REPORT.json",
+          "qa_sha256": "5fb9498e1120db1b96e0309bb1ce6da7093ff2d085b08ba0fe632199af849a66",
+          "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+          "human_accepted": false,
+          "native_semantic_acceptance": "phase2c/runs/closure_20261007_225734/independent_time/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+          "source_sha256": "7d5709bcf9d8cb2135357e228dff03a642b015341369e28739b5f0e06469fb9e",
+          "analysis_sha256": "d435a39e3b66aad26bedf60309f3ebbddefc57c12757d561ec45bb4c3db0d78e",
+          "contract_sha256": "32cc18adc66a8152c4e8255636e0418b8b122bde6b14554b3174397f7a0fd69f",
+          "coordinate_oracle": "phase2c_1/evidence/independent_time_RENDERED_COORDINATES_FINAL.json"
+        },
+        "uncertainty_band": "MISSING",
+        "irregular_linear": {
+          "status": "PRODUCTION_VALIDATED",
+          "path": "phase2c/runs/closure_20261007_225734/irregular_linear",
+          "qa": "phase2c/runs/closure_20261007_225734/irregular_linear/QA_REPORT.json",
+          "qa_sha256": "c10af0591c0dfe98e62f83db1dc6e3c5883a3ffc1bcebec43c65020db4a9a5f3",
+          "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+          "human_accepted": false,
+          "native_semantic_acceptance": "phase2c/runs/closure_20261007_225734/irregular_linear/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+          "source_sha256": "044aa62dcea0a8ce32ddab07656a9ce277f6ba215cbc731ce087fb8f9ac1f919",
+          "analysis_sha256": "268c624b4a61be70cf2845ef9203c16839b3b47eede12fa914b7cfa823ef5cfd",
+          "contract_sha256": "80a9fbe60797137b3c66561f5728147a0b8183deb0779b9a87827d3681cf21bc",
+          "coordinate_oracle": "phase2c_1/evidence/irregular_linear_RENDERED_COORDINATES_FINAL.json"
+        },
+        "irregular_log10": {
+          "status": "PRODUCTION_VALIDATED",
+          "path": "phase2c/runs/closure_20261007_230837/irregular_log",
+          "qa": "phase2c/runs/closure_20261007_230837/irregular_log/QA_REPORT.json",
+          "qa_sha256": "711783ba653e1e15815d06ae2a5819eb366d3f2211c63c9dfec983f8d77cb2de",
+          "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+          "human_accepted": false,
+          "native_semantic_acceptance": "phase2c/runs/closure_20261007_230837/irregular_log/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+          "source_sha256": "044aa62dcea0a8ce32ddab07656a9ce277f6ba215cbc731ce087fb8f9ac1f919",
+          "analysis_sha256": "60d73841464c4d9a73f7873a0f6598c04d811b0b4cde9e60c20de0db88cfea68",
+          "contract_sha256": "d8b4a65451fc2b8ce0b8cb33ae3c90480808b7a8364c7a91b84ae51659618e3e",
+          "coordinate_oracle": "phase2c_1/evidence/irregular_log_RENDERED_COORDINATES_FINAL.json"
+        },
+        "categorical_schedule": {
+          "status": "PRODUCTION_VALIDATED",
+          "path": "phase2c/runs/closure_20261007_225734/irregular_categorical",
+          "qa": "phase2c_1/evidence/CATEGORICAL_QA_SUPPLEMENT_V2.json",
+          "qa_sha256": "0517cad0b413773600606c263c2416c8f17a190cfcc347745ec38f73a6e3f1a8",
+          "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+          "human_accepted": false,
+          "native_semantic_acceptance": "phase2c/runs/closure_20261007_225734/irregular_categorical/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+          "source_sha256": "044aa62dcea0a8ce32ddab07656a9ce277f6ba215cbc731ce087fb8f9ac1f919",
+          "analysis_sha256": "578373c0b60b2acd92896e594e785963d31553cc404089be2c0d664bccc7a52e",
+          "contract_sha256": "b8ee8e4bb7cdc6fa01bb1f61abaca67d5f21e07cc96f8e49cbfc243d630d6ccd",
+          "coordinate_oracle": "phase2c_1/evidence/irregular_categorical_RENDERED_COORDINATES_FINAL.json"
+        }
+      },
+      "prior_validated_scope_retained": true
+    },
+    {
+      "archetype": "paired_dot_slope",
+      "title": "Paired dot / slope",
+      "status": "PRODUCTION_VALIDATED",
+      "validated_scope": "8 exact paired animals; each line joins the same unit",
+      "primary_evidence": {
+        "status": "PRODUCTION_VALIDATED",
+        "path": "phase2c/runs/20261007_204928/paired_dot_slope",
+        "qa": "phase2c/runs/20261007_204928/paired_dot_slope/QA_REPORT.json",
+        "semantic_native_acceptance": "phase2c/runs/20261007_204928/paired_dot_slope/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+        "failures": [],
+        "native_identity": {
+          "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+          "case": "paired_dot_slope",
+          "pass": true
+        }
+      },
+      "board_case": "paired_dot_slope",
+      "human_accepted": false,
+      "prior_validated_scope_retained": true
+    },
+    {
+      "archetype": "scatter_correlation",
+      "title": "Scatter",
+      "status": "PRODUCTION_VALIDATED",
+      "validated_scope": "12 independent animals/group; scatter only; no automatic fit",
+      "primary_evidence": {
+        "status": "PRODUCTION_VALIDATED",
+        "path": "phase2c/runs/20261007_194020/scatter_correlation",
+        "qa": "phase2c/runs/20261007_194020/scatter_correlation/QA_REPORT.json",
+        "semantic_native_acceptance": "phase2c/runs/20261007_194020/scatter_correlation/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+        "failures": [],
+        "native_identity": {
+          "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+          "case": "scatter_correlation",
+          "pass": true
+        }
+      },
+      "board_case": "scatter_correlation",
+      "human_accepted": false,
+      "variants": {
+        "approved_prefit_curve": "SUPPORTED_UNVALIDATED",
+        "automatic_model_fitting": "MISSING",
+        "CI_band": "MISSING"
+      },
+      "prior_validated_scope_retained": true
+    },
+    {
+      "archetype": "multi_xy_curve",
+      "title": "Multi XY / spectrum",
+      "status": "PRODUCTION_VALIDATED",
+      "validated_scope": "3 batches, 301 acquisition samples/curve; line only; real numerical X",
+      "primary_evidence": {
+        "status": "PRODUCTION_VALIDATED",
+        "path": "phase2c/runs/20261007_194020/multi_xy_curve",
+        "qa": "phase2c/runs/20261007_194020/multi_xy_curve/QA_REPORT.json",
+        "semantic_native_acceptance": "phase2c/runs/20261007_194020/multi_xy_curve/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+        "failures": [],
+        "native_identity": {
+          "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+          "case": "multi_xy_curve",
+          "pass": true
+        }
+      },
+      "board_case": "multi_xy_curve",
+      "human_accepted": false,
+      "variants": {
+        "discrete_sample_markers": "SUPPORTED_UNVALIDATED",
+        "log_axes": "SUPPORTED_UNVALIDATED",
+        "vertical_offset_from_approved_data": "SUPPORTED_UNVALIDATED",
+        "peak_annotations": "MISSING",
+        "normalization_baseline_processing": "MISSING"
+      },
+      "prior_validated_scope_retained": true
+    },
+    {
+      "archetype": "box_raw",
+      "title": "Box + raw",
+      "status": "PARTIAL",
+      "validated_scope": "24 independent units/group; native box + raw overlay; blocked",
+      "primary_evidence": {
+        "status": "PARTIAL",
+        "path": "phase2c/runs/20261007_194020/box_raw",
+        "qa": "phase2c/runs/20261007_194020/box_raw/QA_REPORT.json",
+        "semantic_native_acceptance": "phase2c/runs/20261007_194020/box_raw/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+        "failures": [
+          "export_QA",
+          "fresh_group_color_2",
+          "fresh_group_color_3",
+          "fresh_group_color_5",
+          "fresh_group_color_6",
+          "fresh_axis_limits_y",
+          "reopen_group_color_2",
+          "reopen_group_color_3",
+          "reopen_group_color_5",
+          "reopen_group_color_6",
+          "reopen_axis_limits_y"
+        ],
+        "native_identity": {
+          "status": "Not supplemental; see original native report"
+        }
+      },
+      "board_case": "box_raw",
+      "human_accepted": false,
+      "prior_validated_scope_retained": true
+    },
+    {
+      "archetype": "violin_raw",
+      "title": "Violin + raw",
+      "status": "PARTIAL",
+      "validated_scope": "40 independent units/group; approved native KDE display; blocked",
+      "primary_evidence": {
+        "status": "PARTIAL",
+        "path": "phase2c/runs/20261007_194020/violin_raw",
+        "qa": "phase2c/runs/20261007_194020/violin_raw/QA_REPORT.json",
+        "semantic_native_acceptance": "phase2c/runs/20261007_194020/violin_raw/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+        "failures": [
+          "export_QA",
+          "fresh_group_color_2",
+          "fresh_group_color_3",
+          "fresh_group_color_5",
+          "fresh_group_color_6",
+          "reopen_group_color_2",
+          "reopen_group_color_3",
+          "reopen_group_color_5",
+          "reopen_group_color_6"
+        ],
+        "native_identity": {
+          "status": "Not supplemental; see original native report"
+        }
+      },
+      "board_case": "violin_raw",
+      "human_accepted": false,
+      "prior_validated_scope_retained": true
+    },
+    {
+      "archetype": "bar_raw",
+      "title": "Bar + raw",
+      "status": "PRODUCTION_VALIDATED",
+      "validated_scope": "n=4 independent animals/group; approved mean/sample SD + translucent native bars + prominent opaque raw points; native/SVG/PNG geometry",
+      "primary_evidence": {
+        "status": "PRODUCTION_VALIDATED",
+        "path": "phase2c/runs/closure_20261007_225734/bar_raw",
+        "qa": "phase2c/runs/closure_20261007_225734/bar_raw/QA_REPORT.json",
+        "qa_sha256": "c07ac8ad7bc27469c5cf41967148f49220723ad730a41cec879fd103aaf1a9c5",
+        "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+        "human_accepted": false,
+        "native_semantic_acceptance": "phase2c/runs/closure_20261007_225734/bar_raw/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+        "source_sha256": "094302c2140f5ad78a83a3199e437efa08704a1ffb6679e91e6c0340b8071938",
+        "analysis_sha256": "fa7abb55a178e3e42b371ee6167fb08b6de21db9eb6166f064155f49667f34d5",
+        "contract_sha256": "e3baf134a55cdf16c028dd8612b93743f1f2c81228e2eb2259ca562106728571"
+      },
+      "board_case": "bar_raw",
+      "human_accepted": false,
+      "remaining_variants": "Other summary/error forms and larger n unvalidated"
+    },
+    {
+      "archetype": "histogram_ecdf",
+      "title": "Histogram / ECDF",
+      "status": "PRODUCTION_VALIDATED",
+      "validated_scope": "60 independent particles; explicit native bins and strict horizontal-step ECDF",
+      "primary_evidence": {
+        "status": "PRODUCTION_VALIDATED",
+        "path": "phase2c/runs/20261007_194020/histogram",
+        "qa": "phase2c/runs/20261007_194020/histogram/QA_REPORT.json",
+        "semantic_native_acceptance": "phase2c/runs/20261007_194020/histogram/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+        "failures": [],
+        "native_identity": {
+          "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+          "case": "histogram",
+          "pass": true
+        }
+      },
+      "board_case": "histogram",
+      "human_accepted": false,
+      "variants": {
+        "histogram": {
+          "status": "PRODUCTION_VALIDATED",
+          "path": "phase2c/runs/20261007_194020/histogram",
+          "qa": "phase2c/runs/20261007_194020/histogram/QA_REPORT.json",
+          "semantic_native_acceptance": "phase2c/runs/20261007_194020/histogram/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+          "failures": [],
+          "native_identity": {
+            "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+            "case": "histogram",
+            "pass": true
+          }
+        },
+        "ECDF": {
+          "status": "PRODUCTION_VALIDATED",
+          "path": "phase2c/runs/20261007_202353/ecdf",
+          "qa": "phase2c/runs/20261007_202353/ecdf/QA_REPORT.json",
+          "semantic_native_acceptance": "phase2c/runs/20261007_202353/ecdf/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+          "failures": [],
+          "native_identity": {
+            "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+            "case": "ecdf",
+            "pass": true
+          }
+        },
+        "density": "MISSING"
+      },
+      "prior_validated_scope_retained": true
+    },
+    {
+      "archetype": "heatmap",
+      "title": "Heatmap / matrix",
+      "status": "PRODUCTION_VALIDATED",
+      "validated_scope": "6x6 unnormalized matrix, sequential Viridis, source IDs retained with compact display labels; native Color Scale title/ticks/cells Arial 7pt",
+      "primary_evidence": {
+        "status": "PRODUCTION_VALIDATED",
+        "path": "phase2c/runs/closure_20261007_235708/heatmap_compact_labels",
+        "qa": "phase2c/runs/closure_20261007_235708/heatmap_compact_labels/QA_REPORT.json",
+        "qa_sha256": "0728e815d56ba4ba742f2e614e3954de526c412aeaefc287dde8d61d6e93dcf3",
+        "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+        "human_accepted": false,
+        "native_semantic_acceptance": "phase2c/runs/closure_20261007_235708/heatmap_compact_labels/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+        "source_sha256": "89e365b11971e07cb670ce5ad05f38182785910c2d5766f3667251104e618263",
+        "analysis_sha256": "3cb4f9bea1d2dc53751ef3880b287758b0a11e708e149ec932a3ecf0bb69f8bf",
+        "contract_sha256": "fc8ae5b46fbf9d13b3e938e39c046d273eaf5296ff1aeabf59a16b021bdd9897"
+      },
+      "board_case": "heatmap",
+      "human_accepted": false,
+      "remaining_variants": "Diverging/clustered matrices and larger matrices unvalidated"
+    },
+    {
+      "archetype": "dose_response_calibration",
+      "title": "Dose response / calibration",
+      "status": "PRODUCTION_VALIDATED",
+      "validated_scope": "7 measured samples + approved known-parameter 4PL reference; linear X",
+      "primary_evidence": {
+        "status": "PRODUCTION_VALIDATED",
+        "path": "phase2c/runs/20261007_200635/calibration_linear",
+        "qa": "phase2c/runs/20261007_200635/calibration_linear/QA_REPORT.json",
+        "semantic_native_acceptance": "phase2c/runs/20261007_200635/calibration_linear/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+        "failures": [],
+        "native_identity": {
+          "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+          "case": "calibration_linear",
+          "pass": true
+        }
+      },
+      "board_case": "calibration_linear",
+      "human_accepted": false,
+      "variants": {
+        "linear_X_preapproved_4PL": {
+          "status": "PRODUCTION_VALIDATED",
+          "path": "phase2c/runs/20261007_200635/calibration_linear",
+          "qa": "phase2c/runs/20261007_200635/calibration_linear/QA_REPORT.json",
+          "semantic_native_acceptance": "phase2c/runs/20261007_200635/calibration_linear/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+          "failures": [],
+          "native_identity": {
+            "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+            "case": "calibration_linear",
+            "pass": true
+          }
+        },
+        "log_X_preapproved_4PL": {
+          "status": "PARTIAL",
+          "path": "phase2c/runs/20261007_194020/dose_response",
+          "qa": "phase2c/runs/20261007_194020/dose_response/QA_REPORT.json",
+          "semantic_native_acceptance": "phase2c/runs/20261007_194020/dose_response/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+          "failures": [
+            "export_QA",
+            "fresh_axis_limits_x",
+            "reopen_axis_limits_x"
+          ],
+          "native_identity": {
+            "status": "Not supplemental; see original native report"
+          }
+        },
+        "fitting_engine": "MISSING",
+        "approved_points_only": "SUPPORTED_UNVALIDATED",
+        "asymmetric_model_CI": "MISSING"
+      },
+      "prior_validated_scope_retained": true
+    }
+  ],
+  "specialized": [
+    {
+      "archetype": "forest_interval",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "volcano",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "MA_plot",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "PCA",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "UMAP_tSNE",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "survival_Kaplan_Meier",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "ROC",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "Bland_Altman",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "enrichment_dotplot",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "UpSet_Venn",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "contour",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "surface_3D",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "polar_directional",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    },
+    {
+      "archetype": "stacked_composition",
+      "status": "MISSING",
+      "reason": "Registered only; no native adapter + archetype-specific independent-reopen evidence"
+    }
+  ],
+  "image_plate_quant": {
+    "status": "PARTIAL",
+    "reason": "Contract only; no new assembly/image engine or real-image acceptance"
+  },
+  "test_case_evidence": {
+    "bar_raw": {
+      "status": "PARTIAL",
+      "path": "phase2c/runs/20261007_194020/bar_raw",
+      "qa": "phase2c/runs/20261007_194020/bar_raw/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_194020/bar_raw/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [
+        "fresh_filled_native_bar_control",
+        "fresh_filled_native_bar_material",
+        "fresh_filled_native_bar_treatment",
+        "fresh_raw_values_visually_distinguished",
+        "reopen_filled_native_bar_control",
+        "reopen_filled_native_bar_material",
+        "reopen_filled_native_bar_treatment",
+        "reopen_raw_values_visually_distinguished"
+      ],
+      "native_identity": {
+        "status": "Not supplemental; see original native report"
+      }
+    },
+    "bar_raw_shared_x": {
+      "status": "PARTIAL",
+      "path": "phase2c/runs/20261007_204928/bar_raw_shared_x",
+      "qa": "phase2c/runs/20261007_204928/bar_raw_shared_x/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_204928/bar_raw_shared_x/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [
+        "export_QA",
+        "approved_native_semantics",
+        "fresh_raw_values_visually_distinguished",
+        "reopen_raw_values_visually_distinguished"
+      ],
+      "native_identity": {
+        "status": "Not supplemental; see original native report"
+      }
+    },
+    "bar_raw_visible_raw": {
+      "status": "PARTIAL",
+      "path": "phase2c/runs/20261007_212518/bar_raw_visible_raw",
+      "qa": "phase2c/runs/20261007_212518/bar_raw_visible_raw/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_212518/bar_raw_visible_raw/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [
+        "export_QA",
+        "approved_native_semantics",
+        "fresh_filled_native_bar_control",
+        "fresh_filled_native_bar_material",
+        "fresh_filled_native_bar_treatment",
+        "reopen_filled_native_bar_control",
+        "reopen_filled_native_bar_material",
+        "reopen_filled_native_bar_treatment"
+      ],
+      "native_identity": {
+        "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+        "case": "bar_raw_visible_raw",
+        "pass": true
+      }
+    },
+    "box_raw": {
+      "status": "PARTIAL",
+      "path": "phase2c/runs/20261007_194020/box_raw",
+      "qa": "phase2c/runs/20261007_194020/box_raw/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_194020/box_raw/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [
+        "export_QA",
+        "fresh_group_color_2",
+        "fresh_group_color_3",
+        "fresh_group_color_5",
+        "fresh_group_color_6",
+        "fresh_axis_limits_y",
+        "reopen_group_color_2",
+        "reopen_group_color_3",
+        "reopen_group_color_5",
+        "reopen_group_color_6",
+        "reopen_axis_limits_y"
+      ],
+      "native_identity": {
+        "status": "Not supplemental; see original native report"
+      }
+    },
+    "calibration_linear": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/20261007_200635/calibration_linear",
+      "qa": "phase2c/runs/20261007_200635/calibration_linear/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_200635/calibration_linear/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [],
+      "native_identity": {
+        "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+        "case": "calibration_linear",
+        "pass": true
+      }
+    },
+    "dose_response": {
+      "status": "PARTIAL",
+      "path": "phase2c/runs/20261007_194020/dose_response",
+      "qa": "phase2c/runs/20261007_194020/dose_response/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_194020/dose_response/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [
+        "export_QA",
+        "fresh_axis_limits_x",
+        "reopen_axis_limits_x"
+      ],
+      "native_identity": {
+        "status": "Not supplemental; see original native report"
+      }
+    },
+    "ecdf": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/20261007_202353/ecdf",
+      "qa": "phase2c/runs/20261007_202353/ecdf/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_202353/ecdf/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [],
+      "native_identity": {
+        "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+        "case": "ecdf",
+        "pass": true
+      }
+    },
+    "heatmap": {
+      "status": "PARTIAL",
+      "path": "phase2c/runs/20261007_200635/heatmap",
+      "qa": "phase2c/runs/20261007_200635/heatmap/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_200635/heatmap/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [
+        "native_worker_failure",
+        "fresh_native_report",
+        "reopen_native_report"
+      ],
+      "native_identity": {
+        "status": "Not supplemental; see original native report"
+      }
+    },
+    "histogram": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/20261007_194020/histogram",
+      "qa": "phase2c/runs/20261007_194020/histogram/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_194020/histogram/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [],
+      "native_identity": {
+        "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+        "case": "histogram",
+        "pass": true
+      }
+    },
+    "longitudinal_independent": {
+      "status": "PARTIAL",
+      "path": "phase2c/runs/20261007_194020/longitudinal_independent",
+      "qa": "phase2c/runs/20261007_194020/longitudinal_independent/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_194020/longitudinal_independent/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [
+        "export_QA"
+      ],
+      "native_identity": {
+        "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+        "case": "longitudinal_independent",
+        "pass": true
+      }
+    },
+    "longitudinal_repeated": {
+      "status": "PARTIAL",
+      "path": "phase2c/runs/20261007_194020/longitudinal_repeated",
+      "qa": "phase2c/runs/20261007_194020/longitudinal_repeated/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_194020/longitudinal_repeated/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [
+        "export_QA",
+        "fresh_true_x_1",
+        "fresh_true_x_2",
+        "fresh_true_x_3",
+        "fresh_true_x_4",
+        "fresh_true_x_5",
+        "fresh_true_x_6",
+        "fresh_true_x_7",
+        "fresh_true_x_8",
+        "fresh_true_x_9",
+        "fresh_true_x_10",
+        "fresh_true_x_11",
+        "fresh_true_x_12",
+        "fresh_true_x_13",
+        "fresh_true_x_14",
+        "fresh_true_x_15",
+        "fresh_true_x_16",
+        "fresh_true_x_17",
+        "fresh_true_x_18",
+        "fresh_true_x_19",
+        "fresh_true_x_20",
+        "fresh_true_x_21",
+        "fresh_true_x_22",
+        "fresh_true_x_23",
+        "fresh_true_x_24",
+        "fresh_true_x_25",
+        "fresh_true_x_26",
+        "fresh_true_x_27",
+        "fresh_true_x_28",
+        "fresh_true_x_29",
+        "fresh_true_x_30",
+        "reopen_true_x_1",
+        "reopen_true_x_2",
+        "reopen_true_x_3",
+        "reopen_true_x_4",
+        "reopen_true_x_5",
+        "reopen_true_x_6",
+        "reopen_true_x_7",
+        "reopen_true_x_8",
+        "reopen_true_x_9",
+        "reopen_true_x_10",
+        "reopen_true_x_11",
+        "reopen_true_x_12",
+        "reopen_true_x_13",
+        "reopen_true_x_14",
+        "reopen_true_x_15",
+        "reopen_true_x_16",
+        "reopen_true_x_17",
+        "reopen_true_x_18",
+        "reopen_true_x_19",
+        "reopen_true_x_20",
+        "reopen_true_x_21",
+        "reopen_true_x_22",
+        "reopen_true_x_23",
+        "reopen_true_x_24",
+        "reopen_true_x_25",
+        "reopen_true_x_26",
+        "reopen_true_x_27",
+        "reopen_true_x_28",
+        "reopen_true_x_29",
+        "reopen_true_x_30"
+      ],
+      "native_identity": {
+        "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+        "case": "longitudinal_repeated",
+        "pass": true
+      },
+      "visual_geometry": "PARTIAL: timepoints cluster at left; source-X/binding PASS does not prove rendered placement; see phase2c/VISUAL_DIAGNOSTIC_RECORD.json"
+    },
+    "multi_xy_curve": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/20261007_194020/multi_xy_curve",
+      "qa": "phase2c/runs/20261007_194020/multi_xy_curve/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_194020/multi_xy_curve/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [],
+      "native_identity": {
+        "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+        "case": "multi_xy_curve",
+        "pass": true
+      }
+    },
+    "nested_animals": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/20261007_194020/nested_animals",
+      "qa": "phase2c/runs/20261007_194020/nested_animals/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_194020/nested_animals/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [],
+      "native_identity": {
+        "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+        "case": "nested_animals",
+        "pass": true
+      }
+    },
+    "paired_dot_slope": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/20261007_204928/paired_dot_slope",
+      "qa": "phase2c/runs/20261007_204928/paired_dot_slope/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_204928/paired_dot_slope/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [],
+      "native_identity": {
+        "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+        "case": "paired_dot_slope",
+        "pass": true
+      }
+    },
+    "scatter_correlation": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/20261007_194020/scatter_correlation",
+      "qa": "phase2c/runs/20261007_194020/scatter_correlation/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_194020/scatter_correlation/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [],
+      "native_identity": {
+        "path": "phase2c/NATIVE_IDENTITY_COMBINED.json",
+        "case": "scatter_correlation",
+        "pass": true
+      }
+    },
+    "violin_raw": {
+      "status": "PARTIAL",
+      "path": "phase2c/runs/20261007_194020/violin_raw",
+      "qa": "phase2c/runs/20261007_194020/violin_raw/QA_REPORT.json",
+      "semantic_native_acceptance": "phase2c/runs/20261007_194020/violin_raw/NATIVE_SEMANTICS_ACCEPTANCE.v3.json",
+      "failures": [
+        "export_QA",
+        "fresh_group_color_2",
+        "fresh_group_color_3",
+        "fresh_group_color_5",
+        "fresh_group_color_6",
+        "reopen_group_color_2",
+        "reopen_group_color_3",
+        "reopen_group_color_5",
+        "reopen_group_color_6"
+      ],
+      "native_identity": {
+        "status": "Not supplemental; see original native report"
+      }
+    }
+  },
+  "phase2c_1": "TARGETED_AUTOMATED_ACCEPTANCE_PASSED_AWAITING_HUMAN_REVIEW",
+  "predecessor": {
+    "path": "phase2c/CORE_ARCHETYPE_REGISTRY.json",
+    "sha256": "50340dfca5d4c2383ed5ea4fcb907e311161fe7876b9fc80f8583584331a6a59"
+  },
+  "targeted_cases": {
+    "irregular_linear": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/closure_20261007_225734/irregular_linear",
+      "qa": "phase2c/runs/closure_20261007_225734/irregular_linear/QA_REPORT.json",
+      "qa_sha256": "c10af0591c0dfe98e62f83db1dc6e3c5883a3ffc1bcebec43c65020db4a9a5f3",
+      "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+      "human_accepted": false,
+      "native_semantic_acceptance": "phase2c/runs/closure_20261007_225734/irregular_linear/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+      "source_sha256": "044aa62dcea0a8ce32ddab07656a9ce277f6ba215cbc731ce087fb8f9ac1f919",
+      "analysis_sha256": "268c624b4a61be70cf2845ef9203c16839b3b47eede12fa914b7cfa823ef5cfd",
+      "contract_sha256": "80a9fbe60797137b3c66561f5728147a0b8183deb0779b9a87827d3681cf21bc",
+      "coordinate_oracle": "phase2c_1/evidence/irregular_linear_RENDERED_COORDINATES_FINAL.json"
+    },
+    "irregular_categorical": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/closure_20261007_225734/irregular_categorical",
+      "qa": "phase2c_1/evidence/CATEGORICAL_QA_SUPPLEMENT_V2.json",
+      "qa_sha256": "0517cad0b413773600606c263c2416c8f17a190cfcc347745ec38f73a6e3f1a8",
+      "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+      "human_accepted": false,
+      "native_semantic_acceptance": "phase2c/runs/closure_20261007_225734/irregular_categorical/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+      "source_sha256": "044aa62dcea0a8ce32ddab07656a9ce277f6ba215cbc731ce087fb8f9ac1f919",
+      "analysis_sha256": "578373c0b60b2acd92896e594e785963d31553cc404089be2c0d664bccc7a52e",
+      "contract_sha256": "b8ee8e4bb7cdc6fa01bb1f61abaca67d5f21e07cc96f8e49cbfc243d630d6ccd",
+      "coordinate_oracle": "phase2c_1/evidence/irregular_categorical_RENDERED_COORDINATES_FINAL.json"
+    },
+    "irregular_log": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/closure_20261007_230837/irregular_log",
+      "qa": "phase2c/runs/closure_20261007_230837/irregular_log/QA_REPORT.json",
+      "qa_sha256": "711783ba653e1e15815d06ae2a5819eb366d3f2211c63c9dfec983f8d77cb2de",
+      "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+      "human_accepted": false,
+      "native_semantic_acceptance": "phase2c/runs/closure_20261007_230837/irregular_log/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+      "source_sha256": "044aa62dcea0a8ce32ddab07656a9ce277f6ba215cbc731ce087fb8f9ac1f919",
+      "analysis_sha256": "60d73841464c4d9a73f7873a0f6598c04d811b0b4cde9e60c20de0db88cfea68",
+      "contract_sha256": "d8b4a65451fc2b8ce0b8cb33ae3c90480808b7a8364c7a91b84ae51659618e3e",
+      "coordinate_oracle": "phase2c_1/evidence/irregular_log_RENDERED_COORDINATES_FINAL.json"
+    },
+    "repeated": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/closure_20261007_225434/repeated",
+      "qa": "phase2c/runs/closure_20261007_225434/repeated/QA_REPORT.json",
+      "qa_sha256": "8cd6187b6096eae71f81dd86b9167b56cc9ea6d2780e17695a485ff69c2e982c",
+      "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+      "human_accepted": false,
+      "native_semantic_acceptance": "phase2c/runs/closure_20261007_225434/repeated/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+      "source_sha256": "9aeb8d532a3b26f7191a1849439b93198b0b81c73a7b5133132e61953ef6fd5a",
+      "analysis_sha256": "dc9f2ee7af4472193021d3a0942e62180779ef90f99ec5d8fa4d397ab6226b5f",
+      "contract_sha256": "38e65b0cc4387c278bb50dd2eb1480579171474f81582994ca1883685e89ce59",
+      "coordinate_oracle": "phase2c_1/evidence/repeated_RENDERED_COORDINATES_FINAL.json"
+    },
+    "independent_time": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/closure_20261007_225734/independent_time",
+      "qa": "phase2c/runs/closure_20261007_225734/independent_time/QA_REPORT.json",
+      "qa_sha256": "5fb9498e1120db1b96e0309bb1ce6da7093ff2d085b08ba0fe632199af849a66",
+      "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+      "human_accepted": false,
+      "native_semantic_acceptance": "phase2c/runs/closure_20261007_225734/independent_time/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+      "source_sha256": "7d5709bcf9d8cb2135357e228dff03a642b015341369e28739b5f0e06469fb9e",
+      "analysis_sha256": "d435a39e3b66aad26bedf60309f3ebbddefc57c12757d561ec45bb4c3db0d78e",
+      "contract_sha256": "32cc18adc66a8152c4e8255636e0418b8b122bde6b14554b3174397f7a0fd69f",
+      "coordinate_oracle": "phase2c_1/evidence/independent_time_RENDERED_COORDINATES_FINAL.json"
+    },
+    "nested_overlay": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/closure_20261007_231722/nested_overlay",
+      "qa": "phase2c/runs/closure_20261007_231722/nested_overlay/QA_REPORT.json",
+      "qa_sha256": "865ccc4a290c67afd9ac892528005a6b3cad444d332eec5bbf7b864be233345c",
+      "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+      "human_accepted": false,
+      "native_semantic_acceptance": "phase2c/runs/closure_20261007_231722/nested_overlay/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+      "source_sha256": "a01ea4c8f2a98a0548a33388f62cc6b6e2840b8c199e617aa878642bf1b8f186",
+      "analysis_sha256": "074bc46dc071f6acf8bdfd95c5d8f8d0b89639da78302c201f8a0e0236573536",
+      "contract_sha256": "4c9f9e077c8271fa93346bd8c0432afe2e83174e3b06743634ab2a7334de4c04"
+    },
+    "heatmap": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/closure_20261007_235708/heatmap_compact_labels",
+      "qa": "phase2c/runs/closure_20261007_235708/heatmap_compact_labels/QA_REPORT.json",
+      "qa_sha256": "0728e815d56ba4ba742f2e614e3954de526c412aeaefc287dde8d61d6e93dcf3",
+      "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+      "human_accepted": false,
+      "native_semantic_acceptance": "phase2c/runs/closure_20261007_235708/heatmap_compact_labels/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+      "source_sha256": "89e365b11971e07cb670ce5ad05f38182785910c2d5766f3667251104e618263",
+      "analysis_sha256": "3cb4f9bea1d2dc53751ef3880b287758b0a11e708e149ec932a3ecf0bb69f8bf",
+      "contract_sha256": "fc8ae5b46fbf9d13b3e938e39c046d273eaf5296ff1aeabf59a16b021bdd9897"
+    },
+    "bar_raw": {
+      "status": "PRODUCTION_VALIDATED",
+      "path": "phase2c/runs/closure_20261007_225734/bar_raw",
+      "qa": "phase2c/runs/closure_20261007_225734/bar_raw/QA_REPORT.json",
+      "qa_sha256": "c07ac8ad7bc27469c5cf41967148f49220723ad730a41cec879fd103aaf1a9c5",
+      "scope": "Frozen synthetic fixture and recorded OriginPro2026 SR0 baseline only",
+      "human_accepted": false,
+      "native_semantic_acceptance": "phase2c/runs/closure_20261007_225734/bar_raw/NATIVE_SEMANTICS_ACCEPTANCE.v4.json",
+      "source_sha256": "094302c2140f5ad78a83a3199e437efa08704a1ffb6679e91e6c0340b8071938",
+      "analysis_sha256": "fa7abb55a178e3e42b371ee6167fb08b6de21db9eb6166f064155f49667f34d5",
+      "contract_sha256": "e3baf134a55cdf16c028dd8612b93743f1f2c81228e2eb2259ca562106728571"
+    }
+  },
+  "regression_reuse": "phase2c_1/evidence/OLD_7_REGRESSION_REUSE.json"
+}

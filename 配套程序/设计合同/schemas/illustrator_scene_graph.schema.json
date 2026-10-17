@@ -1,0 +1,661 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IllustratorSceneGraph contract only v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "canvas": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "pt",
+            "px",
+            "mm"
+          ]
+        },
+        "origin": {
+          "const": "TOP_LEFT"
+        }
+      },
+      "required": [
+        "width",
+        "height",
+        "unit",
+        "origin"
+      ],
+      "additionalProperties": false
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "z_order": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "z_order"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "layer_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "group_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "[x_min,y_min,x_max,y_max], top-left origin; adapter converts to Illustrator points"
+          },
+          "z_order": {
+            "type": "integer"
+          },
+          "style_token": {
+            "type": "string",
+            "minLength": 1
+          },
+          "geometry": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "RECT",
+                  "ELLIPSE",
+                  "PATH",
+                  "POLYLINE",
+                  "ASSET_PLACEMENT",
+                  "TEXT"
+                ]
+              },
+              "data": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "kind",
+              "data"
+            ],
+            "additionalProperties": false
+          },
+          "render_method": {
+            "type": "string",
+            "enum": [
+              "NATIVE_VECTOR",
+              "PROCEDURAL_VECTOR",
+              "REUSABLE_ASSET",
+              "GENERATED_ASSET",
+              "RASTER_LAST_RESORT"
+            ]
+          },
+          "editability_level": {
+            "type": "string",
+            "enum": [
+              "FULL_NATIVE",
+              "GROUP_EDITABLE",
+              "ASSET_EDITABLE",
+              "RASTER_ONLY"
+            ]
+          },
+          "scientific_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "id",
+          "layer_id",
+          "group_id",
+          "bbox",
+          "z_order",
+          "style_token",
+          "geometry",
+          "render_method",
+          "editability_level",
+          "scientific_refs"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "layer_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "[x_min,y_min,x_max,y_max], top-left origin; adapter converts to Illustrator points"
+          },
+          "z_order": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "layer_id",
+          "name",
+          "bbox",
+          "z_order"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "geometry": {
+      "type": "object",
+      "description": "named geometry resources; object geometry remains explicit"
+    },
+    "bbox": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 4,
+      "maxItems": 4,
+      "description": "[x_min,y_min,x_max,y_max], top-left origin; adapter converts to Illustrator points"
+    },
+    "z_order": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "parent_child": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "parent_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "child_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "parent_id",
+          "child_id"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "clipping": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "clip_path_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target_group_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "clip_path_id",
+          "target_group_id"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "style_tokens": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "fill": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stroke": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stroke_width": {
+            "type": "number",
+            "minimum": 0
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "fill",
+          "stroke",
+          "stroke_width",
+          "opacity"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "text_objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "layer_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "group_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "[x_min,y_min,x_max,y_max], top-left origin; adapter converts to Illustrator points"
+          },
+          "z_order": {
+            "type": "integer"
+          },
+          "style_token": {
+            "type": "string",
+            "minLength": 1
+          },
+          "geometry": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "RECT",
+                  "ELLIPSE",
+                  "PATH",
+                  "POLYLINE",
+                  "ASSET_PLACEMENT",
+                  "TEXT"
+                ]
+              },
+              "data": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "kind",
+              "data"
+            ],
+            "additionalProperties": false
+          },
+          "render_method": {
+            "type": "string",
+            "enum": [
+              "NATIVE_VECTOR",
+              "PROCEDURAL_VECTOR",
+              "REUSABLE_ASSET",
+              "GENERATED_ASSET",
+              "RASTER_LAST_RESORT"
+            ]
+          },
+          "editability_level": {
+            "type": "string",
+            "enum": [
+              "FULL_NATIVE",
+              "GROUP_EDITABLE",
+              "ASSET_EDITABLE",
+              "RASTER_ONLY"
+            ]
+          },
+          "scientific_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "font_family": {
+            "type": "string",
+            "minLength": 1
+          },
+          "font_size": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "live_text_required": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "layer_id",
+          "group_id",
+          "bbox",
+          "z_order",
+          "style_token",
+          "geometry",
+          "render_method",
+          "editability_level",
+          "scientific_refs",
+          "text",
+          "font_family",
+          "font_size",
+          "live_text_required"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "arrow_objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "layer_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "group_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "[x_min,y_min,x_max,y_max], top-left origin; adapter converts to Illustrator points"
+          },
+          "z_order": {
+            "type": "integer"
+          },
+          "style_token": {
+            "type": "string",
+            "minLength": 1
+          },
+          "geometry": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "RECT",
+                  "ELLIPSE",
+                  "PATH",
+                  "POLYLINE",
+                  "ASSET_PLACEMENT",
+                  "TEXT"
+                ]
+              },
+              "data": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "kind",
+              "data"
+            ],
+            "additionalProperties": false
+          },
+          "render_method": {
+            "type": "string",
+            "enum": [
+              "NATIVE_VECTOR",
+              "PROCEDURAL_VECTOR",
+              "REUSABLE_ASSET",
+              "GENERATED_ASSET",
+              "RASTER_LAST_RESORT"
+            ]
+          },
+          "editability_level": {
+            "type": "string",
+            "enum": [
+              "FULL_NATIVE",
+              "GROUP_EDITABLE",
+              "ASSET_EDITABLE",
+              "RASTER_ONLY"
+            ]
+          },
+          "scientific_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "source_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "relation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "arrow_semantics": {
+            "type": "string",
+            "minLength": 1
+          },
+          "epistemic_status": {
+            "type": "string",
+            "minLength": 1
+          },
+          "negated": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "layer_id",
+          "group_id",
+          "bbox",
+          "z_order",
+          "style_token",
+          "geometry",
+          "render_method",
+          "editability_level",
+          "scientific_refs",
+          "source_id",
+          "target_id",
+          "relation_id",
+          "arrow_semantics",
+          "epistemic_status",
+          "negated"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "asset_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "local_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rights_basis": {
+            "type": "string",
+            "minLength": 1
+          },
+          "editability_level": {
+            "type": "string",
+            "enum": [
+              "FULL_NATIVE",
+              "GROUP_EDITABLE",
+              "ASSET_EDITABLE",
+              "RASTER_ONLY"
+            ]
+          },
+          "render_method": {
+            "type": "string",
+            "enum": [
+              "NATIVE_VECTOR",
+              "PROCEDURAL_VECTOR",
+              "REUSABLE_ASSET",
+              "GENERATED_ASSET",
+              "RASTER_LAST_RESORT"
+            ]
+          },
+          "placeholder": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "asset_id",
+          "local_path",
+          "sha256",
+          "rights_basis",
+          "editability_level",
+          "render_method",
+          "placeholder"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "editability_level": {
+      "type": "string",
+      "enum": [
+        "FULL_NATIVE",
+        "GROUP_EDITABLE",
+        "ASSET_EDITABLE",
+        "RASTER_ONLY"
+      ]
+    },
+    "render_method": {
+      "type": "string",
+      "enum": [
+        "NATIVE_VECTOR",
+        "PROCEDURAL_VECTOR",
+        "REUSABLE_ASSET",
+        "GENERATED_ASSET",
+        "RASTER_LAST_RESORT"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "canvas",
+    "layers",
+    "objects",
+    "groups",
+    "geometry",
+    "bbox",
+    "z_order",
+    "parent_child",
+    "clipping",
+    "style_tokens",
+    "text_objects",
+    "arrow_objects",
+    "asset_refs",
+    "editability_level",
+    "render_method"
+  ],
+  "additionalProperties": false
+}

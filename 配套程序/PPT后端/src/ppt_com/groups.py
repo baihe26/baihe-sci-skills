@@ -1,0 +1,287 @@
+"""Shape grouping and ungrouping tools for PowerPoint COM automation.
+
+Handles grouping multiple shapes, ungrouping group shapes,
+and inspecting the items within a group.
+"""
+
+import json
+import logging
+from typing import Union
+
+from pydantic import BaseModel, Field, ConfigDict
+
+from utils.offload import run_offloaded
+from backend import ppt
+from utils.navigation import goto_slide
+from ppt_com.constants import msoGroup, SHAPE_TYPE_NAMES
+from ppt_com.shape_lookup import (
+    PATH_SEPARATOR, require_top_level, resolve_shape as _get_shape,
+    resolve_with_path,
+)
+
+logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Pydantic input models
+# ---------------------------------------------------------------------------
+class GroupShapesInput(BaseModel):
+    """Input for grouping shapes on a slide."""
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    slide_index: int = Field(..., ge=1, description="1-based slide index")
+    shape_names: list[str] = Field(
+        ..., min_length=2,
+        description="List of shape names to group (minimum 2)",
+    )
+
+
+class UngroupShapesInput(BaseModel):
+    """Input for ungrouping a group shape."""
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    slide_index: int = Field(..., ge=1, description="1-based slide index")
+    shape_name_or_index: Union[str, int] = Field(
+        ..., description="Group shape name (str) or 1-based index (int). Prefer name — indices shift when shapes are added/removed"
+    )
+
+
+class GetGroupItemsInput(BaseModel):
+    """Input for getting items within a group shape."""
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    slide_index: int = Field(..., ge=1, description="1-based slide index")
+    shape_name_or_index: Union[str, int] = Field(
+        ..., description="Group shape name (str) or 1-based index (int). Prefer name — indices shift when shapes are added/removed"
+    )
+
+
+# ---------------------------------------------------------------------------
+# COM implementation functions (run on COM thread via ppt.execute)
+# ---------------------------------------------------------------------------
+def _group_shapes_impl(slide_index, shape_names):
+    app = ppt._get_app_impl()
+    goto_slide(app, slide_index)
+    pres = ppt._get_pres_impl()
+    slide = pres.Slides(slide_index)
+
+    # Validate all shape names exist before grouping
+    require_top_level(slide, shape_names, slide_index, "ppt_group_shapes")
+
+    shape_range = slide.Shapes.Range(shape_names)
+    group = shape_range.Group()
+
+    return {
+        "success": True,
+        "group_name": group.Name,
+        "shape_index": group.ZOrderPosition,
+    }
+
+
+def _ungroup_shapes_impl(slide_index, shape_name_or_index):
+    app = ppt._get_app_impl()
+    goto_slide(app, slide_index)
+    pres = ppt._get_pres_impl()
+    slide = pres.Slides(slide_index)
+    shape = _get_shape(slide, shape_name_or_index)
+
+    if shape.Type != msoGroup:
+        raise ValueError(
+            f"Shape '{shape.Name}' is not a group (type={shape.Type}). "
+            f"Only group shapes (type={msoGroup}) can be ungrouped."
+        )
+
+    ungrouped = shape.Ungroup()
+    names = []
+    for i in range(1, ungrouped.Count + 1):
+        names.append(ungrouped(i).Name)
+
+    return {
+        "success": True,
+        "ungrouped_count": ungrouped.Count,
+        "shape_names": names,
+    }
+
+
+def _get_group_items_impl(slide_index, shape_name_or_index):
+    app = ppt._get_app_impl()
+    pres = ppt._get_pres_impl()
+    slide = pres.Slides(slide_index)
+    # The group's own path, not just its name: a nested group asked for as
+    # "Outer/Inner" has to report "Outer/Inner/Deep", or the path it hands
+    # back does not lead anywhere.
+    shape, group_path = resolve_with_path(slide, shape_name_or_index)
+
+    if shape.Type != msoGroup:
+        raise ValueError(
+            f"Shape '{shape.Name}' is not a group (type={shape.Type}). "
+            f"Only group shapes (type={msoGroup}) can be inspected."
+        )
+
+    items = []
+    for i in range(1, shape.GroupItems.Count + 1):
+        item = shape.GroupItems(i)
+        type_val = item.Type
+        items.append({
+            "name": item.Name,
+            # The string every other tool takes. The bare name works too
+            # while it is the only one like it on the slide; this one always
+            # does, which is what makes the list worth handing back.
+            "path": group_path + PATH_SEPARATOR + item.Name,
+            "type": type_val,
+            "type_name": SHAPE_TYPE_NAMES.get(type_val, f"Unknown({type_val})"),
+            "left": round(item.Left, 2),
+            "top": round(item.Top, 2),
+            "width": round(item.Width, 2),
+            "height": round(item.Height, 2),
+        })
+
+    return {
+        "success": True,
+        "group_name": shape.Name,
+        "items": items,
+    }
+
+
+# ---------------------------------------------------------------------------
+# MCP tool functions (async wrappers that delegate to COM thread)
+# ---------------------------------------------------------------------------
+def group_shapes(params: GroupShapesInput) -> str:
+    """Group multiple shapes into a single group shape.
+
+    Args:
+        params: Slide index and list of shape names to group.
+
+    Returns:
+        JSON with group name and shape index.
+    """
+    try:
+        result = ppt.execute(
+            _group_shapes_impl,
+            params.slide_index, params.shape_names,
+        )
+        return json.dumps(result)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to group shapes: {str(e)}"})
+
+
+def ungroup_shapes(params: UngroupShapesInput) -> str:
+    """Ungroup a group shape into its individual shapes.
+
+    Args:
+        params: Slide index and group shape identifier.
+
+    Returns:
+        JSON with ungrouped count and shape names.
+    """
+    try:
+        result = ppt.execute(
+            _ungroup_shapes_impl,
+            params.slide_index, params.shape_name_or_index,
+        )
+        return json.dumps(result)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to ungroup shapes: {str(e)}"})
+
+
+def get_group_items(params: GetGroupItemsInput) -> str:
+    """Get information about all items within a group shape.
+
+    Each item carries a `path` of the form "Group 20/Rounded Rectangle 22".
+    Other tools take that, and take the bare `name` too while it is the only
+    one like it on the slide. On macOS `path` is null, because nothing there
+    reaches a group's member and there is no string that would.
+
+    Args:
+        params: Slide index and group shape identifier.
+
+    Returns:
+        JSON with group name and list of item details.
+    """
+    try:
+        result = ppt.execute(
+            _get_group_items_impl,
+            params.slide_index, params.shape_name_or_index,
+        )
+        return json.dumps(result)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to get group items: {str(e)}"})
+
+
+# ---------------------------------------------------------------------------
+# Tool registration
+# ---------------------------------------------------------------------------
+def register_tools(mcp):
+    """Register all group tools with the MCP server."""
+
+    @mcp.tool(
+        name="ppt_group_shapes",
+        annotations={
+            "title": "Group Shapes",
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+    )
+    async def tool_group_shapes(params: GroupShapesInput) -> str:
+        """Group multiple shapes into a single group.
+
+        Provide at least 2 shape names to combine into a group.
+        The individual shapes are replaced by a single group shape.
+        """
+        return await run_offloaded(group_shapes, params)
+
+    @mcp.tool(
+        name="ppt_ungroup_shapes",
+        annotations={
+            "title": "Ungroup Shapes",
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+    )
+    async def tool_ungroup_shapes(params: UngroupShapesInput) -> str:
+        """Ungroup a group shape into its individual shapes.
+
+        The group shape is removed and its child shapes become
+        independent shapes on the slide.
+        """
+        return await run_offloaded(ungroup_shapes, params)
+
+    @mcp.tool(
+        name="ppt_get_group_items",
+        annotations={
+            "title": "Get Group Items",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+    )
+    async def tool_get_group_items(params: GetGroupItemsInput) -> str:
+        """Get information about all items within a group shape.
+
+        Returns name, path, type, position, and size for each item in the
+        group. Identify the group by shape name or 1-based shape index.
+
+        The path, "Group 20/Rounded Rectangle 22", is what every other tool
+        takes to reach that item; the bare name works too while it is the
+        only one like it on the slide.
+        """
+        return await run_offloaded(get_group_items, params)
+
+
+# ---------------------------------------------------------------------------
+# macOS
+# ---------------------------------------------------------------------------
+# The implementations above walk COM. Their Apple Event counterparts have the
+# same names and signatures, so on macOS they simply take their place; nothing
+# else in this module changes.
+from backend import IS_MACOS, use_mac_impls  # noqa: E402
+
+if IS_MACOS:  # pragma: no cover - platform specific
+    from ppt_mac import groups as _mac_groups
+
+    use_mac_impls(globals(), _mac_groups)

@@ -1,0 +1,91 @@
+{
+  "version": "0.5.0",
+  "source_files": 574,
+  "privacy_changes": [
+    {
+      "path": "科研绘图工位/phase2b/CX_STYLE_V0_1_FREEZE_20261007/ADVISOR_CORPUS.json",
+      "original_sha256": "90c7977988a13b17ad0b2cdeb9ddf4cfc0d13a398ed783282308cd1019fbc355",
+      "published_sha256": "b312fac23822377eeed6a3f0383ea9f803f9695d445b916e8b485755d3d44182",
+      "reason": "Remove personal advisor relationships; preserve optional evidence interface"
+    },
+    {
+      "path": "科研绘图工位/phase2b/CX_STYLE_V0_1_FREEZE_20261007/REFERENCE_PANEL_REGISTRY.json",
+      "original_sha256": "c2779672f0d2d01b86aa322f288686d2975f5ed217ce172cf410d72b6d525fe9",
+      "published_sha256": "6c0089a34ecf19559b1a6a86c3be6ab44529de3584144fe6df94052266ccc910",
+      "reason": "Remove personal reading records, paths, and historical acceptance"
+    },
+    {
+      "path": "科研绘图工位/phase2c/CORE_ARCHETYPE_REGISTRY_V2.json",
+      "original_sha256": "f8b2f3fd838148c5f5bfcbb8cc3b9e753d2df713adbc1d6cfd863662b64580b8",
+      "published_sha256": "a52379fc5d042a8bb36e656f3275bac7beae1a8a3d4e655b3625218655776014",
+      "reason": "Remove machine paths, session IDs, local registration and historical environment"
+    },
+    {
+      "path": "科研绘图工位/phase2c/ADVISOR_AWARE_PLOT_PREFERENCE.md",
+      "original_sha256": "573f2bcfef734e7490a48f3e2b1125588f52f2409eecddaeac24dc4fc4a013e6",
+      "published_sha256": "e35d25072fd6a097cdb4036fcf29145b5327293052f63487938c0b74a594b73f",
+      "reason": "Publish general selection rules without private preference records"
+    },
+    {
+      "path": "科研绘图工位/REPOSITORY_LICENSE_MANIFEST.md",
+      "original_sha256": "0d387bf759314694426dcc6b5dfb2812c3ad9063c7d8b711344e152d3bce7ddc",
+      "published_sha256": "c5a065c43a532a90900f64aa1b4632809f4d4ee06c40677d6f71f28569bb4c40",
+      "reason": "Replace private historical inventory with actual public distribution notices"
+    },
+    {
+      "path": "科研绘图工位/src/figure_system/common.py",
+      "original_sha256": "2faba4d44288e96059f5578cc580a9d3c9d268e0a27aee89df7bc1408b4610dc",
+      "published_sha256": "b563288f03685df4c50d31e63f10e47166110919743ae54098170898989c0107",
+      "reason": "Resolve source worker interpreter from the active isolated runtime, not a private pack layout"
+    },
+    {
+      "path": "PPT工作室/AUTHOR_STYLE_BASELINE_V03/AUTHOR_STYLE_PROFILE_V03.json",
+      "original_sha256": "da4bb1d3f6b6bc7e9a29681b566a4126db393b3b9648dccdcc1da3a57700ff61",
+      "published_sha256": "b536db6b9a45bf7d795a051ed8e9204e5ad4f53e48d9c73c212b032f6e98ed7f",
+      "reason": "Keep style/layout/scientific rules; remove institution assets, private sources and target acceptance inference"
+    },
+    {
+      "path": "PPT工作室/AUTHOR_STYLE_BASELINE_V03/PROFILE_README.md",
+      "original_sha256": "4adffeedc5d7cc50edddaa2322c2ff256d0c4a9eb22f1a478314e616012f2cbf",
+      "published_sha256": "8944b7217fc9414497d4422658734b3f09f74cb35721fcfa6b1ca8d9dd4fb0f2",
+      "reason": "Remove private example references and historical handoff"
+    },
+    {
+      "path": "PPT工作室/AUTHOR_STYLE_BASELINE_V03/AUTHOR_STYLE_BASELINE_V03.md",
+      "original_sha256": "0648b8df16a77bfbe6efd9d781e09896ff7c0766481575e5b97a51396cfe7428",
+      "published_sha256": "e0e07ecc7e25a25c76c3e31034bafe7d114ecb205917971a246f8a256d69deb8",
+      "reason": "Keep default style principles without private branding/history"
+    },
+    {
+      "path": "PPT工作室/AUTHOR_STYLE_BASELINE_V03/HARD_INVARIANTS.md",
+      "original_sha256": "ae449e75628df6dd5109986b7d1ba7e2952d51f6cfac4ea37d25054bb1538d2a",
+      "published_sha256": "2bb869af4ba91ae9542bb28aa8d543390d414821ce5c5c4584a6688b62791e67",
+      "reason": "Publish preserved machine-readable invariants"
+    },
+    {
+      "path": "PPT工作室/AUTHOR_STYLE_BASELINE_V03/ADAPTIVE_LAYOUT_POLICY.md",
+      "original_sha256": "144a2524cb02f7e6d1fc9cb475963b9bb060476f1c7a3a0ed4ebd1b9dba557ab",
+      "published_sha256": "3e15491e9b63ac1bd3b9d027a5db10d2ce89b01e9f7e1a6cf6a72f8e059358fa",
+      "reason": "Keep adaptive layout without private exemplars"
+    },
+    {
+      "path": "PPT工作室/AUTHOR_STYLE_BASELINE_V03/HUMAN_OVERRIDE_POLICY.md",
+      "original_sha256": "a1d6ec1548f2db6c82d90f85a5a4c8a5638d5bc267d4a00e5034b4e8d946dfbd",
+      "published_sha256": "0dd46ec75b56bd7c50786fd8df17df442235206fce34b94ff10d55e120e12085",
+      "reason": "Keep override hierarchy and nonautomatic permanent learning"
+    }
+  ],
+  "research_data_included": false,
+  "personal_corpus_included": false,
+  "institution_assets_included": false,
+  "third_party_binary_environment_in_source": false,
+  "original_engines_or_personal_pack_modified": false,
+  "locked_dependencies": 56,
+  "origin_gate_retained": true,
+  "target_machine_native_acceptance": "PENDING",
+  "style_parent_chain_added": [
+    "配套程序/科研绘图工位/fixtures/styles/p2b_b_review_20261007.json",
+    "配套程序/科研绘图工位/fixtures/styles/v1.json"
+  ],
+  "approved_synthetic_example_added": "示例/Origin合成柱图"
+}

@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "status": "APPROVED_ANALYSIS_MANIFEST",
+  "approved_by": "USER_AUTHORIZED_PHASE2C_SYNTHETIC_PROTOCOL",
+  "approval_scope": "Synthetic engine acceptance only; no real-data inference or author publication acceptance",
+  "source_sha256": "094302c2140f5ad78a83a3199e437efa08704a1ffb6679e91e6c0340b8071938",
+  "plot_data_sha256": "a2d4bdc16ea55cc6b6908757b175cf0fb3ec3df4629d14fc90467a44d0cb4902",
+  "statistical_n": {
+    "STATISTICAL_N_IS": "animal",
+    "stratum_columns": [
+      "group"
+    ],
+    "by_stratum": {
+      "control": 4,
+      "material": 4,
+      "treatment": 4
+    }
+  },
+  "summary": {
+    "type": "mean"
+  },
+  "uncertainty": {
+    "type": "SD",
+    "quantity_column_suffix": "_SD"
+  },
+  "renderer_statistics": "NONE except explicitly authorized Origin distribution geometry from independent raw units",
+  "software": {
+    "numpy": "2.4.4",
+    "pandas": "3.0.3"
+  },
+  "exclusions": [],
+  "transforms": [],
+  "approved_plot_bindings": [
+    {
+      "column": "control",
+      "x_column": "X_categories",
+      "error_column": "control_SD",
+      "role": "group_summary",
+      "unit_ids": []
+    },
+    {
+      "column": "control_raw",
+      "x_column": "RawX_control",
+      "error_column": null,
+      "role": "unit",
+      "unit_ids": [
+        "control_animal_0",
+        "control_animal_1",
+        "control_animal_2",
+        "control_animal_3"
+      ]
+    },
+    {
+      "column": "material",
+      "x_column": "X_categories",
+      "error_column": "material_SD",
+      "role": "group_summary",
+      "unit_ids": []
+    },
+    {
+      "column": "material_raw",
+      "x_column": "RawX_material",
+      "error_column": null,
+      "role": "unit",
+      "unit_ids": [
+        "material_animal_0",
+        "material_animal_1",
+        "material_animal_2",
+        "material_animal_3"
+      ]
+    },
+    {
+      "column": "treatment",
+      "x_column": "X_categories",
+      "error_column": "treatment_SD",
+      "role": "group_summary",
+      "unit_ids": []
+    },
+    {
+      "column": "treatment_raw",
+      "x_column": "RawX_treatment",
+      "error_column": null,
+      "role": "unit",
+      "unit_ids": [
+        "treatment_animal_0",
+        "treatment_animal_1",
+        "treatment_animal_2",
+        "treatment_animal_3"
+      ]
+    }
+  ],
+  "approved_group_statistics": {
+    "control": {
+      "mean": 2.1542539054659673,
+      "sample_sd": 0.2958174420853099,
+      "quartiles_linear": [
+        1.9444010744900344,
+        2.1717324157848132,
+        2.3815852467607463
+      ]
+    },
+    "material": {
+      "mean": 2.8049689177283974,
+      "sample_sd": 0.3627967430426434,
+      "quartiles_linear": [
+        2.7654886070106053,
+        2.966594963818129,
+        3.006075274535921
+      ]
+    },
+    "treatment": {
+      "mean": 3.5297348441662777,
+      "sample_sd": 0.37276794887488807,
+      "quartiles_linear": [
+        3.36793717382268,
+        3.5525016383839425,
+        3.71429930872754
+      ]
+    }
+  },
+  "approved_geometry_override": {},
+  "native_layout_adapter": {
+    "approved": true,
+    "method": "Shared categorical numerical X positions; summary/error moved together to their group row",
+    "parent_plot_data_sha256": "381399d00600d44842e61417e71b45433efb4bc5dc59db54e858ae1f7fed08a9",
+    "statistical_values_unchanged": true
+  },
+  "approved_bar_display": {
+    "fill_transparency_percent": 70,
+    "raw_point_transparency_percent": 0,
+    "reason": "Independent raw values remain visible inside approved summary bars; categorical hue/marker identity unchanged"
+  }
+}

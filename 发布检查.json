@@ -1,126 +1,156 @@
 {
-  "version": "0.4.0",
-  "date": "2026-10-16",
-  "baseline_commit": "be0a4cc0e554fc2ce23d00133c36a71599f52d87",
-  "skills": [
-    {
-      "name": "baihe-sci",
-      "passed": true
-    },
-    {
-      "name": "baihe-sci-design",
-      "passed": true
-    },
-    {
-      "name": "baihe-sci-plot",
-      "passed": true
-    },
-    {
-      "name": "baihe-sci-slides",
-      "passed": true
-    },
-    {
-      "name": "baihe-sci-vector",
-      "passed": true
-    }
-  ],
-  "unit_tests": {
-    "status": "PASS",
-    "test_cases": 53,
-    "skipped": 0,
-    "environment": "Existing isolated optional backend environment"
-  },
-  "native_validation": {
-    "default_ppt_source_claim_object_occurrences": 12,
-    "optional_mixed_occurrences": 13,
-    "inspected_decks": 8,
-    "snapshot_and_pixels_equal_after_reopen": true,
-    "current_environment_default_vs_0_3": "EXACT_PIXELS_EQUAL",
-    "current_environment_optional_vs_0_3": "EXACT_PIXELS_EQUAL",
-    "references": {
-      "total": 3,
-      "updated": 2,
-      "manual_conflicts_preserved": 1,
-      "unrelated_page_pixels_equal": true,
-      "conflict_page_pixels_equal": true,
-      "original_media_bytes_preserved": true
-    },
-    "actual_tags_readable_by_powerpoint": true,
-    "text_color_group_connector_edit_probe": true,
-    "application_restart": false,
-    "manual_mouse_drag": false
-  },
-  "visual": {
-    "status": "NO_SUBSTANTIVE_VISUAL_ISSUES_IN_REVIEWED_IMAGES",
-    "images": 6,
-    "independent_read_only": true,
-    "scope": "Simple candidates plus selected main/small native renders",
-    "unknown_source_text": "PENDING_NOT_RECONSTRUCTED",
-    "native_editability_assessed_by_visual_reviewer": false,
-    "author_acceptance": "PENDING"
-  },
-  "protection": {
-    "targeted_original_tool_files_checked": 2699,
-    "changed": 0,
-    "scope": "Tool source/contracts/docs snapshot; not full research data library or recoverable backup",
-    "research_data_processing_performed": false
-  },
-  "publication": {
-    "repository": "baihe26/baihe-sci-skills",
-    "visibility": "public",
-    "research_materials_bundled": false,
-    "private_engines_bundled": false,
-    "software_environment_bundled": false
-  },
-  "journal_provenance": {
-    "source": "User-owned Live PowerPoint Studio recovery_journal module",
-    "source_version": "9203b53",
-    "source_sha256": "a9bd3d01ee8d196bb9a289d6ffcc161db3dc0d1a8771ab3c9507d33629cacc09",
-    "published_sha256": "75fefcb635dae5fad209a539f9e218d6946c42f02a5db793299f348abfe0e43c",
-    "change": "LF newline normalization only"
-  },
-  "limitations": [
-    "Scientific truth and final author acceptance remain pending",
-    "Text quotes checked when declared; PDF page/bbox locators are not independent full-text verification",
-    "New provenance native location support covers the declared PPT routes; Illustrator retains prior note/sidecar scope",
-    "Optional multi-page assembly uses approved equal-size supported scenes, not full Live Studio/V03/media parity",
-    "Reference updates inspect saved files; unsaved app state is not inspected; replacement pixels require new source review",
-    "Nested-owner and extra collinear connector nodes have scoped automated checks; no universal curve/nonrectangular binding or mouse-drag validation",
-    "No Norman same-budget/model quality or cost ranking, unfamiliar complex-figure generalization, other-machine native install or Mac native production"
-  ],
-  "privacy": {
-    "status": "PASS",
-    "files": 87,
-    "findings": [],
-    "scope": "Exact Git staging blobs only; untracked local configuration and runtime outputs excluded. PNG has only dpi metadata."
-  },
-  "python_syntax": {
-    "status": "PASS",
-    "files": 36
-  },
-  "documentation_links": {
-    "status": "PASS",
-    "broken": 0
-  },
-  "migration_supplement": {
-    "date": "2026-10-18",
-    "public_payload": "Generic personal-transfer builder, setup helper, guide and 2 targeted tests only",
-    "private_engines_runtime_or_archive_published": false,
-    "targeted_tests": {
-      "cases": 2,
+  "version": "0.5.0",
+  "date": "2026-10-18",
+  "historical_release_validation": {
+    "version": "0.4.0",
+    "date": "2026-10-16",
+    "baseline_commit": "be0a4cc0e554fc2ce23d00133c36a71599f52d87",
+    "skills": [
+      {
+        "name": "baihe-sci",
+        "passed": true
+      },
+      {
+        "name": "baihe-sci-design",
+        "passed": true
+      },
+      {
+        "name": "baihe-sci-plot",
+        "passed": true
+      },
+      {
+        "name": "baihe-sci-slides",
+        "passed": true
+      },
+      {
+        "name": "baihe-sci-vector",
+        "passed": true
+      }
+    ],
+    "unit_tests": {
       "status": "PASS",
-      "old_checks_repeated": false
+      "test_cases": 53,
+      "skipped": 0,
+      "environment": "Existing isolated optional backend environment"
     },
-    "source_host_validation": {
-      "files_dependencies_configured": true,
-      "origin_python_and_package_gate": true,
-      "origin_native_render_repeated": false,
-      "designer_compiled": true,
-      "illustrator_import_only": true,
-      "ppt_native_generated_saved_reopened": true,
-      "ppt_visual_read_only": "PASS_ONE_RENDER"
+    "native_validation": {
+      "default_ppt_source_claim_object_occurrences": 12,
+      "optional_mixed_occurrences": 13,
+      "inspected_decks": 8,
+      "snapshot_and_pixels_equal_after_reopen": true,
+      "current_environment_default_vs_0_3": "EXACT_PIXELS_EQUAL",
+      "current_environment_optional_vs_0_3": "EXACT_PIXELS_EQUAL",
+      "references": {
+        "total": 3,
+        "updated": 2,
+        "manual_conflicts_preserved": 1,
+        "unrelated_page_pixels_equal": true,
+        "conflict_page_pixels_equal": true,
+        "original_media_bytes_preserved": true
+      },
+      "actual_tags_readable_by_powerpoint": true,
+      "text_color_group_connector_edit_probe": true,
+      "application_restart": false,
+      "manual_mouse_drag": false
     },
-    "target_machine_native_acceptance": "PENDING",
-    "origin_version_gate": "UNCHANGED"
+    "visual": {
+      "status": "NO_SUBSTANTIVE_VISUAL_ISSUES_IN_REVIEWED_IMAGES",
+      "images": 6,
+      "independent_read_only": true,
+      "scope": "Simple candidates plus selected main/small native renders",
+      "unknown_source_text": "PENDING_NOT_RECONSTRUCTED",
+      "native_editability_assessed_by_visual_reviewer": false,
+      "author_acceptance": "PENDING"
+    },
+    "protection": {
+      "targeted_original_tool_files_checked": 2699,
+      "changed": 0,
+      "scope": "Tool source/contracts/docs snapshot; not full research data library or recoverable backup",
+      "research_data_processing_performed": false
+    },
+    "publication": {
+      "repository": "baihe26/baihe-sci-skills",
+      "visibility": "public",
+      "research_materials_bundled": false,
+      "private_engines_bundled": false,
+      "software_environment_bundled": false
+    },
+    "journal_provenance": {
+      "source": "User-owned Live PowerPoint Studio recovery_journal module",
+      "source_version": "9203b53",
+      "source_sha256": "a9bd3d01ee8d196bb9a289d6ffcc161db3dc0d1a8771ab3c9507d33629cacc09",
+      "published_sha256": "75fefcb635dae5fad209a539f9e218d6946c42f02a5db793299f348abfe0e43c",
+      "change": "LF newline normalization only"
+    },
+    "limitations": [
+      "Scientific truth and final author acceptance remain pending",
+      "Text quotes checked when declared; PDF page/bbox locators are not independent full-text verification",
+      "New provenance native location support covers the declared PPT routes; Illustrator retains prior note/sidecar scope",
+      "Optional multi-page assembly uses approved equal-size supported scenes, not full Live Studio/V03/media parity",
+      "Reference updates inspect saved files; unsaved app state is not inspected; replacement pixels require new source review",
+      "Nested-owner and extra collinear connector nodes have scoped automated checks; no universal curve/nonrectangular binding or mouse-drag validation",
+      "No Norman same-budget/model quality or cost ranking, unfamiliar complex-figure generalization, other-machine native install or Mac native production"
+    ],
+    "privacy": {
+      "status": "PASS",
+      "files": 87,
+      "findings": [],
+      "scope": "Exact Git staging blobs only; untracked local configuration and runtime outputs excluded. PNG has only dpi metadata."
+    },
+    "python_syntax": {
+      "status": "PASS",
+      "files": 36
+    },
+    "documentation_links": {
+      "status": "PASS",
+      "broken": 0
+    },
+    "migration_supplement": {
+      "date": "2026-10-18",
+      "public_payload": "Generic personal-transfer builder, setup helper, guide and 2 targeted tests only",
+      "private_engines_runtime_or_archive_published": false,
+      "targeted_tests": {
+        "cases": 2,
+        "status": "PASS",
+        "old_checks_repeated": false
+      },
+      "source_host_validation": {
+        "files_dependencies_configured": true,
+        "origin_python_and_package_gate": true,
+        "origin_native_render_repeated": false,
+        "designer_compiled": true,
+        "illustrator_import_only": true,
+        "ppt_native_generated_saved_reopened": true,
+        "ppt_visual_read_only": "PASS_ONE_RENDER"
+      },
+      "target_machine_native_acceptance": "PENDING",
+      "origin_version_gate": "UNCHANGED"
+    }
+  },
+  "public_distribution_0_5": {
+    "date": "2026-10-18",
+    "version": "0.5.0",
+    "scope": "Sanitized engine source and local automatic dependency preparation; no personal runtime or binary environment publication",
+    "private_personal_pack_published": false,
+    "personal_identity_paths_corpus_and_branding_removed": true,
+    "native_scientific_contracts_and_style_parameters_retained": true,
+    "style_parent_dependencies_included": true,
+    "pinned_python_source": "Python Software Foundation official NuGet 3.12.10 x64",
+    "python_package_hash": "0eb85c2dfccccf1b17352de4c397f69194035b7d37149eacc16f1147d93de3b8",
+    "dependencies": "56 packages; pinned wheel SHA256; direct PyPI download into isolated runtime",
+    "clean_install": "ACTUAL_ONLINE_DOWNLOAD_HASH_VERIFY_INSTALL_PIP_CHECK_AND_DOCTOR_PASS",
+    "targeted_config_test": "PASS_ONE_TEST_COVERS_MOVE_IDEMPOTENCE_PRIVATE_CONFIG_AND_MANUAL_EDITS",
+    "designer": "COMPILED",
+    "portable_pptx": "GENERATED",
+    "origin": "NATIVE_SAVED_INDEPENDENT_REOPEN_EDIT_PROBE_SOURCE_VALUES_AND_SEMANTIC_QA_PASS",
+    "ppt": "NATIVE_SAVED_INDEPENDENT_REOPEN_SNAPSHOT_AND_PIXELS_MATCH",
+    "visual": {
+      "origin": "ONE_NEW_RENDER_READ_ONLY_REVIEW_PASS",
+      "ppt": "HASH_IDENTICAL_TO_PREVIOUS_VISUALLY_CHECKED_SYNTHETIC_RENDER"
+    },
+    "illustrator": "BRIDGE_LOADED_NOT_NATIVE_RETESTED",
+    "target_machine_native": "PENDING",
+    "author_acceptance": "PENDING",
+    "original_engines_research_and_personal_pack_modified": false
   }
 }

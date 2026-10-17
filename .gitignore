@@ -23,3 +23,6 @@ __pycache__/
 
 # Personal transfer payloads are never part of the public source package.
 **/baihe-sci配套包/
+
+# Downloaded runtimes, caches and local installation evidence stay on this computer.
+运行环境/

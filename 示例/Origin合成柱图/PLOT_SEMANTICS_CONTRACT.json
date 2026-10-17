@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "data_status": "SYNTHETIC_NO_SCIENTIFIC_CONCLUSION",
+  "scientific_question": "explicit_summary_bar: synthetic semantic/native compatibility example",
+  "experimental_unit": {
+    "type": "animal",
+    "id_column": "unit_id",
+    "definition": "Independent synthetic treatment/inference unit; acquisition rows never increase n.",
+    "independence_id_column": "unit_id"
+  },
+  "identifiers": {
+    "biological_replicate_id": "unit_id",
+    "technical_replicate_id": null,
+    "subject_id": "unit_id",
+    "sample_id": "unit_id",
+    "batch_id": null,
+    "section_id": null,
+    "field_id": null,
+    "cell_id": null
+  },
+  "nesting_structure": [],
+  "point_semantics": {
+    "ONE_POINT_IS": "one independent animal",
+    "primary_level": "experimental_unit",
+    "subsample_display": false
+  },
+  "statistical_n": {
+    "STATISTICAL_N_IS": "animal",
+    "stratum_columns": [
+      "group"
+    ],
+    "by_stratum": {
+      "control": 4,
+      "material": 4,
+      "treatment": 4
+    }
+  },
+  "x_variable": {
+    "type": "categorical",
+    "spacing": "explicit_category",
+    "column": "x"
+  },
+  "y_variable": {
+    "type": "continuous",
+    "units": "a.u.",
+    "column": "value"
+  },
+  "design": {
+    "paired": false,
+    "repeated": false,
+    "independent_by_x": false,
+    "pair_id_column": null
+  },
+  "connection": {
+    "mode": "none"
+  },
+  "connection_keys": [],
+  "summary": {
+    "type": "mean"
+  },
+  "uncertainty": {
+    "type": "SD",
+    "quantity_column_suffix": "_SD"
+  },
+  "selected_archetype": "bar_raw",
+  "purpose": "explicit_summary_bar",
+  "analysis": {
+    "path": "analysis_manifest.json",
+    "sha256": "fa7abb55a178e3e42b371ee6167fb08b6de21db9eb6166f064155f49667f34d5"
+  },
+  "source": {
+    "path": "observations.csv",
+    "sha256": "094302c2140f5ad78a83a3199e437efa08704a1ffb6679e91e6c0340b8071938"
+  },
+  "plot_data": {
+    "path": "plot_data.csv",
+    "sha256": "a2d4bdc16ea55cc6b6908757b175cf0fb3ec3df4629d14fc90467a44d0cb4902"
+  },
+  "plot_bindings": [
+    {
+      "column": "control",
+      "x_column": "X_categories",
+      "error_column": "control_SD",
+      "role": "group_summary",
+      "unit_ids": []
+    },
+    {
+      "column": "control_raw",
+      "x_column": "RawX_control",
+      "error_column": null,
+      "role": "unit",
+      "unit_ids": [
+        "control_animal_0",
+        "control_animal_1",
+        "control_animal_2",
+        "control_animal_3"
+      ]
+    },
+    {
+      "column": "material",
+      "x_column": "X_categories",
+      "error_column": "material_SD",
+      "role": "group_summary",
+      "unit_ids": []
+    },
+    {
+      "column": "material_raw",
+      "x_column": "RawX_material",
+      "error_column": null,
+      "role": "unit",
+      "unit_ids": [
+        "material_animal_0",
+        "material_animal_1",
+        "material_animal_2",
+        "material_animal_3"
+      ]
+    },
+    {
+      "column": "treatment",
+      "x_column": "X_categories",
+      "error_column": "treatment_SD",
+      "role": "group_summary",
+      "unit_ids": []
+    },
+    {
+      "column": "treatment_raw",
+      "x_column": "RawX_treatment",
+      "error_column": null,
+      "role": "unit",
+      "unit_ids": [
+        "treatment_animal_0",
+        "treatment_animal_1",
+        "treatment_animal_2",
+        "treatment_animal_3"
+      ]
+    }
+  ],
+  "color_semantics": {
+    "kind": "categorical"
+  },
+  "raw_prominent": true,
+  "markers": true,
+  "dense_sampling": false,
+  "figurestate_owner": {
+    "style_version": "style_v0_1_selected",
+    "style_sha256": "20b46b50ffe97fe03ce844d526c5007ea75a934507ebea94e615b1b513855bc9",
+    "manuscript_id": "SYNTHETIC_MVP_20261003"
+  },
+  "approved_geometry_override": {},
+  "approved_bar_display": {
+    "fill_transparency_percent": 70,
+    "raw_point_transparency_percent": 0,
+    "reason": "Independent raw values remain visible inside approved summary bars; categorical hue/marker identity unchanged"
+  }
+}

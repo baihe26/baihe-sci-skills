@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "manuscript_id": "SYNTHETIC_MVP_20261003",
+  "style_version": "p2b_b_review_20261007",
+  "parent": {
+    "version": "v1",
+    "sha256": "48efc1a2a8acb63922da7d7beac9b12e37ef23b985106bd02879c99c57eeba4f"
+  },
+  "group_registry_version": "p2b_b_review_20261007",
+  "groups": {
+    "control": {
+      "stable_group_id": "control",
+      "display_name": "Control",
+      "semantic_role": "control",
+      "fill": "#4D4D4D",
+      "edge": "#4D4D4D",
+      "marker": "circle",
+      "line_style": "solid",
+      "alpha": 1.0,
+      "saturation": 1.0,
+      "saturation_behavior": "identity",
+      "display_order": 0
+    },
+    "material": {
+      "stable_group_id": "material",
+      "display_name": "Material",
+      "semantic_role": "comparison",
+      "fill": "#0072B2",
+      "edge": "#0072B2",
+      "marker": "square",
+      "line_style": "solid",
+      "alpha": 1.0,
+      "saturation": 1.0,
+      "saturation_behavior": "identity",
+      "display_order": 1
+    },
+    "treatment": {
+      "stable_group_id": "treatment",
+      "display_name": "Treatment",
+      "semantic_role": "intervention",
+      "fill": "#D55E00",
+      "edge": "#D55E00",
+      "marker": "triangle",
+      "line_style": "solid",
+      "alpha": 1.0,
+      "saturation": 1.0,
+      "saturation_behavior": "identity",
+      "display_order": 2
+    }
+  },
+  "tokens": {
+    "width_mm": 89.0,
+    "height_mm": 65.0,
+    "font_family": "Arial",
+    "axis_title_pt": 7.0,
+    "tick_pt": 7.0,
+    "legend_pt": 7.0,
+    "panel_label_pt": 8.0,
+    "axis_width_pt": 0.7,
+    "tick_width_pt": 0.7,
+    "tick_length_pt": 2.5,
+    "tick_direction": "out",
+    "marker_size_pt": 4.2,
+    "raw_marker_size_pt": 2.6,
+    "line_width_pt": 1.0,
+    "error_width_pt": 0.8,
+    "error_cap_pt": 2.0,
+    "legend_frame": false,
+    "background": "#FFFFFF",
+    "grid": false,
+    "raw_alpha": 0.75,
+    "fill_alpha": 1.0,
+    "line_alpha": 1.0,
+    "band_alpha": 0.15,
+    "layer_left_percent": 18.0,
+    "layer_top_percent": 12.0,
+    "layer_width_percent": 77.0,
+    "layer_height_percent": 68.0,
+    "frame": "left_bottom",
+    "axis_title_bold": false
+  },
+  "figures": [
+    "FigA",
+    "FigB"
+  ],
+  "feedback": [],
+  "status": "PROPOSED_VISUAL_REVIEW_PENDING",
+  "created_at": "2026-10-07",
+  "human_accepted": false
+}

@@ -1,0 +1,723 @@
+"""ppt-mcp: The world's best PowerPoint MCP server.
+
+Real-time PowerPoint control via COM automation.
+"""
+
+import json
+import logging
+import os
+import sys
+import tempfile
+from pathlib import Path
+
+from pydantic import BaseModel, Field
+
+# When installed via PyPI (entry point: src.server:main), ensure the src/
+# directory is in sys.path so that internal imports like
+# `from backend import ppt` resolve correctly.
+_src_dir = str(Path(__file__).parent)
+if _src_dir not in sys.path:
+    sys.path.insert(0, _src_dir)
+
+from contextlib import asynccontextmanager
+
+# mcp 2.0 renamed mcp.server.fastmcp to mcp.server.mcpserver, and FastMCP to
+# MCPServer, without leaving a compatibility shim behind. Import from whichever
+# module the installed major provides so the server runs on both 1.x and 2.x.
+#
+# Catch ModuleNotFoundError rather than ImportError: the fallback should only
+# trigger when the 2.x module is absent. A broken 2.x install that raises
+# ImportError from one of its own imports must surface that traceback instead
+# of being masked by the 1.x fallback failing afterwards.
+try:
+    from mcp.server.mcpserver import Image, MCPServer  # mcp >= 2.0
+except ModuleNotFoundError:
+    from mcp.server.fastmcp import Image  # mcp 1.x
+    from mcp.server.fastmcp import FastMCP as MCPServer
+
+from utils.com_wrapper import call_presentation
+
+# Configure logging to stderr (stdout is used for MCP protocol)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
+    stream=sys.stderr,
+)
+logger = logging.getLogger("ppt-mcp")
+
+
+@asynccontextmanager
+async def app_lifespan(server: MCPServer):
+    """Manage COM lifecycle for the MCP server."""
+    from backend import ppt
+
+    from backend import AUTO_DISMISS_DIALOG
+    logger.info("AUTO_DISMISS_DIALOG=%s (set PPT_AUTO_DISMISS_DIALOG=true to enable)", AUTO_DISMISS_DIALOG)
+    logger.info("Starting PowerPoint COM worker thread...")
+    ppt.start()
+    # Do NOT connect to PowerPoint here. Connecting at startup would launch
+    # PowerPoint.exe the moment the MCP client boots, even when the user never
+    # invokes a ppt_* tool. The COM connection is established lazily on the
+    # first tool call instead (see PowerPointCOMWrapper._get_app_impl).
+    try:
+        yield {}
+    finally:
+        logger.info("Shutting down PowerPoint COM worker thread...")
+        ppt.stop()
+
+
+# Appended to the server instructions only when the backend is the Apple Event
+# one. On Windows it is empty, so nothing about it reaches a Windows reader.
+_MACOS_NOTE = """
+## On macOS
+
+This server is driving PowerPoint for Mac over Apple Events rather than COM.
+Almost everything works the same, and where it does not, a tool answers with
+`error`, `reason`, `platform` and often `alternatives` instead of doing
+something unexpected. Read the `reason`; it says what PowerPoint for Mac does
+not have and what to do instead, and one retry along that route usually works.
+
+**Call these tools one after another, not several in the same turn.** Only one
+request at a time reaches PowerPoint here, so the rest queue behind it, and the
+order they come out in is whatever order they arrived. A call that adds a slide
+and a call that reads it, sent together, can run the wrong way round. A call
+left waiting too long is taken back and says so, having changed nothing.
+
+A refusal whose `error` names an argument rather than the tool means the tool
+itself is fine and only that argument has to go. `ppt_add_table_row` cannot
+insert at a `position`, for instance, but appending still works.
+
+Some results carry `warnings` alongside `success`. Those are parts of the
+request that did not land, listed rather than silently dropped.
+
+A note about Japanese fonts. PowerPoint for Mac will not set the East Asian
+font to a font that has no East Asian glyphs. It accepts the write, keeps the
+old value and reports nothing, so `font_name` alone leaves Japanese text in
+whatever font it was in. That now comes back as a warning; pass
+`font_name_fareast` to choose the Japanese font yourself.
+
+**Save early and at each natural break.** A deck that has never been saved has
+been seen to disappear mid-session on macOS, taking every slide with it, and
+the cause is not yet known (issue #191). `ppt_save_presentation_as` right after
+creating a deck, and `ppt_save_presentation` at each break, costs almost
+nothing and is the difference between a hiccup and starting over.
+
+Charts, freeform paths and groups go through the clipboard here, because
+PowerPoint for Mac's scripting dictionary has no words for them. Creating and
+reading them works as on Windows. Editing an existing chart or path
+(`ppt_set_chart_data`, `ppt_change_chart_type`, `ppt_format_chart`,
+`ppt_format_chart_axis`, `ppt_set_chart_series`, and the node tools) works by
+copying the shape, rewriting it and pasting it back, then deleting the
+original: the name, position and z order are kept, animations on that shape
+are lost, and `warnings` says so each time. Set the data and formatting of a
+chart before animating it. A node's editing type cannot be set; SmartArt has
+no route at all. The user's clipboard is saved and put back around each of
+these calls.
+
+A few chart arguments have no place in that XML and are refused by name rather
+than ignored: `chart_style`, `legend_font_size`, explicit legend and title
+coordinates and the corner legend positions on `ppt_format_chart`, and
+`tick_label_font_size` on `ppt_format_chart_axis`. Everything else those two
+take works. Drop the named argument and call again.
+""" if sys.platform == "darwin" else ""
+
+
+# Naming a font PowerPoint cannot find does not fail. The system quietly
+# substitutes one, so a deck built from the Windows recommendation on a Mac
+# comes out in something nobody chose. The advice therefore has to be right
+# the first time it is read, rather than corrected further down (#194).
+_PREFERRED_FONTS = (
+    "Preferred fonts: Hiragino Sans (Japanese, ヒラギノ角ゴシック in the font "
+    "menu) with Hiragino Sans W6 for headings, and Helvetica Neue or Arial "
+    "(Latin). Segoe UI and BIZ UDPゴシック are Windows fonts and are not on "
+    "macOS; BIZ UDGothic ships here, without the P."
+    if sys.platform == "darwin"
+    else "Preferred fonts: BIZ UDPゴシック (Japanese) + Segoe UI (Latin)."
+)
+
+
+# The argument every presentation-bound tool accepts next to `params`, and the
+# tools that do not take it because they act on PowerPoint itself, on the
+# running slide show, or set the session target in the first place.
+PRESENTATION_ARG = "presentation"
+_TOOLS_WITHOUT_PRESENTATION_ARG = frozenset({
+    "ppt_connect", "ppt_get_app_info", "ppt_get_active_window",
+    "ppt_set_window_state", "ppt_list_presentations", "ppt_create_presentation",
+    "ppt_open_presentation", "ppt_activate_presentation", "ppt_list_templates",
+    "ppt_search_icons", "ppt_slideshow_stop", "ppt_slideshow_next",
+    "ppt_slideshow_previous", "ppt_slideshow_goto", "ppt_slideshow_get_status",
+})
+# Type only. The same entry is copied into every bound tool's schema, and a
+# description there would be sent 141 times per connection (about 80,000
+# characters); the server instructions explain the argument once instead.
+_PRESENTATION_ARG_SCHEMA = {"type": "string"}
+
+
+class _PowerPointServer(MCPServer):
+    """MCPServer that accepts a per-call `presentation` argument.
+
+    The session target set by ppt_activate_presentation is one value for the
+    whole process, and one process can serve several conversations at once:
+    Claude Desktop starts a server once and routes every chat through it. When
+    a second conversation activates its deck, the first one's next call lands
+    there. A call that names its deck is immune to that.
+
+    The argument is taken out here, before the SDK validates `params`, and
+    held in utils.com_wrapper.call_presentation while the tool runs. Both SDK
+    majors dispatch tools/call through this method, so no SDK internals are
+    involved; the schema side is added by _add_presentation_arg().
+    """
+
+    async def call_tool(self, name, arguments, *args, **kwargs):
+        wanted = None
+        if isinstance(arguments, dict) and PRESENTATION_ARG in arguments:
+            arguments = dict(arguments)
+            wanted = arguments.pop(PRESENTATION_ARG)
+            if wanted is not None and not isinstance(wanted, str):
+                raise ValueError(
+                    f"'{PRESENTATION_ARG}' must be a string (a file name or "
+                    f"full path), got {type(wanted).__name__}"
+                )
+            # Harmless where it means nothing, and clients told to pass it on
+            # every call will, so it is dropped there rather than refused.
+            if name in _TOOLS_WITHOUT_PRESENTATION_ARG:
+                wanted = None
+            wanted = (wanted or "").strip() or None
+        token = call_presentation.set(wanted)
+        try:
+            return await super().call_tool(name, arguments, *args, **kwargs)
+        finally:
+            call_presentation.reset(token)
+
+
+mcp = _PowerPointServer(
+    "powerpoint_mcp",
+    lifespan=app_lifespan,
+    instructions="""
+## Getting started
+
+1. Call `ppt_activate_presentation` first — locks all tools to a specific file and prevents accidental edits to the wrong presentation. The activated presentation is shared by every conversation this server serves, so also pass its `full_name` as `presentation` on every further call: that keeps the call on your file even when another conversation activates a different one. Every tool that works on a presentation takes this optional `presentation` argument next to `params`. It accepts a `full_name` (as returned by `ppt_activate_presentation` or `ppt_open_presentation`), a file name, or a file name without extension; a new unsaved deck goes by the `name` that `ppt_create_presentation` returns. It applies to that call only and never changes the activated presentation. A presentation that is not open is an error, never a fallback to another one.
+2. Call `ppt_get_presentation_info` to understand the presentation — slide count, dimensions, template, current default fonts, and accent colors. Use this to inform all subsequent decisions. When saving files (e.g., exported markdown, images), use the presentation's `local_dir` from `ppt_get_presentation_info` as the default save directory. To read the existing slide content, call `ppt_get_all_text` — it returns all text as pseudo-Markdown with layout analysis, heading detection, and formatting markers.
+3. When adding slides, use `ppt_add_slide` with `count` to create multiple slides at once instead of calling it repeatedly.
+4. After placing text, set fonts explicitly with `ppt_batch_apply_formatting` or `ppt_set_default_fonts`. On Japanese-locale systems, the slide master default is often 游ゴシック, which renders thin and illegible when projected. """ + _PREFERRED_FONTS + """
+5. For visual symbols, `ppt_search_icons` + `ppt_add_svg_icon` produce crisper, scalable results than emoji characters and are generally preferred in presentations.
+6. Use `ppt_get_slide_preview` to visually inspect slides as you work.
+
+## Key tools
+
+- `ppt_batch_apply_formatting`: Apply fill, line, shadow, text formatting to multiple shapes at once. Use whenever styling multiple shapes consistently.
+- `ppt_set_default_shape_style`: Set default fill/border/font before inserting shapes. Can capture all properties from a template shape including gradients.
+- `ppt_add_shape`: Supports inline text styling (`font_name`, `font_size`, `bold`, `font_color`, `align`) — no need for a separate `ppt_format_text` call.
+- `ppt_add_slide`: Accepts `count` to create multiple slides at once.
+- `ppt_set_slide_background`: Accepts `slide_indices` to set background on multiple slides in one call.
+
+## Design thinking
+
+Before placing any shapes, take a moment to plan:
+- **Slide structure**: decide the narrative arc and number of slides upfront
+- **Color system**: use accent colors from `ppt_get_presentation_info` instead of hardcoding RGB values. Pick one accent and use it consistently for icons, headings, and highlights.
+- **Icons**: whenever content has distinct points, steps, or features, add an icon for each — use `ppt_search_icons` + `ppt_add_svg_icon`
+- **One message per slide**: decide what this slide communicates, then place only what supports that message
+
+Standard 16:9 slide = 960 × 540 pt. Default to light backgrounds unless the user specifies otherwise. Always ensure sufficient contrast between text and background.
+
+**Consistency across slides:** use the same heading size, card style, and spacing throughout. `ppt_set_default_shape_style` and `ppt_batch_apply_formatting` are your tools for this. For rounded rectangles, use `corner_radius_pt` (e.g. `10`) to keep the same corner radius across shapes.
+
+**Font sizes** — you should use these. They are what makes a slide readable when projected:
+- Slide title: 40–48 pt
+- Section heading / subheading: 24–32 pt
+- Body text: 20–28 pt
+- Caption / annotation: 16–20 pt
+- **Never go below 16 pt.** Smaller text is unreadable when projected.
+"""
+    + _MACOS_NOTE,
+)
+
+
+# =============================================================================
+# App tools
+# =============================================================================
+from utils.offload import run_offloaded
+from ppt_com.app import (
+    ConnectInput,
+    SetWindowStateInput,
+    connect_to_powerpoint,
+    get_app_info,
+    get_active_window_info,
+    list_presentations,
+    set_window_state,
+)
+
+
+@mcp.tool(
+    name="ppt_connect",
+    annotations={
+        "title": "Connect to PowerPoint",
+        "readOnlyHint": False,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
+)
+async def tool_ppt_connect(params: ConnectInput) -> str:
+    """Connect to a running PowerPoint instance or launch a new one.
+
+    Attempts to connect to an already-running PowerPoint via COM.
+    If no instance is found, launches a new one.
+    Set visible=false for headless mode (background operation).
+    """
+    return await run_offloaded(connect_to_powerpoint, params)
+
+
+@mcp.tool(
+    name="ppt_get_app_info",
+    annotations={
+        "title": "Get PowerPoint App Info",
+        "readOnlyHint": True,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
+)
+async def tool_ppt_get_app_info() -> str:
+    """Get information about the connected PowerPoint application.
+
+    Returns version, visibility, window state, presentation count,
+    and active presentation name.
+    """
+    return await run_offloaded(get_app_info)
+
+
+@mcp.tool(
+    name="ppt_get_active_window",
+    annotations={
+        "title": "Get Active Window Info",
+        "readOnlyHint": True,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
+)
+async def tool_ppt_get_active_window() -> str:
+    """Get info about the active PowerPoint window and current selection.
+
+    Returns window caption, view type, current slide index,
+    and what is selected (shapes, text, or nothing).
+    """
+    return await run_offloaded(get_active_window_info)
+
+
+@mcp.tool(
+    name="ppt_list_presentations",
+    annotations={
+        "title": "List Open Presentations",
+        "readOnlyHint": True,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
+)
+async def tool_ppt_list_presentations() -> str:
+    """List all currently open presentations in PowerPoint.
+
+    Returns name, path, slide count, and status for each.
+    """
+    return await run_offloaded(list_presentations)
+
+
+@mcp.tool(
+    name="ppt_set_window_state",
+    annotations={
+        "title": "Set PowerPoint Window State",
+        "readOnlyHint": False,
+        "destructiveHint": False,
+        "idempotentHint": False,
+        "openWorldHint": False,
+    },
+)
+async def tool_ppt_set_window_state(params: SetWindowStateInput) -> str:
+    """Set the PowerPoint application window state.
+
+    Controls whether the PowerPoint window is maximized, minimized, or
+    restored to normal size.
+    """
+    return await run_offloaded(set_window_state, params)
+
+
+# =============================================================================
+# Import and register additional tool modules as they are implemented.
+# Each module registers its tools below.
+# =============================================================================
+
+# Presentation tools
+try:
+    from ppt_com.presentation import register_tools as register_presentation_tools
+    register_presentation_tools(mcp)
+except ImportError:
+    logger.debug("presentation module not yet available")
+
+# Slide tools
+try:
+    from ppt_com.slides import register_tools as register_slide_tools
+    register_slide_tools(mcp)
+except ImportError:
+    logger.debug("slides module not yet available")
+
+# Shape tools
+try:
+    from ppt_com.shapes import register_tools as register_shape_tools
+    register_shape_tools(mcp)
+except ImportError:
+    logger.debug("shapes module not yet available")
+
+# Text tools
+try:
+    from ppt_com.text import register_tools as register_text_tools
+    register_text_tools(mcp)
+except ImportError:
+    logger.debug("text module not yet available")
+
+# Placeholder tools
+try:
+    from ppt_com.placeholders import register_tools as register_placeholder_tools
+    register_placeholder_tools(mcp)
+except ImportError:
+    logger.debug("placeholders module not yet available")
+
+# Formatting tools
+try:
+    from ppt_com.formatting import register_tools as register_formatting_tools
+    register_formatting_tools(mcp)
+except ImportError:
+    logger.debug("formatting module not yet available")
+
+# Table tools
+try:
+    from ppt_com.tables import register_tools as register_table_tools
+    register_table_tools(mcp)
+except ImportError:
+    logger.debug("tables module not yet available")
+
+# Export tools
+try:
+    from ppt_com.export import register_tools as register_export_tools
+    register_export_tools(mcp)
+except ImportError:
+    logger.debug("export module not yet available")
+
+# SlideShow tools
+try:
+    from ppt_com.slideshow import register_tools as register_slideshow_tools
+    register_slideshow_tools(mcp)
+except ImportError:
+    logger.debug("slideshow module not yet available")
+
+# Groups tools
+try:
+    from ppt_com.groups import register_tools as register_groups_tools
+    register_groups_tools(mcp)
+except ImportError:
+    logger.debug("groups module not yet available")
+
+# Connectors tools
+try:
+    from ppt_com.connectors import register_tools as register_connectors_tools
+    register_connectors_tools(mcp)
+except ImportError:
+    logger.debug("connectors module not yet available")
+
+# Hyperlinks tools
+try:
+    from ppt_com.hyperlinks import register_tools as register_hyperlinks_tools
+    register_hyperlinks_tools(mcp)
+except ImportError:
+    logger.debug("hyperlinks module not yet available")
+
+# Sections tools
+try:
+    from ppt_com.sections import register_tools as register_sections_tools
+    register_sections_tools(mcp)
+except ImportError:
+    logger.debug("sections module not yet available")
+
+# Properties tools
+try:
+    from ppt_com.properties import register_tools as register_properties_tools
+    register_properties_tools(mcp)
+except ImportError:
+    logger.debug("properties module not yet available")
+
+# Charts tools
+try:
+    from ppt_com.charts import register_tools as register_charts_tools
+    register_charts_tools(mcp)
+except ImportError:
+    logger.debug("charts module not yet available")
+
+# Animation tools
+try:
+    from ppt_com.animation import register_tools as register_animation_tools
+    register_animation_tools(mcp)
+except ImportError:
+    logger.debug("animation module not yet available")
+
+# Themes tools
+try:
+    from ppt_com.themes import register_tools as register_themes_tools
+    register_themes_tools(mcp)
+except ImportError:
+    logger.debug("themes module not yet available")
+
+# Media tools
+try:
+    from ppt_com.media import register_tools as register_media_tools
+    register_media_tools(mcp)
+except ImportError:
+    logger.debug("media module not yet available")
+
+# SmartArt tools
+try:
+    from ppt_com.smartart import register_tools as register_smartart_tools
+    register_smartart_tools(mcp)
+except ImportError:
+    logger.debug("smartart module not yet available")
+
+# Edit operations tools (undo, redo, clipboard, format copy)
+try:
+    from ppt_com.edit_ops import register_tools as register_edit_ops_tools
+    register_edit_ops_tools(mcp)
+except ImportError:
+    logger.debug("edit_ops module not yet available")
+
+# Layout tools (align, distribute, slide size, background, flip)
+try:
+    from ppt_com.layout import register_tools as register_layout_tools
+    register_layout_tools(mcp)
+except ImportError:
+    logger.debug("layout module not yet available")
+
+# Visual effects tools (glow, reflection, soft edge)
+try:
+    from ppt_com.effects import register_tools as register_effects_tools
+    register_effects_tools(mcp)
+except ImportError:
+    logger.debug("effects module not yet available")
+
+# Comments tools
+try:
+    from ppt_com.comments import register_tools as register_comments_tools
+    register_comments_tools(mcp)
+except ImportError:
+    logger.debug("comments module not yet available")
+
+# Advanced operations tools (tags, fonts, crop, merge, export, hidden, select, view)
+try:
+    from ppt_com.advanced_ops import register_tools as register_advanced_ops_tools
+    register_advanced_ops_tools(mcp)
+except ImportError:
+    logger.debug("advanced_ops module not yet available")
+
+# Batch apply formatting tools
+try:
+    from ppt_com.batch_apply import register_tools as register_batch_apply_tools
+    register_batch_apply_tools(mcp)
+except ImportError:
+    logger.debug("batch_apply module not yet available")
+
+# Freeform shape tools
+try:
+    from ppt_com.freeform import register_tools as register_freeform_tools
+    register_freeform_tools(mcp)
+except ImportError:
+    logger.debug("freeform module not yet available")
+
+
+# =============================================================================
+# Tools: Slide Preview (Visual Inspection)
+# =============================================================================
+
+
+class GetSlidePreviewInput(BaseModel):
+    slide_index: int = Field(1, ge=1, description="1-based slide index")
+
+
+@mcp.tool(
+    name="ppt_get_slide_preview",
+    annotations={
+        "title": "Get Slide Preview Image",
+        "readOnlyHint": True,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
+)
+async def tool_ppt_get_slide_preview(params: GetSlidePreviewInput) -> Image:
+    """Get a visual preview of a PowerPoint slide as an image.
+
+    This is the RECOMMENDED way to visually inspect slides for appearance, design,
+    layout, colors, text readability, and overall quality. Much more efficient
+    than exporting all slides to files.
+
+    Also navigates the PowerPoint editor window to the target slide so the user
+    can see which slide is being inspected.
+
+    Returns:
+        Image: PNG image of the slide for visual inspection
+    """
+    from backend import IS_MACOS, ppt
+    from utils.navigation import goto_slide
+
+    def _export_slide_impl(slide_idx: int):
+        if IS_MACOS:
+            # PowerPoint for Mac has no Slide.Export. The preview is rendered
+            # from the deck's PDF export instead; see ppt_mac/export.py.
+            from ppt_mac.export import render_slide_png
+
+            goto_slide(ppt._get_app_impl(), slide_idx)
+            return render_slide_png(slide_idx)
+
+        app = ppt._get_app_impl()
+        pres = ppt._get_pres_impl()
+        goto_slide(app, slide_idx)
+
+        # Validate slide
+        if slide_idx < 1 or slide_idx > pres.Slides.Count:
+            raise ValueError(
+                f"Slide index {slide_idx} out of range (1-{pres.Slides.Count})"
+            )
+
+        slide = pres.Slides(slide_idx)
+
+        # Generate temp file path
+        temp_dir = tempfile.gettempdir()
+        temp_file = os.path.join(temp_dir, f"ppt_slide_preview_{slide_idx}.png")
+
+        try:
+            # Export slide as PNG
+            slide.Export(temp_file, "PNG")
+
+            # Read binary data
+            with open(temp_file, "rb") as f:
+                image_data = f.read()
+
+            return image_data
+        finally:
+            # Cleanup
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+
+    image_data = await run_offloaded(ppt.execute, _export_slide_impl, params.slide_index)
+    return Image(data=image_data, format="png")
+
+
+# =============================================================================
+# Tool schema post-processing
+# =============================================================================
+
+
+def _inline_schema_defs(server) -> int:
+    """Inline ``$defs`` references in every registered tool's input schema.
+
+    Every tool takes a single Pydantic model (``params: XInput``), and the SDK
+    renders that as ``{"params": {"$ref": "#/$defs/XInput"}}`` with the model's
+    fields tucked away under ``$defs``. MCP clients such as Claude Desktop do
+    not dereference ``$ref``, so ``params`` showed up as an empty object and
+    callers had to guess field names from validation errors. Inlining keeps
+    the wire schema self-contained; validation still runs against the Pydantic
+    model and is unaffected.
+
+    Returns the number of tools whose schema was rewritten.
+    """
+
+    def _resolve(node, defs, stack):
+        if isinstance(node, list):
+            return [_resolve(item, defs, stack) for item in node]
+        if not isinstance(node, dict):
+            return node
+        ref = node.get("$ref")
+        if isinstance(ref, str) and ref.startswith("#/$defs/"):
+            name = ref[len("#/$defs/"):]
+            target = defs.get(name)
+            if target is not None and name not in stack:
+                merged = dict(target)
+                # Keep sibling keys (e.g. a field-level description) next to
+                # the inlined definition.
+                merged.update({k: v for k, v in node.items() if k != "$ref"})
+                return _resolve(merged, defs, stack + [name])
+            # Unknown target or a recursive schema: leave the reference alone.
+        return {key: _resolve(value, defs, stack) for key, value in node.items()}
+
+    rewritten = 0
+    for tool in server._tool_manager.list_tools():
+        schema = tool.parameters
+        if not isinstance(schema, dict) or "$defs" not in schema:
+            continue
+        defs = schema["$defs"]
+        inlined = _resolve({k: v for k, v in schema.items() if k != "$defs"}, defs, [])
+        if "$ref" in json.dumps(inlined):
+            # Something could not be resolved (recursive model); keep $defs so
+            # the remaining references stay valid.
+            inlined["$defs"] = defs
+        tool.parameters = inlined
+        rewritten += 1
+    return rewritten
+
+
+try:
+    _inlined_tool_count = _inline_schema_defs(mcp)
+    logger.debug("Inlined $defs in %d tool schemas", _inlined_tool_count)
+except Exception:
+    # _tool_manager and Tool.parameters are SDK internals, and the SDK has
+    # renamed internals across majors before (see the MCPServer import above).
+    # Losing the inlining costs clients an extra round trip; losing the import
+    # would cost them every tool, so degrade instead of failing to start.
+    logger.warning(
+        "Could not inline $defs in tool schemas; they keep their $ref form",
+        exc_info=True,
+    )
+    _inlined_tool_count = 0
+
+
+def _add_presentation_arg(server) -> int:
+    """Declare the per-call `presentation` argument in the input schemas.
+
+    _PowerPointServer.call_tool is what honours it; this only makes it visible
+    to clients. Tools listed in _TOOLS_WITHOUT_PRESENTATION_ARG are skipped.
+    The argument sits next to `params` and is never required.
+
+    Returns the number of tools that gained the argument.
+    """
+    added = 0
+    for tool in server._tool_manager.list_tools():
+        if tool.name in _TOOLS_WITHOUT_PRESENTATION_ARG:
+            continue
+        schema = dict(tool.parameters)
+        properties = dict(schema.get("properties") or {})
+        if PRESENTATION_ARG in properties:
+            raise RuntimeError(f"{tool.name} already has a '{PRESENTATION_ARG}' argument")
+        properties[PRESENTATION_ARG] = dict(_PRESENTATION_ARG_SCHEMA)
+        schema["properties"] = properties
+        tool.parameters = schema
+        added += 1
+    return added
+
+
+try:
+    _presentation_arg_count = _add_presentation_arg(mcp)
+except Exception:
+    # Same SDK internals as _inline_schema_defs, and the same reasoning: the
+    # argument still works when a client sends it, it is only not advertised.
+    logger.warning(
+        "Could not add the 'presentation' argument to tool schemas",
+        exc_info=True,
+    )
+    _presentation_arg_count = 0
+
+
+def main():
+    """Entry point for the MCP server."""
+    mcp.run()
+
+
+if __name__ == "__main__":
+    main()

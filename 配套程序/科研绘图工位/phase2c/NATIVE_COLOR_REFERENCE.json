@@ -1,0 +1,9 @@
+{
+  "source": "phase2c/runs/20261007_194020/bar_raw/origin_render_report.json",
+  "source_sha256": "82658f5986a8cf59989f04d44b87362aef2d9b4cab17990ac47e24424e0c857e",
+  "codes_from_official_Origin_ocolor": {
+    "#4D4D4D": 21843277.0,
+    "#0072B2": 28471808.0,
+    "#D55E00": 16801493.0
+  }
+}

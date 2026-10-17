@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "figure_id": "bar_raw",
+  "style_version": "style_v0_1_selected",
+  "manuscript_id": "SYNTHETIC_MVP_20261003",
+  "tokens": {
+    "width_mm": 89.0,
+    "height_mm": 65.0,
+    "font_family": "Arial",
+    "axis_title_pt": 7.0,
+    "tick_pt": 7.0,
+    "legend_pt": 7.0,
+    "panel_label_pt": 8.0,
+    "axis_width_pt": 0.7,
+    "tick_width_pt": 0.7,
+    "tick_length_pt": 2.5,
+    "tick_direction": "out",
+    "marker_size_pt": 4.2,
+    "raw_marker_size_pt": 2.6,
+    "line_width_pt": 1.0,
+    "error_width_pt": 0.8,
+    "error_cap_pt": 2.0,
+    "legend_frame": false,
+    "background": "#FFFFFF",
+    "grid": false,
+    "raw_alpha": 0.75,
+    "fill_alpha": 1.0,
+    "line_alpha": 1.0,
+    "band_alpha": 0.15,
+    "layer_left_percent": 18.0,
+    "layer_top_percent": 12.0,
+    "layer_width_percent": 77.0,
+    "layer_height_percent": 68.0,
+    "frame": "left_bottom",
+    "axis_title_bold": false
+  },
+  "groups": {
+    "control": {
+      "stable_group_id": "control",
+      "display_name": "Control",
+      "semantic_role": "control",
+      "fill": "#4D4D4D",
+      "edge": "#4D4D4D",
+      "marker": "circle",
+      "line_style": "solid",
+      "alpha": 1.0,
+      "saturation": 1.0,
+      "saturation_behavior": "identity",
+      "display_order": 0
+    },
+    "material": {
+      "stable_group_id": "material",
+      "display_name": "Material",
+      "semantic_role": "comparison",
+      "fill": "#0072B2",
+      "edge": "#0072B2",
+      "marker": "square",
+      "line_style": "solid",
+      "alpha": 1.0,
+      "saturation": 1.0,
+      "saturation_behavior": "identity",
+      "display_order": 1
+    },
+    "treatment": {
+      "stable_group_id": "treatment",
+      "display_name": "Treatment",
+      "semantic_role": "intervention",
+      "fill": "#D55E00",
+      "edge": "#D55E00",
+      "marker": "triangle",
+      "line_style": "solid",
+      "alpha": 1.0,
+      "saturation": 1.0,
+      "saturation_behavior": "identity",
+      "display_order": 2
+    }
+  },
+  "all_groups": {
+    "control": {
+      "stable_group_id": "control",
+      "display_name": "Control",
+      "semantic_role": "control",
+      "fill": "#4D4D4D",
+      "edge": "#4D4D4D",
+      "marker": "circle",
+      "line_style": "solid",
+      "alpha": 1.0,
+      "saturation": 1.0,
+      "saturation_behavior": "identity",
+      "display_order": 0
+    },
+    "material": {
+      "stable_group_id": "material",
+      "display_name": "Material",
+      "semantic_role": "comparison",
+      "fill": "#0072B2",
+      "edge": "#0072B2",
+      "marker": "square",
+      "line_style": "solid",
+      "alpha": 1.0,
+      "saturation": 1.0,
+      "saturation_behavior": "identity",
+      "display_order": 1
+    },
+    "treatment": {
+      "stable_group_id": "treatment",
+      "display_name": "Treatment",
+      "semantic_role": "intervention",
+      "fill": "#D55E00",
+      "edge": "#D55E00",
+      "marker": "triangle",
+      "line_style": "solid",
+      "alpha": 1.0,
+      "saturation": 1.0,
+      "saturation_behavior": "identity",
+      "display_order": 2
+    }
+  },
+  "series": [
+    {
+      "group_id": "control",
+      "x": "X_categories",
+      "y": "control",
+      "plot_type": "c",
+      "role": "group_summary",
+      "unit_ids": [],
+      "error": "control_SD"
+    },
+    {
+      "group_id": "control",
+      "x": "RawX_control",
+      "y": "control_raw",
+      "plot_type": "s",
+      "role": "unit",
+      "unit_ids": [
+        "control_animal_0",
+        "control_animal_1",
+        "control_animal_2",
+        "control_animal_3"
+      ]
+    },
+    {
+      "group_id": "material",
+      "x": "X_categories",
+      "y": "material",
+      "plot_type": "c",
+      "role": "group_summary",
+      "unit_ids": [],
+      "error": "material_SD"
+    },
+    {
+      "group_id": "material",
+      "x": "RawX_material",
+      "y": "material_raw",
+      "plot_type": "s",
+      "role": "unit",
+      "unit_ids": [
+        "material_animal_0",
+        "material_animal_1",
+        "material_animal_2",
+        "material_animal_3"
+      ]
+    },
+    {
+      "group_id": "treatment",
+      "x": "X_categories",
+      "y": "treatment",
+      "plot_type": "c",
+      "role": "group_summary",
+      "unit_ids": [],
+      "error": "treatment_SD"
+    },
+    {
+      "group_id": "treatment",
+      "x": "RawX_treatment",
+      "y": "treatment_raw",
+      "plot_type": "s",
+      "role": "unit",
+      "unit_ids": [
+        "treatment_animal_0",
+        "treatment_animal_1",
+        "treatment_animal_2",
+        "treatment_animal_3"
+      ]
+    }
+  ],
+  "plot_kind": "bar_raw",
+  "backend_route": "scientific",
+  "x_title": "Group",
+  "y_title": "Response (a.u.)",
+  "x_limits": [
+    0.5,
+    3.5,
+    1
+  ],
+  "y_limits": [
+    0,
+    5,
+    1
+  ],
+  "x_scale": "linear",
+  "y_scale": "linear",
+  "category_column": null,
+  "bins": null,
+  "source_sha256": "094302c2140f5ad78a83a3199e437efa08704a1ffb6679e91e6c0340b8071938",
+  "plot_data_sha256": "a2d4bdc16ea55cc6b6908757b175cf0fb3ec3df4629d14fc90467a44d0cb4902",
+  "analysis_sha256": "fa7abb55a178e3e42b371ee6167fb08b6de21db9eb6166f064155f49667f34d5",
+  "contract_sha256": "e3baf134a55cdf16c028dd8612b93743f1f2c81228e2eb2259ca562106728571",
+  "style_sha256": "20b46b50ffe97fe03ce844d526c5007ea75a934507ebea94e615b1b513855bc9",
+  "renderer_statistics": "NO UNAPPROVED COMPUTATION",
+  "raw_required": false,
+  "variant_of": "bar_raw_shared_x",
+  "variant_reason": "Approved bar display opacity exposes all independent raw points",
+  "native_bar_fill_transparency_percent": 70
+}

@@ -1,0 +1,13 @@
+unit_id,group,x,value
+control_animal_0,control,1,1.8284787690808106
+control_animal_1,control,1,1.9830418429597756
+control_animal_2,control,1,2.4450720212134325
+control_animal_3,control,1,2.3604229886098507
+material_animal_0,material,2,2.2638192440139
+material_animal_1,material,2,2.932711728009507
+material_animal_2,material,2,3.0004781996267504
+material_animal_3,material,2,3.0228664992634324
+treatment_animal_0,treatment,3,3.058921926291496
+treatment_animal_1,treatment,3,3.6340610204348103
+treatment_animal_2,treatment,3,3.9550141736057296
+treatment_animal_3,treatment,3,3.4709422563330747

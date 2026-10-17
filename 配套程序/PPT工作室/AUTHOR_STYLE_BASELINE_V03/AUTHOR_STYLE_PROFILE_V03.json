@@ -1,0 +1,528 @@
+{
+  "profile_id": "AUTHOR_STYLE_PROFILE_V03",
+  "baseline_id": "AUTHOR_STYLE_BASELINE_V03",
+  "status": "DEFAULT_BASELINE",
+  "acceptance": {
+    "source": "MAINTAINER_DEFAULT_STYLE",
+    "target_user": "NOT_YET_ACCEPTED",
+    "scientific_conclusions": "NOT_INDEPENDENTLY_VALIDATED"
+  },
+  "principle": "V03 is a default, not a template.",
+  "created_date": "2026-10-07",
+  "scope": "科研PPT作者默认风格；本轮明确要求与内容需求优先",
+  "schema_policy": "轻量可读配置，不是强制schema或坐标模板",
+  "brand": {
+    "primary": "#003F88",
+    "secondary": [
+      "#FFFFFF",
+      "#303030"
+    ],
+    "auxiliary": "必要的浅蓝，仅辅助；不强改真实科学颜色",
+    "logos": [],
+    "logo_policy": {
+      "default_cover": "Only use assets supplied or explicitly approved for the current task",
+      "default_normal": "Optional small task-approved logo; may be omitted",
+      "presence_position_pairing": "ADAPTIVE",
+      "preserve_original_color_and_aspect": true,
+      "provenance": "not_recorded_for_target_user"
+    }
+  },
+  "typography": {
+    "chinese": "Microsoft YaHei / 微软雅黑",
+    "latin": "Microsoft YaHei for authored outer text; preserve source-figure fonts",
+    "title": {
+      "default_pt": 28,
+      "cover_starting_pt": 40,
+      "role": "STRONG_DEFAULT, adapt to readable hierarchy"
+    },
+    "body": {
+      "suggested_pt": [
+        17,
+        20
+      ]
+    },
+    "caption": {
+      "suggested_pt": [
+        12,
+        16
+      ],
+      "note": "新加外部说明建议；原科学图内字号不擅改"
+    },
+    "conclusion": {
+      "suggested_pt": [
+        17,
+        21
+      ],
+      "style": "clear concise single main expression; not always bottom or blue band"
+    }
+  },
+  "layout": {
+    "margins": {
+      "starting_horizontal_fraction": [
+        0.035,
+        0.05
+      ],
+      "role": "suggestion; no frozen x/y coordinates"
+    },
+    "grid": "content-selected; unrestricted new patterns allowed",
+    "spacing": "space separates evidence and explanation; no fixed row/column gap",
+    "preferred_density": {
+      "data_area_fraction_hint": [
+        0.75,
+        0.9
+      ],
+      "role": "rough candidate range for data pages, not a quota",
+      "exceptions": "workflow/table/summary/low-resolution composite may need other balance"
+    },
+    "canvas_reference": "V03 uses 16:9 960×540pt; follows task constraints, not invariant"
+  },
+  "scientific": {
+    "preserve_data": true,
+    "preserve_color_encoding": true,
+    "result_priority": "primary evidence before branding/decoration",
+    "conclusion_policy": "source-supported; may be title, side, bottom, local or absent; do not repeat same claim three times",
+    "sample_correspondence": "not_recorded stays unknown; placement is not evidence"
+  },
+  "avoid": {
+    "page_numbers": "absent by default; explicit current-task request can override",
+    "ai_cards": "avoid automatic card-heavy layouts",
+    "decorative_gradients": "avoid; preserve scientific gradients",
+    "emojis": "avoid unrelated additions",
+    "fake_dashboard": "avoid synthetic metrics presented as results",
+    "unnecessary_icons": "avoid unrelated additions"
+  },
+  "defaults": {
+    "rule_class": "STRONG_DEFAULT",
+    "rules": [
+      {
+        "id": "D01",
+        "preference": "科研蓝 #003F88",
+        "qualification": "外部层级色，保留实验原色编码"
+      },
+      {
+        "id": "D02",
+        "preference": "白底",
+        "qualification": "有明确内容/参考要求时可以改变"
+      },
+      {
+        "id": "D03",
+        "preference": "黑色或深灰正文",
+        "qualification": "保持可读对比"
+      },
+      {
+        "id": "D04",
+        "preference": "数据优先与大图优先",
+        "qualification": "图占内容区主体；按素材分辨率与比较关系调整"
+      },
+      {
+        "id": "D05",
+        "preference": "结论精炼清晰",
+        "qualification": "结论应贴证据；有明确展示现象要求时取消"
+      },
+      {
+        "id": "D06",
+        "preference": "克制科研风格",
+        "qualification": "少装饰，不做商业仪表盘式结果包装"
+      },
+      {
+        "id": "D07",
+        "preference": "普通页品牌低存在感",
+        "qualification": "无机构标识的默认示例；可以移位或省去"
+      },
+      {
+        "id": "D08",
+        "preference": "避免多彩卡片",
+        "qualification": "内容需要分组时可用轻分区，不把所有结果改三卡片"
+      },
+      {
+        "id": "D09",
+        "preference": "避免渐变装饰",
+        "qualification": "不同于保留真实热图/荧光强度梯度"
+      },
+      {
+        "id": "D10",
+        "preference": "避免三卡片AI套版",
+        "qualification": "不是禁止真正有意义的三组并列"
+      },
+      {
+        "id": "D11",
+        "preference": "figure first",
+        "qualification": "先读图，再精炼解释"
+      },
+      {
+        "id": "D12",
+        "preference": "conclusion close to evidence",
+        "qualification": "位置依内容，不强制蓝带"
+      },
+      {
+        "id": "D13",
+        "preference": "V03标题层级",
+        "qualification": "正文页约28pt/蓝色、封面约40pt，仅起始参考"
+      },
+      {
+        "id": "D14",
+        "preference": "无emoji、fake dashboard和无关图标",
+        "qualification": "不删原实验图片中必要标记与科学符号"
+      }
+    ],
+    "figure_first": true,
+    "title_hierarchy": "V03 family; TOPIC or supported CLAIM",
+    "normal_logo_low_presence": true,
+    "editable_objects_preferred": true
+  },
+  "adaptive": {
+    "rule_class": "ADAPTIVE_HEURISTIC",
+    "content_determines_layout": true,
+    "decisions": [
+      {
+        "id": "A01",
+        "decision": "Logo 是否出现",
+        "policy": "根据身份识别价值与证据空间决定，冲突可省略",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A02",
+        "decision": "Logo 放哪里",
+        "policy": "选择干净边缘区，在同一deck同类页面保持一致；不挤标题或图",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A03",
+        "decision": "ZJU 与 College 是否同时出现",
+        "policy": "封面可双组合，普通页通常单标识；遵从任务要求",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A04",
+        "decision": "底部 conclusion 是否需要",
+        "policy": "现象展示/未知结论可不设；标题已表达则不重复",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A05",
+        "decision": "是否使用 claim title",
+        "policy": "证据支持单一明确结果才优先；多观察/导航用TOPIC",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A06",
+        "decision": "是否左图右文",
+        "policy": "取决于原图比例、信息量和证据-解释绑定",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A07",
+        "decision": "是否两栏",
+        "policy": "真正并读两证据时是候选；原复合图不强拆",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A08",
+        "decision": "是否三栏",
+        "policy": "确有三类可比较证据且标签可读时可用",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A09",
+        "decision": "是否拆两页",
+        "policy": "先确保比较完整；用户要求同页时保留同页并重新分配空间",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A10",
+        "decision": "多panel是否同页",
+        "policy": "比较需要决定；不为数量齐全挤成不可读小图",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A11",
+        "decision": "是否加annotation",
+        "policy": "只加来源支持、必要且不会遮挡的科学说明",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A12",
+        "decision": "annotation位置",
+        "policy": "靠对应panel但不建立未证实样本/因果对应",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A13",
+        "decision": "figure最大尺寸",
+        "policy": "由分辨率、标尺/图例可读性、比较范围及页面共同决定",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A14",
+        "decision": "是否保留较多whitespace",
+        "policy": "有助隔离证据、突出主图可保留；无效空白应重新分配真实内容",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A15",
+        "decision": "是否加小标题",
+        "policy": "需要导航/方法区分时加；不复制总标题/结论",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      },
+      {
+        "id": "A16",
+        "decision": "是否加入section divider",
+        "policy": "报告较长且需要阶段切换时可加；不按固定页间隔插入",
+        "rule_class": "ADAPTIVE_HEURISTIC"
+      }
+    ],
+    "routing": {
+      "MICROSCOPY": {
+        "candidates": [
+          "microscopy_matrix",
+          "single_large_field",
+          "main_plus_backup"
+        ],
+        "check": "倍率/处理/样本关系与原标尺；不能靠排列猜配对"
+      },
+      "MICROSCOPY + QUANT": {
+        "candidates": [
+          "image_matrix_with_adjacent_quant",
+          "composite_with_side_findings"
+        ],
+        "check": "图像与定量是否同实验单位、同组别"
+      },
+      "SPECTROSCOPY": {
+        "candidates": [
+          "two_large_spectra",
+          "single_spectrum_with_local_annotation"
+        ],
+        "check": "峰位、轴、单位与图例；不强改科学配色"
+      },
+      "MULTI-PLOT": {
+        "candidates": [
+          "two_by_three_plot_matrix",
+          "two_pages_of_three",
+          "question_grouped_rows"
+        ],
+        "check": "共享问题/组别和可读刻度；Origin原图不重绘"
+      },
+      "HISTOLOGY": {
+        "candidates": [
+          "treatment_time_matrix_plus_quant",
+          "large_native_composite"
+        ],
+        "check": "组织类型、时间、组别、原标尺"
+      },
+      "OMICS": {
+        "candidates": [
+          "question_evidence_validation_sequence",
+          "overview_then_detail"
+        ],
+        "check": "实验单位、批次、模型、阈值和假设边界"
+      },
+      "HEATMAP": {
+        "candidates": [
+          "heatmap_dominant",
+          "heatmap_with_focused_side_note"
+        ],
+        "check": "行列、聚类、色标、归一化和样本身份"
+      },
+      "VOLCANO": {
+        "candidates": [
+          "volcano_dominant",
+          "volcano_with_validated_gene_notes"
+        ],
+        "check": "阈值、FDR/显著性、fold change和标注来源"
+      },
+      "WORKFLOW": {
+        "candidates": [
+          "linear_process",
+          "loop_with_feedback",
+          "dependency_lanes"
+        ],
+        "check": "实际顺序/分支/反馈；同一行不等于同一时间"
+      },
+      "MECHANISM": {
+        "candidates": [
+          "restrained_native_causal_diagram",
+          "two_state_mechanism_comparison"
+        ],
+        "check": "机制示意≠实测数据；证据/假设不同标注"
+      },
+      "TABLE": {
+        "candidates": [
+          "native_comparison_table",
+          "table_plus_one_question"
+        ],
+        "check": "实验条件、未知值留待定，不用卡片掩盖精确条件"
+      },
+      "PHOTO": {
+        "candidates": [
+          "single_context_photo",
+          "documented_series"
+        ],
+        "check": "身份、时间、用途及科学/隐私边界"
+      },
+      "MULTI-PANEL FIGURE": {
+        "candidates": [
+          "intact_composite_dominant",
+          "linked_overview_detail_pages"
+        ],
+        "check": "已排好/禁止拆的图完整保留，放大后标签能否读"
+      },
+      "MIXED DATA": {
+        "candidates": [
+          "primary_evidence_plus_secondary",
+          "paired_evidence_rows",
+          "main_plus_supplement"
+        ],
+        "check": "先区分证据层级与已确认对应，不把不同数据硬等同"
+      }
+    },
+    "new_layout_allowed": true,
+    "new_layout_guards": [
+      "scientific clarity",
+      "ZJU visual family unless explicit task override",
+      "restrained styling",
+      "data prominence",
+      "honest editability"
+    ]
+  },
+  "hard_invariants": [
+    {
+      "id": "H01",
+      "rule": "科研数据真实性优先",
+      "operational_meaning": "不得用视觉效果、作者风格或模型推测替代来源证据。",
+      "guard": "scientific_integrity",
+      "rule_class": "HARD_INVARIANT",
+      "override": "明确、来源可核对的修改可另作新版本；不允许造假或抹掉完整证据"
+    },
+    {
+      "id": "H02",
+      "rule": "不 AI 重画真实实验数据",
+      "operational_meaning": "实验图像/结果不得生成或描摹后伪装成原实验；机制示意须另标示意。",
+      "guard": "scientific_integrity",
+      "rule_class": "HARD_INVARIANT",
+      "override": "明确、来源可核对的修改可另作新版本；不允许造假或抹掉完整证据"
+    },
+    {
+      "id": "H03",
+      "rule": "默认保持用户图像内容完整",
+      "operational_meaning": "不自行裁掉图例、标尺、单位、面板或有效信号；裁切须明确授权并留原图。",
+      "guard": "scientific_integrity",
+      "rule_class": "HARD_INVARIANT",
+      "override": "明确、来源可核对的修改可另作新版本；不允许造假或抹掉完整证据"
+    },
+    {
+      "id": "H04",
+      "rule": "不改变统计结果",
+      "operational_meaning": "不改数值、误差线、n、检验、显著性和统计语义；有疑点先追溯来源。",
+      "guard": "scientific_integrity",
+      "rule_class": "HARD_INVARIANT",
+      "override": "明确、来源可核对的修改可另作新版本；不允许造假或抹掉完整证据"
+    },
+    {
+      "id": "H05",
+      "rule": "不改变 scale bar 标定",
+      "operational_meaning": "标尺、图像与标尺标签耦合等比缩放；不单独拉长标尺、改数字或破坏标定。",
+      "guard": "scientific_integrity",
+      "rule_class": "HARD_INVARIANT",
+      "override": "明确、来源可核对的修改可另作新版本；不允许造假或抹掉完整证据"
+    },
+    {
+      "id": "H06",
+      "rule": "不改写数据含义",
+      "operational_meaning": "不把不同单位/实验/样本/视野视觉拼成已确认对应；未知项保持未知。",
+      "guard": "scientific_integrity",
+      "rule_class": "HARD_INVARIANT",
+      "override": "明确、来源可核对的修改可另作新版本；不允许造假或抹掉完整证据"
+    },
+    {
+      "id": "H07",
+      "rule": "品牌不变形、不AI重画",
+      "operational_meaning": "官方logo按原比例和原色使用，不拼接周年标识伪造普通标识。",
+      "guard": "provenance",
+      "rule_class": "HARD_INVARIANT",
+      "override": "不得以未验证资产或不真实编辑声明绕过"
+    },
+    {
+      "id": "H08",
+      "rule": "品牌来源可验证",
+      "operational_meaning": "使用有来源页、原资产和哈希的确认资产；新用户指定资产仍先核验身份。",
+      "guard": "provenance",
+      "rule_class": "HARD_INVARIANT",
+      "override": "不得以未验证资产或不真实编辑声明绕过"
+    },
+    {
+      "id": "H09",
+      "rule": "默认无页码",
+      "operational_meaning": "构建起点不添加显示型页码；本轮用户明确要求页码时可局部覆盖。",
+      "guard": "explicit_override_allowed",
+      "rule_class": "HARD_INVARIANT",
+      "override": "本轮明确用户要求可覆盖起点/优先项，来源与可编辑性声明仍须真实"
+    },
+    {
+      "id": "H10",
+      "rule": "不flatten整页冒充可编辑",
+      "operational_meaning": "禁止整页栅格图假称可编辑PPT；原始复合图作一张图片可保留，但需如实说明编辑边界。",
+      "guard": "honest_editability",
+      "rule_class": "HARD_INVARIANT",
+      "override": "不得以未验证资产或不真实编辑声明绕过"
+    },
+    {
+      "id": "H11",
+      "rule": "能原生时优先原生",
+      "operational_meaning": "可行的外部文本、图形、表格、图表先用原生对象；原数据无可核对数值时保留原图片，不能为原生化重画。",
+      "guard": "mandatory_preference",
+      "rule_class": "HARD_INVARIANT",
+      "override": "本轮明确用户要求可覆盖起点/优先项，来源与可编辑性声明仍须真实"
+    },
+    {
+      "id": "H12",
+      "rule": "不升级假设与趋势",
+      "operational_meaning": "hypothesis/trend/待讨论设计不能变确定结果；CLAIM标题须有明确证据。",
+      "guard": "scientific_integrity",
+      "rule_class": "HARD_INVARIANT",
+      "override": "明确、来源可核对的修改可另作新版本；不允许造假或抹掉完整证据"
+    },
+    {
+      "id": "H13",
+      "rule": "不自行添加无关AI装饰",
+      "operational_meaning": "默认工作流不加与科研阅读无关的AI装饰；明确作者要求属任务覆盖，仍不得遮挡/替代证据。",
+      "guard": "explicit_override_allowed",
+      "rule_class": "HARD_INVARIANT",
+      "override": "本轮明确用户要求可覆盖起点/优先项，来源与可编辑性声明仍须真实"
+    }
+  ],
+  "human_override": {
+    "priority": [
+      "scientific_truth_and_data_integrity",
+      "explicit_current_user_request",
+      "explicit_user_reference_or_asset",
+      "current_content_needs",
+      "AUTHOR_STYLE_BASELINE_V03",
+      "generic_presentation_heuristic"
+    ],
+    "scopes": [
+      "OBJECT_LEVEL",
+      "SLIDE_LEVEL",
+      "SECTION_LEVEL",
+      "DECK_LEVEL",
+      "SESSION_LEVEL",
+      "PROFILE_LEVEL"
+    ],
+    "default_scope": "smallest reasonable scope, only current task",
+    "profile_update": "record proposal only; explicit confirmation required; create future version, never overwrite frozen V03",
+    "profile_update_triggers": [
+      "以后",
+      "从现在开始",
+      "所有PPT",
+      "我以后都喜欢这样",
+      "把这个作为我的默认风格"
+    ]
+  },
+  "feedback": {
+    "automatic_permanent_learning": false,
+    "candidate_file": "AUTHOR_FEEDBACK_CANDIDATES.md",
+    "threshold": "repeated across tasks and explicitly accepted; not model-inferred recurrence",
+    "upgrade_condition": "stable author style change and human confirmation, not every deck",
+    "storage_policy": "本文件夹候选台账是基线交付快照；未来反馈写当前任务同名候选文件，跨任务稳定偏好用来源task_id提出汇总proposal，不自动写当前冻结profile或台账"
+  },
+  "source_documents": []
+}

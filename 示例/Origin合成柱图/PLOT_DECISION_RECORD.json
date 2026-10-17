@@ -1,0 +1,47 @@
+{
+  "scientific_question": "explicit_summary_bar: synthetic semantic/native compatibility example",
+  "experimental_unit": {
+    "type": "animal",
+    "id_column": "unit_id",
+    "definition": "Independent synthetic treatment/inference unit; acquisition rows never increase n.",
+    "independence_id_column": "unit_id"
+  },
+  "statistical_n": {
+    "STATISTICAL_N_IS": "animal",
+    "stratum_columns": [
+      "group"
+    ],
+    "by_stratum": {
+      "control": 4,
+      "material": 4,
+      "treatment": 4
+    }
+  },
+  "nested_subsamples": [],
+  "x_variable": {
+    "type": "categorical",
+    "spacing": "explicit_category",
+    "column": "x"
+  },
+  "y_variable": {
+    "type": "continuous",
+    "units": "a.u.",
+    "column": "value"
+  },
+  "paired_repeated": {
+    "paired": false,
+    "repeated": false,
+    "independent_by_x": false,
+    "pair_id_column": null
+  },
+  "approved_summary": {
+    "type": "mean"
+  },
+  "approved_uncertainty": {
+    "type": "SD",
+    "quantity_column_suffix": "_SD"
+  },
+  "selected_plot_archetype": "bar_raw",
+  "why": "Explicitly requested approved categorical summary plus raw unit evidence",
+  "alternatives_not_selected": "Raw-summary is preferred by default; a bar alone hides variation."
+}

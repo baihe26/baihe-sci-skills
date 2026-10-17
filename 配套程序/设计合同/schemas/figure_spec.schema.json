@@ -1,0 +1,963 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:scientific-visual-compiler:figure-spec:1.0.0",
+  "title": "Scientific Visual Compiler FigureSpec V1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "compiler_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "input_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "epistemic_status": {
+                "type": "string",
+                "minLength": 1
+              },
+              "derived_from": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "path",
+              "sha256",
+              "epistemic_status",
+              "derived_from"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        },
+        "design_status": {
+          "type": "string",
+          "enum": [
+            "DRAFT_NEEDS_REVIEW"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "compiler_version",
+        "input_sha256",
+        "input_text",
+        "sources",
+        "design_status"
+      ],
+      "additionalProperties": false
+    },
+    "figure_type": {
+      "type": "string",
+      "enum": [
+        "MECHANISM_FIGURE",
+        "GRAPHICAL_ABSTRACT",
+        "WORKFLOW_TECHNICAL_ROUTE"
+      ]
+    },
+    "central_message": {
+      "type": "string",
+      "minLength": 1
+    },
+    "supporting_messages": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "omissions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "text",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "scientific_claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "statement": {
+            "type": "string",
+            "minLength": 1
+          },
+          "claim_kind": {
+            "type": "string",
+            "enum": [
+              "measured_result",
+              "inferred_mechanism",
+              "hypothesis",
+              "procedure",
+              "context",
+              "negated_claim"
+            ]
+          },
+          "evidence_level": {
+            "type": "string",
+            "enum": [
+              "KNOWN",
+              "DIRECTLY_SUPPORTED",
+              "INFERRED",
+              "HYPOTHESIZED",
+              "OPTIONAL_DECORATIVE"
+            ]
+          },
+          "source_span": {
+            "type": "object",
+            "properties": {
+              "quote": {
+                "type": "string",
+                "minLength": 1
+              },
+              "start": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "end": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "quote",
+              "start",
+              "end"
+            ],
+            "additionalProperties": false
+          },
+          "supporting_source_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+            },
+            "minItems": 0
+          },
+          "entity_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+            },
+            "minItems": 0
+          }
+        },
+        "required": [
+          "id",
+          "statement",
+          "claim_kind",
+          "evidence_level",
+          "source_span",
+          "supporting_source_ids",
+          "entity_ids"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "evidence_levels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "KNOWN",
+          "DIRECTLY_SUPPORTED",
+          "INFERRED",
+          "HYPOTHESIZED",
+          "OPTIONAL_DECORATIVE"
+        ]
+      },
+      "minItems": 1
+    },
+    "story_direction": {
+      "type": "string",
+      "enum": [
+        "left_to_right",
+        "top_to_bottom",
+        "material_to_cell_to_tissue",
+        "input_process_output",
+        "comparison",
+        "center_out"
+      ]
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "entity_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "entity_ids"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "panels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "zone_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+            },
+            "minItems": 1
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "hero",
+              "support"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "zone_ids",
+          "role"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "layout_zones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "x,y,width,height in canvas viewBox units"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "hero",
+              "support",
+              "context"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "bbox",
+          "role"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "canonical_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "display_label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "entity_type": {
+            "type": "string",
+            "enum": [
+              "material",
+              "cell",
+              "tissue",
+              "molecule",
+              "intervention",
+              "stage",
+              "outcome",
+              "equipment",
+              "symbol"
+            ]
+          },
+          "scientific_role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "visual_role": {
+            "type": "string",
+            "enum": [
+              "hero",
+              "support",
+              "context"
+            ]
+          },
+          "importance": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "preferred_representation": {
+            "type": "string",
+            "enum": [
+              "native_vector",
+              "asset_library",
+              "procedural",
+              "generated_asset"
+            ]
+          },
+          "repeat_consistency_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_spans": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "quote": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "start": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "end": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "quote",
+                "start",
+                "end"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          },
+          "zone_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "x,y,width,height in canvas viewBox units; not legacy xyxy"
+          },
+          "color_role": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "canonical_name",
+          "display_label",
+          "entity_type",
+          "scientific_role",
+          "visual_role",
+          "importance",
+          "preferred_representation",
+          "repeat_consistency_key",
+          "source_spans",
+          "zone_id",
+          "bbox",
+          "color_role"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "source": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "target": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "relation_type": {
+            "type": "string",
+            "enum": [
+              "temporal_order",
+              "activation",
+              "inhibition",
+              "association",
+              "spatial",
+              "material_formation",
+              "proposed_effect"
+            ]
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "forward",
+              "undirected"
+            ]
+          },
+          "certainty": {
+            "type": "string",
+            "enum": [
+              "KNOWN",
+              "DIRECTLY_SUPPORTED",
+              "INFERRED",
+              "HYPOTHESIZED",
+              "OPTIONAL_DECORATIVE"
+            ]
+          },
+          "visual_encoding": {
+            "type": "string",
+            "enum": [
+              "solid_arrow",
+              "dashed_arrow",
+              "inhibition_bar",
+              "dashed_inhibition_bar",
+              "association_line"
+            ]
+          },
+          "claim_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "target",
+          "relation_type",
+          "direction",
+          "certainty",
+          "visual_encoding",
+          "claim_id"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "relationship_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "waypoints": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "minItems": 2
+          },
+          "encoding": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "relationship_id",
+          "waypoints",
+          "encoding"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "entity_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "native_required": {
+            "const": true
+          }
+        },
+        "required": [
+          "id",
+          "entity_id",
+          "text",
+          "native_required"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "semantic_color_roles": {
+      "type": "object",
+      "properties": {
+        "material": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prp": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cell": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tissue": {
+          "type": "string",
+          "minLength": 1
+        },
+        "molecule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stage": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uncertainty": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "material",
+        "prp",
+        "cell",
+        "tissue",
+        "molecule",
+        "stage",
+        "outcome",
+        "uncertainty",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "visual_hierarchy": {
+      "type": "object",
+      "properties": {
+        "hero_entity_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "minItems": 0
+        },
+        "support_entity_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "minItems": 0
+        },
+        "reading_order": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "minItems": 1
+        },
+        "label_font_pt": {
+          "type": "number"
+        },
+        "title_font_pt": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "hero_entity_ids",
+        "support_entity_ids",
+        "reading_order",
+        "label_font_pt",
+        "title_font_pt"
+      ],
+      "additionalProperties": false
+    },
+    "asset_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "entity_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "scientific_meaning": {
+            "type": "string",
+            "minLength": 1
+          },
+          "visual_style": {
+            "type": "string",
+            "minLength": 1
+          },
+          "view_angle": {
+            "type": "string",
+            "minLength": 1
+          },
+          "palette_role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "editable_type": {
+            "type": "string",
+            "enum": [
+              "native_vector",
+              "path_vector",
+              "transparent_raster",
+              "placeholder"
+            ]
+          },
+          "reuse_constraints": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "preferred_source": {
+            "type": "string",
+            "enum": [
+              "asset_library",
+              "procedural",
+              "generated_asset"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "entity_id",
+          "scientific_meaning",
+          "visual_style",
+          "view_angle",
+          "palette_role",
+          "editable_type",
+          "reuse_constraints",
+          "preferred_source",
+          "required"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "render_preferences": {
+      "type": "object",
+      "properties": {
+        "prefer_direct": {
+          "const": true
+        },
+        "allow_image_guided": {
+          "type": "boolean"
+        },
+        "explore_visual_directions": {
+          "type": "boolean"
+        },
+        "organic_scene_complexity": {
+          "type": "string",
+          "enum": [
+            "low",
+            "high"
+          ]
+        },
+        "allow_generated_asset": {
+          "type": "boolean"
+        },
+        "fallback": {
+          "type": "string",
+          "enum": [
+            "schematic_preview"
+          ]
+        }
+      },
+      "required": [
+        "prefer_direct",
+        "allow_image_guided",
+        "explore_visual_directions",
+        "organic_scene_complexity",
+        "allow_generated_asset",
+        "fallback"
+      ],
+      "additionalProperties": false
+    },
+    "editability_requirements": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "enum": [
+            "native"
+          ]
+        },
+        "routes": {
+          "type": "string",
+          "enum": [
+            "native"
+          ]
+        },
+        "complex_asset": {
+          "type": "string",
+          "enum": [
+            "move_scale_replace_or_path_if_validated"
+          ]
+        }
+      },
+      "required": [
+        "text",
+        "routes",
+        "complex_asset"
+      ],
+      "additionalProperties": false
+    },
+    "scientific_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "uncertainties": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "unresolved_items": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "style": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "enum": [
+            "internal_draft"
+          ]
+        },
+        "journal_compliance": {
+          "type": "string",
+          "enum": [
+            "NOT_ASSESSED"
+          ]
+        },
+        "canvas_width_mm": {
+          "type": "number"
+        },
+        "canvas_height_mm": {
+          "type": "number"
+        },
+        "viewbox": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "background": {
+          "type": "string",
+          "minLength": 1
+        },
+        "forbidden_effects": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "profile",
+        "journal_compliance",
+        "canvas_width_mm",
+        "canvas_height_mm",
+        "viewbox",
+        "background",
+        "forbidden_effects"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "metadata",
+    "figure_type",
+    "central_message",
+    "supporting_messages",
+    "omissions",
+    "scientific_claims",
+    "evidence_levels",
+    "story_direction",
+    "stages",
+    "panels",
+    "layout_zones",
+    "entities",
+    "relationships",
+    "routes",
+    "labels",
+    "semantic_color_roles",
+    "visual_hierarchy",
+    "asset_requirements",
+    "render_preferences",
+    "editability_requirements",
+    "scientific_constraints",
+    "uncertainties",
+    "unresolved_items",
+    "style"
+  ],
+  "additionalProperties": false
+}

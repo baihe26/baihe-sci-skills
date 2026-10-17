@@ -1,3 +1,9 @@
 * text=auto eol=lf
 *.cmd text eol=crlf
 *.png -text
+
+*.ps1 text eol=crlf
+"配套程序/**/*.json" -text
+"配套程序/**/*.csv" -text
+"示例/Origin合成柱图/*.json" -text
+"示例/Origin合成柱图/*.csv" -text
