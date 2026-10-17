@@ -101,5 +101,26 @@
   "documentation_links": {
     "status": "PASS",
     "broken": 0
+  },
+  "migration_supplement": {
+    "date": "2026-10-18",
+    "public_payload": "Generic personal-transfer builder, setup helper, guide and 2 targeted tests only",
+    "private_engines_runtime_or_archive_published": false,
+    "targeted_tests": {
+      "cases": 2,
+      "status": "PASS",
+      "old_checks_repeated": false
+    },
+    "source_host_validation": {
+      "files_dependencies_configured": true,
+      "origin_python_and_package_gate": true,
+      "origin_native_render_repeated": false,
+      "designer_compiled": true,
+      "illustrator_import_only": true,
+      "ppt_native_generated_saved_reopened": true,
+      "ppt_visual_read_only": "PASS_ONE_RENDER"
+    },
+    "target_machine_native_acceptance": "PENDING",
+    "origin_version_gate": "UNCHANGED"
   }
 }
