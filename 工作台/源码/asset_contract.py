@@ -45,8 +45,15 @@ def check_assets(contract, base, graph):
         aspect=(region[2]-region[0])/(region[3]-region[1]);actual=(placement[2]-placement[0])/(placement[3]-placement[1])
         if abs(actual/aspect-1)>.001: raise GateError('SCIENTIFIC_IMAGE_STRETCH_FORBIDDEN')
         if row.get('group_id') is not None and row['group_id'] not in groups: raise GateError('ASSET_PARENT_UNRESOLVED')
+        if 'semantic_content' in row:
+            content=row['semantic_content']
+            if not all(isinstance(content.get(k),list) and content[k] for k in ('allowed_content','forbidden_content')):
+                raise GateError('ASSET_ALLOWED_AND_FORBIDDEN_CONTENT_REQUIRED')
+            if not set(content.get('native_surrounding_ids',[]))<=native_ids:
+                raise GateError('ASSET_REQUIRED_NATIVE_SURROUNDING_UNRESOLVED')
         result.append(dict(row,source_path=str(path),source_box_px=region,source_sha256=sha(path),source_format=image_format,
-                           crop_box_normalized=[region[0]/width,region[1]/height,region[2]/width,region[3]/height]))
+                           crop_box_normalized=[region[0]/width,region[1]/height,region[2]/width,region[3]/height],
+                           semantic_content_verification='DECLARATION_ONLY_VISUAL_REVIEW_REQUIRED' if 'semantic_content' in row else 'NOT_PROVIDED'))
     coverage=[]
     for path in sorted({row['source_path'] for row in result}):
         subset=[r for r in result if r['source_path']==path];w,h=subset[0]['source']['size_px']

@@ -57,8 +57,11 @@ def configure(root):
             state='REGISTERED_NATIVE_ACCEPTANCE_PENDING'
         except FileNotFoundError: state='NOT_REGISTERED_INSTALL_OR_REPAIR_FROM_OFFICIAL_SOURCE'
         apps[name]=dict(status=state,official_download=url)
-    report=dict(version='0.5.0',status='ENVIRONMENT_READY_NATIVE_ACCEPTANCE_PENDING',doctor=doctor,
+    from runtime_config import select_config
+    active,selection=select_config(root)
+    report=dict(version='0.6.0',status='ENVIRONMENT_READY_NATIVE_ACCEPTANCE_PENDING',doctor=doctor,
                 applications=apps,configuration=path.name,
+                default_active_configuration=active.name,default_selection=selection,
                 origin_compatibility='OriginPro 2026 SR0 x64 build 180; strict gate retained',
                 native_software_started=False,global_configuration_changed=False,
                 ready_without_commercial_apps=['scientific design compile','supported simple editable PPTX generation'],

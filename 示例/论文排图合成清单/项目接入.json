@@ -1,0 +1,124 @@
+{
+  "schema_version": "project-intake-0.1",
+  "project_id": "SYNTHETIC_PANEL_DEMO_NOT_RESEARCH",
+  "canvas_mm": [
+    180,
+    120
+  ],
+  "layout_columns": [
+    1,
+    2
+  ],
+  "minimum_font_pt": 7,
+  "sources": [
+    {
+      "id": "A",
+      "path": "合成面板A.png",
+      "sha256": "b236d62ceb5da10220c09da1f2bea48ab45d54dc270819934433f4fd3b60c1df",
+      "kind": "data_plot",
+      "review_status": "CONFIRMED"
+    },
+    {
+      "id": "B",
+      "path": "合成面板B.png",
+      "sha256": "66b49bb2710259bcecf366b0860172aa6efa3343d8553e63580920794c23f728",
+      "kind": "data_plot",
+      "review_status": "CONFIRMED"
+    },
+    {
+      "id": "C",
+      "path": "合成面板C.png",
+      "sha256": "0a58c1dc6bc4a1a42878627076b889421b8901d2493480e017aaf9b3f0c0522b",
+      "kind": "data_plot",
+      "review_status": "CONFIRMED"
+    },
+    {
+      "id": "D",
+      "path": "合成面板D.png",
+      "sha256": "d75bc5ffd9709689d889874de62b829f98964f19a292ffd29f80acd80d8393a8",
+      "kind": "data_plot",
+      "review_status": "CONFIRMED"
+    },
+    {
+      "id": "synthetic_raw",
+      "path": "合成数值.csv",
+      "kind": "numerical_data",
+      "review_status": "HOLD",
+      "scientific_metadata": {
+        "experimental_unit": "UNKNOWN",
+        "statistical_n": "UNKNOWN",
+        "uncertainty": "UNKNOWN",
+        "units": "synthetic_units",
+        "denominator": "not_applicable",
+        "design": "independent"
+      }
+    }
+  ],
+  "panels": [
+    {
+      "id": "panel_A",
+      "source_id": "A",
+      "plot_area_normalized": [
+        0.1,
+        0.12,
+        0.92,
+        0.85
+      ],
+      "source_font_pt": 10,
+      "source_width_mm": 90
+    },
+    {
+      "id": "panel_B",
+      "source_id": "B",
+      "plot_area_normalized": [
+        0.125,
+        0.12,
+        0.92,
+        0.85
+      ],
+      "source_font_pt": 10,
+      "source_width_mm": 90
+    },
+    {
+      "id": "panel_C",
+      "source_id": "C",
+      "plot_area_normalized": [
+        0.15000000000000002,
+        0.12,
+        0.92,
+        0.85
+      ],
+      "source_font_pt": 10,
+      "source_width_mm": 90
+    },
+    {
+      "id": "panel_D",
+      "source_id": "D",
+      "plot_area_normalized": [
+        0.17500000000000002,
+        0.12,
+        0.92,
+        0.85
+      ],
+      "source_font_pt": 10,
+      "source_width_mm": 90
+    }
+  ],
+  "required_figure_ids": [
+    "Fig_TEST_1",
+    "Fig_TEST_2"
+  ],
+  "figure_uses": [
+    {
+      "source_figure_id": "Fig_TEST_1",
+      "placements": [
+        "panel_A",
+        "panel_B"
+      ]
+    },
+    {
+      "source_figure_id": "Fig_TEST_2",
+      "unused_reason": "Synthetic example: deliberately not selected"
+    }
+  ]
+}

@@ -24,12 +24,16 @@ def compile_design(spec_path,plan_path,binding_path,out):
     if {r['id'] for r in plan['relations']}!={r['id'] for r in spec['relationships']}:raise GateError('PLAN_RELATIONS_DIFFER')
     # Carry relative source files into this new output, without rewriting source contracts.
     source_copies={}
-    extra_names=('retained_assets.json','reconstruction_map.json','layout_constraints.json','evidence_map.json')
+    extra_names=('retained_assets.json','reconstruction_map.json','layout_constraints.json','evidence_map.json','color_roles.json','style_profile.json','delivery_requirements.json')
     extras={name:Path(spec_path).parent/name for name in extra_names if (Path(spec_path).parent/name).is_file()}
     references=[(Path(spec_path).parent,v['path']) for v in spec['metadata']['sources']]+[(Path(binding_path).parent,binding['source_file']['path'])]
     if 'retained_assets.json' in extras:references.extend((Path(spec_path).parent,r['source']['path']) for r in read(extras['retained_assets.json'])['assets'])
     if 'reconstruction_map.json' in extras:references.append((Path(spec_path).parent,read(extras['reconstruction_map.json'])['source']['path']))
     if 'evidence_map.json' in extras:references.extend((Path(spec_path).parent,r['path']) for r in read(extras['evidence_map.json'])['source_blocks'])
+    if 'style_profile.json' in extras:
+        profile=read(extras['style_profile.json'])
+        references.append((Path(spec_path).parent,profile['source']['path']))
+        references.extend((Path(spec_path).parent,r['authorization_source']['path']) for r in profile.get('overrides', []))
     for base,ref in references:
         relative=Path(ref)
         if relative.is_absolute():continue

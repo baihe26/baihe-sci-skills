@@ -140,6 +140,13 @@ def validate_scene(spec, plan, graph):
     for identity, element in expected_primitives.items():
         native = primitives[identity]
         same(element['kind'], native['geometry']['kind'], 'SCENE_ELEMENT_KIND_CONFLICT')
+        style = graph['style_tokens'][native['style_token']]
+        for field in ('fill', 'stroke'):
+            # The frozen compiler intentionally emits TEXT as live glyph fill,
+            # ignoring its plan stroke. Preserve that established representation.
+            if field == 'stroke' and element['kind'] == 'TEXT':
+                continue
+            same(element.get(field), style.get(field), 'SCENE_ELEMENT_STYLE_CONFLICT/' + field)
         expected_data = dict(element['data'], dash=element.get('dash'))
         same(expected_data, native['geometry']['data'], 'SCENE_ELEMENT_CONTENT_CONFLICT')
         same(element['scientific_refs'], native['scientific_refs'], 'SCENE_ELEMENT_REF_CONFLICT')

@@ -1,7 +1,7 @@
 """Cooperative single native writer and immutable, parent-bound handoffs."""
-from paths import ROOT, DESKTOP_LOCKS, save, read, sha, digest, Path
+from paths import ROOT, DESKTOP_LOCKS, SHARED_WRITER_LOCKS, save, read, sha, digest, Path
 from core import writable, source, GateError
-from contextlib import contextmanager
+from contextlib import contextmanager, ExitStack
 from functools import wraps
 import uuid, re
 
@@ -31,9 +31,16 @@ def single_writer(function):
         for path in DESKTOP_LOCKS:
             if path.exists():
                 raise GateError('DESKTOP_BUSY: ' + str(path))
-        with exclusive(own):
+        # Reuse the same atomic, owner-bound primitive. A crash leaves an explicit
+        # reconciliation marker; absence/release never authorizes replay of native writes.
+        owned = {Path(p).resolve() for p in [own, *SHARED_WRITER_LOCKS]}
+        with ExitStack() as stack:
+            for path in sorted(owned, key=lambda p: str(p).casefold()):
+                if path.drive.upper() != 'D:':
+                    raise GateError('SHARED_WRITER_LOCK_REQUIRES_D_DRIVE')
+                stack.enter_context(exclusive(path))
             for path in DESKTOP_LOCKS:
-                if path != own and path.exists():
+                if Path(path).resolve() not in owned and path.exists():
                     raise GateError('DESKTOP_BUSY: ' + str(path))
             return function(*args, **kwargs)
     return call

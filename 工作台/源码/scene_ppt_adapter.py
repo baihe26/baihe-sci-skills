@@ -102,11 +102,16 @@ def produce(scene_path,out,source_png=None):
     finally:os.chdir(prior)
     verification=native_verify(target,out/'证据')
     record_trace(out,trace_contract,target,occurrences)
+    if (scene_path.parent/'delivery_requirements.json').is_file():
+        from delivery_review import verify_delivery
+        observed=verify_delivery(scene_path.parent/'delivery_requirements.json',target)
+        save(out/'最终对象核对.json',observed)
+        if observed['status']=='FAIL':raise GateError('FINAL_DELIVERY_OBSERVATION_FAILED')
     elements=from_scene(graph)
     for row in elements['elements']:
         if row['id'] in connectors:row.update(treatment='native_bound_connector',editability='NATIVE_RECTANGLE_ENDPOINTS_MOVE_RESIZE')
     save(out/'元素处理清单.json',elements)
     report=dict(status='NATIVE_COMPLETE_PENDING_EDIT_VISUAL',backend=result,native=verification,scene=source(scene_path),source_png=source(source_png) if source_png else None,
-      mode='FAITHFUL_VISIBLE_RECONSTRUCTION_NONBLIND_TEST' if source_png else 'APPROVED_SCENE_PRODUCTION_NO_REDESIGN',physical_size_pt=[w,h],editing='NATIVE_OBJECTS_WITH_EXPLICIT_CONNECTOR_SCOPE',native_bound_connectors=binding_results,free_paths=[a['id'] for a in graph['arrow_objects'] if a['id'] not in connectors],author_acceptance='PENDING')
+      mode='FAITHFUL_VISIBLE_RECONSTRUCTION_NONBLIND_TEST' if source_png else 'APPROVED_SCENE_PRODUCTION_NO_REDESIGN',physical_size_pt=[w,h],editing='NATIVE_OBJECTS_WITH_EXPLICIT_CONNECTOR_SCOPE',native_bound_connectors=binding_results,free_paths=[a['id'] for a in graph['arrow_objects'] if a['id'] not in connectors],style_profile=inspection['style_profile'],author_acceptance='PENDING')
     save(out/'生产验收.json',report);return report
 if __name__=='__main__':print(json.dumps(produce(sys.argv[1],sys.argv[2],sys.argv[3] if len(sys.argv)>3 else None),ensure_ascii=False))

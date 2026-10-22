@@ -6,7 +6,7 @@ set PYTHONDONTWRITEBYTECODE=1
 set PYTHONNOUSERSITE=1
 set PYTHONPATH=
 set PYTHONHOME=
-if not defined BAIHE_SCI_CONFIG if exist "%~dp0baihe-sci.public.local.json" set "BAIHE_SCI_CONFIG=%~dp0baihe-sci.public.local.json"
+rem All entrypoints use runtime_config.py; existing personal settings retain priority.
 if defined BAIHE_SCI_PYTHON (
   "%BAIHE_SCI_PYTHON%" "%~dp0工作台\源码\workbench.py" %*
 ) else (

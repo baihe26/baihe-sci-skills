@@ -11,7 +11,26 @@ def main():
     p.add_argument('--preflight',action='store_true');p.add_argument('--status',action='store_true');p.add_argument('--revise')
     p.add_argument('--compare-images',action='store_true');p.add_argument('--baseline');p.add_argument('--candidate');p.add_argument('--baseline-environment');p.add_argument('--candidate-environment')
     p.add_argument('--verify-trace');p.add_argument('--reference-index',action='append',default=[]);p.add_argument('--propagate')
+    p.add_argument('--inspect-project');p.add_argument('--plan-panels');p.add_argument('--verify-delivery');p.add_argument('--artifact')
     a=p.parse_args()
+    if a.inspect_project or a.plan_panels or a.verify_delivery:
+        operations=(a.inspect_project,a.plan_panels,a.verify_delivery,a.verify_trace,a.reference_index,a.propagate,
+                    a.preflight,a.revise,a.compare_images,a.doctor,a.catalog,a.status,a.check_protection)
+        if sum(bool(v) for v in operations)!=1 or not a.out or a.module:
+            raise GateError('ONE_REVIEW_OPERATION_AND_NEW_OUTPUT_REQUIRED')
+        if a.inspect_project:
+            from project_intake import intake
+            result=intake(a.inspect_project,a.out)
+        elif a.plan_panels:
+            from project_intake import panel_candidates
+            result=panel_candidates(a.plan_panels,a.out)
+        else:
+            if not a.artifact:raise GateError('FINAL_ARTIFACT_REQUIRED')
+            from delivery_review import verify_delivery
+            result=verify_delivery(a.verify_delivery,a.artifact,a.out)
+        print(json.dumps(result,ensure_ascii=False,indent=2))
+        if result['status']=='FAIL':sys.exit(2)
+        return
     for key in ('bundle','spec','plan','binding','scene','scene_deck','source_image','manifest'):
         if getattr(a,key):setattr(a,key,str(Path(getattr(a,key)).resolve()))
     if a.scene and a.scene_deck:raise GateError('ONE_SCENE_OR_SCENE_DECK_REQUIRED')
@@ -68,10 +87,12 @@ def main():
         for item in scene_inputs(a.scene_deck):refs.extend(str(p) for p in dependency_paths(item['scene_path']))
     refs=list(dict.fromkeys(str(Path(p).resolve()) for p in refs))
     if a.bundle:refs.extend(str(p) for p in Path(a.bundle).iterdir() if p.is_file() and p.name in ('figure_spec.json','PLOT_SEMANTICS_CONTRACT.json','plot_data.csv','analysis_manifest.json','observations.csv'))
-    state=new_task(intent,a.project,refs,a.request_id);folder=ROOT/'任务'/state['task_id']
-    module=a.module or (state['modules'][0] if len(state['modules'])==1 else None)
+    modules=route(intent)
+    request_id=a.request_id or __import__('uuid').uuid4().hex
+    folder=writable(ROOT/'任务'/request_id)
+    module=a.module or (modules[0] if len(modules)==1 else None)
     out=writable(a.out or folder/'产物')
-    if a.module and a.module not in state['modules']:raise GateError('EXPLICIT_INTENT_MODULE_CONFLICT')
+    if a.module and a.module not in modules:raise GateError('EXPLICIT_INTENT_MODULE_CONFLICT')
     if a.backend=='portable' and not(module=='vector' and a.target=='ppt' and (a.scene or a.scene_deck)):raise GateError('PORTABLE_BACKEND_ONLY_FOR_APPROVED_VECTOR_PPT')
     if a.scene_deck and a.backend!='portable':raise GateError('SCENE_DECK_REQUIRES_EXPLICIT_PORTABLE_BACKEND')
     if module=='plot' and a.bundle:cmd=[str(PLOT_PY),str(ROOT/'源码/plot_adapter.py'),a.bundle,str(out)]
@@ -79,16 +100,19 @@ def main():
     elif module=='vector' and a.scene_deck:cmd=[str(PORTABLE_PY),str(ROOT/'源码/portable_deck.py'),a.scene_deck,str(out)]
     elif module=='vector' and a.scene:cmd=[str(PORTABLE_PY if a.backend=='portable' else PYTHON),str(ROOT/('源码/portable_ppt.py' if a.backend=='portable' else '源码/scene_ppt_adapter.py' if a.target=='ppt' else '源码/vector_adapter.py')),a.scene,str(out),*([a.source_image] if a.source_image else [])]
     elif module=='ppt' and a.manifest:cmd=[str(PYTHON),str(ROOT/'源码/ppt_adapter.py'),a.manifest,str(out),a.mode]
-    else:
+    else:cmd=None
+    if cmd:
+        if out.exists():raise FileExistsError(out)
+        from doctor import require
+        if a.backend=='portable':
+            from doctor import portable_check
+            checked=portable_check()
+            if checked['missing']:raise GateError(json.dumps(checked,ensure_ascii=False))
+        else:require(module,a.target)
+    state=new_task(intent,a.project,refs,request_id)
+    if cmd is None:
         save(folder/'待继续.json',dict(status='HOST_CONTRACT_REQUIRED',modules=state['modules'],guidance='由当前Codex按对应旧合同核对科学信息并生成适配输入，禁止猜测。读取SKILL.md按模块继续。',configured_roots={k:str(v) for k,v in dict(plot=PLOT,designer=DESIGN,vector=VECTOR,ppt=STUDIO).items()}))
         print(json.dumps(dict(task_id=state['task_id'],modules=state['modules'],status='HOST_CONTRACT_REQUIRED',task=str(folder)),ensure_ascii=False));return
-    if out.exists():raise FileExistsError(out)
-    from doctor import require
-    if a.backend=='portable':
-        from doctor import portable_check
-        checked=portable_check()
-        if checked['missing']:raise GateError(json.dumps(checked,ensure_ascii=False))
-    else:require(module,a.target)
     from coordination import append_checkpoint
     checkpoint=append_checkpoint(folder/'交接', 'INPUT_BOUND', [r['path'] for r in state['sources']],None,digest(state['sources']),'CLI',semantic_kind='INPUT_CONTRACT_SET_FINGERPRINT_NOT_SCIENTIFIC_TRUTH')
     from recovery_journal import Journal

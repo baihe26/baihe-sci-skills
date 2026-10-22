@@ -41,6 +41,12 @@ def produce(scene_path,out,source_image=None):
     if any(row['source_sha256'] not in media_hashes for row in checked['retained_assets']['assets']):raise GateError('SOURCE_IMAGE_BYTES_CHANGED')
     record_trace(out,contract,target,[dict(slide_id='SCENE',object_id=identity,native_id=shape.shape_id) for identity,shape in shapes.items()])
     verify_trace(out/'来源与引用链.json')
+    goals=scene_path.parent/'delivery_requirements.json'
+    if goals.is_file():
+        from delivery_review import verify_delivery
+        observed=verify_delivery(goals,target)
+        save(out/'最终对象核对.json',observed)
+        if observed['status']=='FAIL':raise GateError('FINAL_DELIVERY_OBSERVATION_FAILED')
     ledger=from_scene(g)
     for row in ledger['elements']:
         if row['id'] in plans:row.update(treatment='native_bound_connector',editability='NATIVE_RECTANGLE_ENDPOINTS')
@@ -55,6 +61,7 @@ def produce(scene_path,out,source_image=None):
                 native_bound_connectors=plans,retained_assets=len(checked['retained_assets']['assets']),source_pixels_preserved=True,
                 stable_ids='PresentationML Tags: STUDIO_SLIDE_ID / STUDIO_ID / ASSET_ID plus provenance contract hash',source_image=source(source_image) if source_image else None)
     result['unresolved_reconstruction_ids']=unresolved;result['release_ready']=False
+    result['style_profile']=checked['style_profile']
     save(out/'生产验收.json',result);return result
 
 

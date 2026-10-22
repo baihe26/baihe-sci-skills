@@ -93,7 +93,7 @@ class UpgradeTests(unittest.TestCase):
             with self.subTest(bad=bad),self.assertRaises(GateError):validate_scene(self.spec,read(self.base/'ConstructionPlan.json'),graph)
 
     def patch_request(self,folder,scene,findings=None,fields=None):
-        review=dict(artifact_scene_sha256=sha(scene),reviewer='SYNTHETIC_HOST_REVIEW',findings=findings or [dict(id='F1',object_ids=['AI_text_A'],category='display',description='increase contrast')])
+        review=dict(artifact_scene_sha256=sha(scene),reviewer='SYNTHETIC_HOST_REVIEW',findings=findings or [dict(id='F1',object_ids=['AI_text_A'],category='display',description='increase contrast')],decorative_color_permissions=[dict(object_id='AI_text_A',fields=['fill'],reason='Synthetic label contrast only; no group/status colour encoding')])
         save(folder/'review.json',review)
         request=dict(expected_parent_sha256=sha(scene),expected_pack_sha256=inspect_pack(scene)['input_fingerprint'],review=dict(path='review.json',sha256=sha(folder/'review.json')),finding_ids=[review['findings'][0]['id']],allowed_object_ids=['AI_text_A'],changes=[dict(object_id='AI_text_A',fields=fields or dict(fill='#102030'))])
         save(folder/'request.json',request);return folder/'request.json'

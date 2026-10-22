@@ -31,6 +31,9 @@ def revise(scene_path,request_path,out):
     permitted={key for identity in selected for key in findings[identity]['object_ids']}
     if not ids<=permitted:raise GateError('REVISION_OUTSIDE_REVIEW_SCOPE')
     plan=read(base/'ConstructionPlan.json');graph=read(scene_path)
+    from color_roles import check_roles, permit_display_color
+    color_bindings=check_roles(read(base/'color_roles.json'),graph) if (base/'color_roles.json').is_file() else {}
+    color_changes=[]
     elements={'AI_'+o['id']:o for o in plan['elements']};objects={o['id']:o for k in ('objects','text_objects') for o in graph[k]}
     before={p:sha(p) for p in dependency_paths(scene_path)}
     for index,change in enumerate(changes):
@@ -41,6 +44,8 @@ def revise(scene_path,request_path,out):
             if key in ('fill','stroke'):
                 if value is not None and (not isinstance(value,str) or not re.fullmatch(r'#[0-9A-Fa-f]{6}',value)):raise GateError('PATCH_COLOR_INVALID')
                 if obj['geometry']['kind']=='TEXT' and (key!='fill' or value is None):raise GateError('TEXT_STYLE_PATCH_UNSUPPORTED')
+                permission=permit_display_color(identity,key,style.get(key),value,color_bindings,review)
+                color_changes.append(dict(object_id=identity,field=key,permission=permission))
                 element[key]=value;style[key]=value
             else:
                 if not isinstance(value,(int,float)) or not math.isfinite(value):raise GateError('PATCH_NUMBER_INVALID')
@@ -67,6 +72,7 @@ def revise(scene_path,request_path,out):
                 completed_rounds=rounds+1,max_rounds=budget,finding_ids_before=sorted(findings),
                 addressed_finding_ids=selected,changed_object_ids=sorted(ids),request=source(request_path),review=source(review_path),
                 scientific_content_changed=False,unrelated_objects_changed=False,original_sources_unchanged=True,
+                color_changes=color_changes,color_scope='DECORATIVE_ONLY_OR_UNCHANGED_NOT_SCIENTIFIC_TRUTH_REVIEW',
                 rollback='Use the immutable parent; no source file was overwritten',next_review='PENDING',automatic_retry=False)
     # Parent record remains in the parent's directory; this record belongs to the new revision.
     (out/'修订记录.json').write_text(__import__('json').dumps(record,ensure_ascii=False,indent=2),encoding='utf-8')
