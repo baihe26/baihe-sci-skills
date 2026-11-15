@@ -6,7 +6,8 @@ loading uses the first non-empty worksheet.
 
 Required:
 - At least two numeric columns.
-- One binding-energy column. Preferred names include `BindingEnergy`, `Binding Energy (E)`, `Energy`, or similar.
+- One explicitly identified energy column. Binding and kinetic energy are distinct
+  coordinate conventions; a generic `Energy` title alone does not identify which.
 - At least one intensity-like Y column.
 
 Recognized optional columns:
@@ -14,7 +15,8 @@ Recognized optional columns:
 - Background: `Background`, `Backgnd.`, `BG`, `Baseline`.
 - Envelope: `Envelope`, `Fit`, `Fit Total`, `Total`.
 - Residuals: `Residuals`, `Residual`.
-- Any other numeric Y columns are treated as editable component/series curves.
+- Other numeric columns need confirmed component/series/ignored roles. Numeric
+  shape or a monotonic column alone is not proof of scientific meaning.
 
 The template does not add missing peak columns or alter source values. Temporary
 Origin worksheet helper columns such as `PlotX` are generated only inside the
@@ -39,12 +41,15 @@ result may remain XLS/XLSX or be saved as CSV/TXT:
 - Treat each measured-spectrum sheet as one input table; preserve its spectrum name
   in the file or worksheet name.
 - Skip index/empty sheets such as `Titles` and `Sheet1`.
-- For the observed workbooks, row 15 contains the semantic series names and
-  row 16 contains units or the raw counts label; numeric data starts at row 17.
+- Determine semantic header/unit/data rows from the specific workbook. Historical
+  row 15/16/17 examples are not an instrument-independent parsing rule.
 - Keep only columns that contain numeric data rows. Drop spacer columns and
   acquisition-parameter text.
 - Do not create missing peaks, do not normalize values, and do not write helper
   columns into the cleaned input.
-- `Kinetic Energy (E)` is accepted as the X column through the monotonic numeric
-  fallback. If a future plot must show a kinetic-energy axis title, implement
-  axis-title inference in the renderer rather than renaming the source data.
+- Use the current `prepare_xps` mapping and energy-kind plan. The normal adaptive
+  runner already consumes that preparation and distinguishes kinetic from binding
+  energy. Do not use the legacy monotonic fallback or its default title as evidence
+  for relabelling. Changing coordinate convention requires numerical conversion,
+  known photon energy and the applicable reference/calibration convention; preserve
+  the original column, conversion evidence and resulting coordinates.

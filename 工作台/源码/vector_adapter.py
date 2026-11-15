@@ -7,8 +7,9 @@ import html,xml.etree.ElementTree as ET,subprocess
 from coordination import single_writer
 def scene_svg(graph):
     # Keep group identity and hierarchy. Reject unsupported assets rather than flattening them.
-    from designer_adapter import replay
-    r=replay();w,h=graph['canvas']['width'],graph['canvas']['height']
+    import vector_svg as r
+    from design_styles import validate_style
+    w,h=graph['canvas']['width'],graph['canvas']['height'];definitions=[]
     if graph['canvas']['origin']!='TOP_LEFT' or graph['canvas']['unit']!='px':raise GateError('COORDINATE_CONTRACT_UNSUPPORTED_USE_LEGACY_HANDOFF')
     if graph['asset_refs'] or graph['clipping']:raise GateError('ASSET_OR_CLIP_REQUIRES_LEGACY_PRODUCTION_ADAPTER')
     objects={o['id']:o for key in ('objects','arrow_objects','text_objects') for o in graph[key]}
@@ -19,21 +20,33 @@ def scene_svg(graph):
     def emit(key,trail=()):
         if key in trail:raise GateError('PARENT_CYCLE')
         if key in groups:
-            children=[k for k in [*groups,*objects] if parents.get(k)==key]
+            children=sorted([k for k in [*groups,*objects] if parents.get(k)==key],key=lambda k:objects[k]['z_order'] if k in objects else groups[k]['z_order'])
             return '<g id="'+html.escape(key)+'">'+''.join(emit(k,trail+(key,)) for k in children)+'</g>'
-        o=objects[key];s=graph['style_tokens'][o['style_token']];kind=o['geometry']['kind'];data=o['geometry']['data']
+        o=objects[key];s=validate_style(graph['style_tokens'][o['style_token']]);kind=o['geometry']['kind'];data=o['geometry']['data']
         if kind not in ('RECT','ELLIPSE','PATH','POLYLINE','TEXT'):raise GateError('GEOMETRY_USE_LEGACY_HANDOFF: '+kind)
-        element=dict(id=key,owner=o.get('group_id'),kind=kind,data=data,fill=s.get('fill') or 'none',stroke=s.get('stroke') or 'none',stroke_width=s.get('stroke_width',0),dash=data.get('dash'))
+        element=dict(id=key,owner=o.get('group_id'),kind=kind,data=data,fill=s.get('fill') or 'none',stroke=s.get('stroke') or 'none',stroke_width=s.get('stroke_width',0),dash=data.get('dash'),font_family=o.get('font_family','Arial, sans-serif'))
         body=r.element_svg(element)
+        if s.get('fill_gradient'):
+            if kind=='TEXT':raise GateError('TEXT_GRADIENT_REQUIRES_NATIVE_TEXT_ROUTE')
+            import math
+            gradient=s['fill_gradient'];gid='gradient_'+str(len(definitions));stops=''.join(
+                f'<stop offset="{v["offset"]}" stop-color="{v["color"]}" stop-opacity="{v.get("opacity",1)}"/>' for v in gradient['stops'])
+            if gradient['kind']=='linear':
+                angle=math.radians(gradient.get('angle_deg',0));dx,dy=math.cos(angle)/2,math.sin(angle)/2
+                definitions.append(f'<linearGradient id="{gid}" x1="{.5-dx}" y1="{.5-dy}" x2="{.5+dx}" y2="{.5+dy}">{stops}</linearGradient>')
+            else:
+                cx,cy=gradient.get('center',[.5,.5]);definitions.append(f'<radialGradient id="{gid}" cx="{cx}" cy="{cy}" r=".5">{stops}</radialGradient>')
+            primitive=ET.fromstring(body);primitive.set('fill','url(#'+gid+')');body=ET.tostring(primitive,encoding='unicode')
         if key in {v['id'] for v in graph['arrow_objects']}:
             p=r.arrow_paths(data['points'],data['encoding'])
-            if p:body+='<polyline points="'+' '.join(f'{x},{y}' for x,y in p)+'" fill="none" stroke="'+s['stroke']+'" stroke-width="2.2"/>'
-        return '<g id="'+html.escape(key)+'_semantic">'+body+'</g>'
-    allids=[*groups,*objects]
+            if p:body+='<polyline points="'+' '.join(f'{x},{y}' for x,y in p)+'" fill="none" stroke="'+s['stroke']+'" stroke-width="'+str(s.get('stroke_width',2.2))+'"/>'
+        return '<g id="'+html.escape(key)+'_semantic" opacity="'+str(s.get('opacity',1))+'">'+body+'</g>'
+    allids=sorted([*groups,*objects],key=lambda k:objects[k]['z_order'] if k in objects else groups[k]['z_order'])
     if any(p not in groups for p in parents.values()):raise GateError('UNKNOWN_PARENT')
     scale=graph['geometry']['coordinate_transform']['scale_pt_per_px']
     output=f'<svg xmlns="http://www.w3.org/2000/svg" width="{w*scale}pt" height="{h*scale}pt" viewBox="0 0 {w} {h}"><rect width="100%" height="100%" fill="white"/>'
-    output+=''.join(emit(k) for k in allids if k not in parents)+'</svg>'
+    body=''.join(emit(k) for k in allids if k not in parents)
+    output+='<defs>'+''.join(definitions)+'</defs>'+body+'</svg>'
     return output
 @single_writer
 def produce(scene_path,out,source_image=None,mode='approved_design'):
@@ -46,7 +59,8 @@ def produce(scene_path,out,source_image=None,mode='approved_design'):
     inspection=inspect_pack(scene_path);consistency=inspection['consistency']
     if inspection['retained_assets']['assets']:raise GateError('RETAINED_ASSETS_REQUIRE_SUPPORTED_PORTABLE_PPT_OR_LEGACY_ROUTE')
     import jsonschema
-    jsonschema.validate(graph,read(HANDOFF/'schemas/illustrator_scene_graph.schema.json'))
+    from design_styles import schema_projection
+    jsonschema.validate(schema_projection(graph),read(HANDOFF/'schemas/illustrator_scene_graph.schema.json'))
     if mode=='faithful_reconstruction' and not source_image:raise GateError('SOURCE_IMAGE_REQUIRED')
     out.mkdir(parents=True);svg=out/'施工输入.svg'
     save(out/'跨合同一致性检查.json',consistency)

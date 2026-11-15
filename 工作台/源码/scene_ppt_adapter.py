@@ -21,7 +21,10 @@ def produce(scene_path,out,source_png=None):
     if graph['asset_refs'] or graph['clipping']:raise GateError('COMPLEX_SCENE_SAFE_LEGACY_HANDOFF_REQUIRED')
     if graph['canvas']['unit']!='px' or graph['canvas']['origin']!='TOP_LEFT':raise GateError('COORDINATE_CONTRACT_UNSUPPORTED')
     import jsonschema
-    jsonschema.validate(graph,read(HANDOFF/'schemas/illustrator_scene_graph.schema.json'))
+    from design_styles import schema_projection,capability_route
+    jsonschema.validate(schema_projection(graph),read(HANDOFF/'schemas/illustrator_scene_graph.schema.json'))
+    route=capability_route(graph,'ppt_native')
+    if route['unsupported']:raise GateError('NATIVE_BACKEND_HANDOFF_REQUIRED: '+json.dumps(route,ensure_ascii=False))
     items=[*graph['objects'],*graph['arrow_objects'],*graph['text_objects']]
     if any(o['geometry']['kind'] not in ('RECT','ELLIPSE','POLYLINE','TEXT') for o in items):raise GateError('COMPLEX_PATH_SAFE_LEGACY_HANDOFF_REQUIRED')
     scale=graph['geometry']['coordinate_transform']['scale_pt_per_px'];w=graph['canvas']['width']*scale;h=graph['canvas']['height']*scale
@@ -63,6 +66,10 @@ def produce(scene_path,out,source_png=None):
                 q.Line.Visible=-1 if style.get('stroke') else 0
                 if style.get('stroke'):q.Line.ForeColor.RGB=color(style['stroke'].lstrip('#'));q.Line.Weight=style['stroke_width']*scale
                 if d.get('dash'):q.Line.DashStyle=4
+                q.Fill.Transparency=1-style.get('opacity',1)
+                q.Line.Transparency=1-style.get('opacity',1)
+            elif style.get('opacity',1)!=1:
+                q.TextFrame2.TextRange.Font.Fill.Transparency=1-style['opacity']
             journal.commit(token,q.Id)
         # Group semantic owners after constructing exact named primitives. Direct backend owns the operation.
         pending={g['id']:g for g in graph['groups']};links=graph['parent_child'];done=set()

@@ -12,7 +12,95 @@ def main():
     p.add_argument('--compare-images',action='store_true');p.add_argument('--baseline');p.add_argument('--candidate');p.add_argument('--baseline-environment');p.add_argument('--candidate-environment')
     p.add_argument('--verify-trace');p.add_argument('--reference-index',action='append',default=[]);p.add_argument('--propagate')
     p.add_argument('--inspect-project');p.add_argument('--plan-panels');p.add_argument('--verify-delivery');p.add_argument('--artifact')
+    p.add_argument('--task-context',help='本轮阶段、人工父本、可输出根与保护范围；由宿主按现有授权生成。')
+    p.add_argument('--check-revision',help='检查稳定小图/数据去向及审阅问题是否已落实。')
+    p.add_argument('--inspect-microscopy',help='只读提取原PPT显微图的对象、裁剪及显示处理。')
+    p.add_argument('--audit-presentation',help='实际保存PPT的组缩放、字号继承及遮挡候选。')
+    p.add_argument('--profile',help='仅本轮启用的视觉偏好JSON。')
+    p.add_argument('--verify-package',help='按本版面板及配套角色核对交付包。')
+    p.add_argument('--write-notes',help='按已核对来源写备注，新副本保留人工修改。')
+    p.add_argument('--vector-capabilities',help='为给定SceneGraph检查当前后端是否支持所需效果。')
+    p.add_argument('--plot-task',help='真实表或已有Origin项目的显式接入任务。')
+    p.add_argument('--execute-plot',action='store_true',help='执行已明确映射的数据图任务；否则只核对。')
+    p.add_argument('--edit-ppt',help='沿已保存人工PPT局部改字、字体或位置，不占原生会话。')
     a=p.parse_args()
+    operations=(a.inspect_microscopy,a.check_revision,a.audit_presentation,a.verify_package,a.write_notes,a.vector_capabilities,
+                a.plot_task,a.edit_ppt,a.inspect_project,a.plan_panels,a.verify_delivery,a.verify_trace,a.reference_index,a.propagate,
+                a.preflight,a.revise,a.compare_images,a.doctor,a.catalog,a.status,a.check_protection)
+    if sum(bool(v) for v in operations)>1:raise GateError('ONE_OPERATION_REQUIRED')
+    if a.execute_plot and not a.plot_task:raise GateError('EXECUTE_PLOT_REQUIRES_TASK')
+    # Match the legacy plot route: the configured plotting interpreter owns its
+    # template dependencies; an Office coordinator need not install them too.
+    if a.plot_task and Path(sys.executable).resolve()!=PLOT_PY.resolve():
+        if not PLOT_PY.is_file():raise GateError('CONFIGURED_PLOT_PYTHON_MISSING')
+        result=subprocess.run([str(PLOT_PY),str(Path(__file__).resolve()),*sys.argv[1:]],
+                              env=dict(os.environ,PYTHONUTF8='1'))
+        sys.exit(result.returncode)
+    from task_context import load_context, check_stage, require_parent_match, resolve_path
+    if a.task_context:os.environ['BAIHE_SCI_TASK_CONTEXT']=str(Path(a.task_context).resolve())
+    context=load_context()
+    if context:
+        if a.project!='baihe-sci-local' and a.project!=context['project_id']:raise GateError('TASK_PROJECT_CONFLICT')
+        a.project=context['project_id']
+        if context['stage'] in ('understand','review') and (a.revise or a.propagate or a.write_notes or a.edit_ppt or a.execute_plot):raise GateError('READ_ONLY_TASK_NO_ARTIFACT_REVISION')
+    if a.audit_presentation or a.verify_package or a.write_notes or a.edit_ppt or a.vector_capabilities or a.plot_task:
+        if a.module:raise GateError('OPERATION_ALREADY_SELECTS_MODULE')
+        if a.audit_presentation:
+            from delivery_review import audit_presentation
+            result=audit_presentation(a.audit_presentation,read(a.profile) if a.profile else None,a.out)
+        elif a.verify_package:
+            from delivery_package import verify_package
+            result=verify_package(a.verify_package,a.out)
+        elif a.write_notes:
+            check_stage(context,'ppt')
+            if not a.out:raise GateError('NEW_NOTES_OUTPUT_REQUIRED')
+            note_request=read(a.write_notes)
+            require_parent_match(context,resolve_path(note_request['artifact']['path'],Path(a.write_notes).resolve().parent))
+            from delivery_package import write_notes
+            result=write_notes(a.write_notes,a.out)
+        elif a.edit_ppt:
+            check_stage(context,'local')
+            if not a.out:raise GateError('NEW_PPT_REVISION_OUTPUT_REQUIRED')
+            from ppt_local_patch import edit_ppt
+            result=edit_ppt(a.edit_ppt,a.out)
+        elif a.vector_capabilities:
+            from design_styles import capability_route
+            scene=Path(a.vector_capabilities).resolve()
+            backend='portable' if a.backend=='portable' else 'illustrator' if a.target=='illustrator' else 'ppt_native'
+            result=capability_route(read(scene),backend,(scene.parent/'retained_assets.json').is_file())
+        else:
+            if a.execute_plot:check_stage(context,'plot')
+            if not a.out:raise GateError('NEW_PLOT_TASK_OUTPUT_REQUIRED')
+            plot_request=read(a.plot_task)
+            if plot_request.get('operation')=='revise_origin':
+                require_parent_match(context,resolve_path(plot_request['parent_origin']['path'],Path(a.plot_task).resolve().parent))
+            from plot_adapter import run_plot_task
+            if a.execute_plot:
+                from plot_sources import inspect_plot_task
+                inspect_plot_task(a.plot_task)
+                if read(a.plot_task)['operation']=='render_table':
+                    from plot_runtime import prepare_native
+                    prepare_native(a.plot_task)
+                from execution_record import record_call
+                result=record_call('plot',a.plot_task,a.out,lambda:run_plot_task(a.plot_task,a.out,execute=True),
+                                   a.project,a.request_id,context)
+            else:result=run_plot_task(a.plot_task,a.out,execute=False)
+        print(json.dumps(result,ensure_ascii=False,indent=2))
+        if result.get('status') in ('FAIL','PACKAGE_REQUIRES_REPAIR','EXPLICIT_HANDOFF_REQUIRED'):sys.exit(2)
+        return
+    if a.inspect_microscopy:
+        if any((a.module,a.check_revision,a.inspect_project,a.plan_panels,a.verify_delivery,a.propagate,a.revise)):
+            raise GateError('ONE_OPERATION_REQUIRED')
+        from microscopy_sources import inspect_request
+        print(json.dumps(inspect_request(a.inspect_microscopy,a.out),ensure_ascii=False,indent=2));return
+    if a.check_revision:
+        if any((a.module,a.inspect_project,a.plan_panels,a.verify_delivery,a.propagate,a.revise)):
+            raise GateError('ONE_OPERATION_REQUIRED')
+        from revision_checks import check_request
+        result=check_request(a.check_revision,a.out)
+        print(json.dumps(result,ensure_ascii=False,indent=2))
+        if result['status']!='PASS':sys.exit(2)
+        return
     if a.inspect_project or a.plan_panels or a.verify_delivery:
         operations=(a.inspect_project,a.plan_panels,a.verify_delivery,a.verify_trace,a.reference_index,a.propagate,
                     a.preflight,a.revise,a.compare_images,a.doctor,a.catalog,a.status,a.check_protection)
@@ -68,6 +156,7 @@ def main():
             result=preflight(a.out,a.scene,a.spec,a.plan,a.binding)
         elif a.revise:
             if not a.scene:raise GateError('REVISION_SCENE_REQUIRED')
+            require_parent_match(context,a.scene)
             from refinement import revise
             result=revise(a.scene,a.revise,a.out)
         else:
@@ -87,10 +176,11 @@ def main():
         for item in scene_inputs(a.scene_deck):refs.extend(str(p) for p in dependency_paths(item['scene_path']))
     refs=list(dict.fromkeys(str(Path(p).resolve()) for p in refs))
     if a.bundle:refs.extend(str(p) for p in Path(a.bundle).iterdir() if p.is_file() and p.name in ('figure_spec.json','PLOT_SEMANTICS_CONTRACT.json','plot_data.csv','analysis_manifest.json','observations.csv'))
-    modules=route(intent)
+    modules=route(intent,a.module,context.get('stage') if context else None)
     request_id=a.request_id or __import__('uuid').uuid4().hex
     folder=writable(ROOT/'任务'/request_id)
     module=a.module or (modules[0] if len(modules)==1 else None)
+    if module:check_stage(context,module)
     out=writable(a.out or folder/'产物')
     if a.module and a.module not in modules:raise GateError('EXPLICIT_INTENT_MODULE_CONFLICT')
     if a.backend=='portable' and not(module=='vector' and a.target=='ppt' and (a.scene or a.scene_deck)):raise GateError('PORTABLE_BACKEND_ONLY_FOR_APPROVED_VECTOR_PPT')
@@ -109,7 +199,7 @@ def main():
             checked=portable_check()
             if checked['missing']:raise GateError(json.dumps(checked,ensure_ascii=False))
         else:require(module,a.target)
-    state=new_task(intent,a.project,refs,request_id)
+    state=new_task(intent,a.project,refs,request_id,modules,context)
     if cmd is None:
         save(folder/'待继续.json',dict(status='HOST_CONTRACT_REQUIRED',modules=state['modules'],guidance='由当前Codex按对应旧合同核对科学信息并生成适配输入，禁止猜测。读取SKILL.md按模块继续。',configured_roots={k:str(v) for k,v in dict(plot=PLOT,designer=DESIGN,vector=VECTOR,ppt=STUDIO).items()}))
         print(json.dumps(dict(task_id=state['task_id'],modules=state['modules'],status='HOST_CONTRACT_REQUIRED',task=str(folder)),ensure_ascii=False));return

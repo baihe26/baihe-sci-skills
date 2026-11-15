@@ -63,16 +63,24 @@ def add_unresolved(ledger,inspection):
     return ledger
 
 
-def bounded_review(rounds, max_rounds=2):
-    """Return an advisory next action; never claims a critic actually ran."""
-    if not 1 <= max_rounds <= 5:
+def bounded_review(rounds, max_rounds=None):
+    """Advise continuation. Only an explicit task budget limits review rounds.
+
+    A newly discovered defect does not cancel progress on the previous ones.
+    Repeated unchanged findings ask for a different approach, not task completion.
+    """
+    if max_rounds is not None and (type(max_rounds) is not int or max_rounds < 1):
         raise GateError('REVIEW_BUDGET_INVALID')
     previous = None
+    stagnant = False
     for row in rounds:
         issues = set(row['unresolved_issue_ids'])
-        if previous is not None and issues and not issues < previous:
-            return dict(status='STOP_NO_STRICT_PROGRESS', automatic_retry=False, unresolved=sorted(issues))
+        stagnant = previous is not None and bool(issues) and issues == previous and not row.get('progress_evidence')
         previous = issues
     issues = previous if previous is not None else set()
-    status = 'NOT_REVIEWED' if not rounds else 'PASS_RECORDED_SCOPE' if not issues else 'STOP_BUDGET' if len(rounds) >= max_rounds else 'TARGETED_FIX_REQUIRED'
-    return dict(status=status, automatic_retry=False, unresolved=sorted(issues), max_rounds=max_rounds)
+    status = ('NOT_REVIEWED' if not rounds else 'PASS_RECORDED_SCOPE' if not issues
+              else 'STOP_BUDGET' if max_rounds is not None and len(rounds) >= max_rounds
+              else 'CHANGE_APPROACH_REQUIRED' if stagnant else 'TARGETED_FIX_REQUIRED')
+    return dict(status=status, automatic_retry=False, unresolved=sorted(issues), max_rounds=max_rounds,
+                task_complete=bool(rounds) and not issues,
+                scope='RECORDED_REVIEW_ONLY_NOT_AUTHOR_ACCEPTANCE')

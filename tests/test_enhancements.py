@@ -90,8 +90,9 @@ class EnhancementTests(unittest.TestCase):
 
     def test_bounded_review_stops(self):
         self.assertEqual(bounded_review([])['status'], 'NOT_REVIEWED')
-        self.assertEqual(bounded_review([dict(unresolved_issue_ids=['A']), dict(unresolved_issue_ids=['A'])])['status'], 'STOP_NO_STRICT_PROGRESS')
-        self.assertEqual(bounded_review([dict(unresolved_issue_ids=['A','B']), dict(unresolved_issue_ids=['A'])])['status'], 'STOP_BUDGET')
+        self.assertEqual(bounded_review([dict(unresolved_issue_ids=['A']), dict(unresolved_issue_ids=['A'])])['status'], 'CHANGE_APPROACH_REQUIRED')
+        self.assertEqual(bounded_review([dict(unresolved_issue_ids=['A','B']), dict(unresolved_issue_ids=['A'])])['status'], 'TARGETED_FIX_REQUIRED')
+        self.assertEqual(bounded_review([dict(unresolved_issue_ids=['A','B']), dict(unresolved_issue_ids=['A'])],max_rounds=2)['status'], 'STOP_BUDGET')
         self.assertEqual(bounded_review([dict(unresolved_issue_ids=[])])['status'], 'PASS_RECORDED_SCOPE')
 
     def test_checkpoint_conflicts_and_input_changes(self):

@@ -59,7 +59,7 @@ def configure(root):
         apps[name]=dict(status=state,official_download=url)
     from runtime_config import select_config
     active,selection=select_config(root)
-    report=dict(version='0.6.0',status='ENVIRONMENT_READY_NATIVE_ACCEPTANCE_PENDING',doctor=doctor,
+    report=dict(version='0.7.0',status='ENVIRONMENT_READY_NATIVE_ACCEPTANCE_PENDING',doctor=doctor,
                 applications=apps,configuration=path.name,
                 default_active_configuration=active.name,default_selection=selection,
                 origin_compatibility='OriginPro 2026 SR0 x64 build 180; strict gate retained',

@@ -23,7 +23,7 @@ def require(module,target='illustrator'):
     r=check(module,target)
     if r['missing']:raise GateError(json.dumps(r,ensure_ascii=False))
 def report():
-    return dict(version='0.6.0',config_present=CONFIG_FILE.is_file(),
+    return dict(version='0.7.0',config_present=CONFIG_FILE.is_file(),
         configuration=dict(path=str(CONFIG_FILE),selection=CONFIG_SELECTION,running_python=sys.executable,
             configured_module_python=str(PYTHON),explicit_missing=CONFIG_SELECTION=='EXPLICIT_ENVIRONMENT' and not CONFIG_FILE.is_file()),
         writer_locks=dict(owned=[str(p) for p in SHARED_WRITER_LOCKS],legacy_busy_markers=[str(p) for p in DESKTOP_LOCKS]),

@@ -30,12 +30,17 @@ def check_roles(contract, graph):
     return bindings
 
 
-def permit_display_color(identity, field, old, new, bindings, review):
+def permit_display_color(identity, field, old, new, bindings, review, reencoding=None):
     if old == new or isinstance(old,str) and isinstance(new,str) and old.upper()==new.upper():
         return 'UNCHANGED'
+    if (identity,field) in (reencoding or {}) and isinstance(new,str) and new.upper()==reencoding[(identity,field)].upper():
+        return 'AUTHORIZED_CONSISTENT_REENCODING'
     binding = bindings.get((identity, field))
     if binding:
         if binding['kind'] == 'scientific':
+            if (identity,field) in (reencoding or {}):
+                approved=reencoding[(identity,field)]
+                if isinstance(new,str) and new.upper()==approved.upper():return 'AUTHORIZED_CONSISTENT_REENCODING'
             raise GateError('SCIENTIFIC_COLOR_REENCODING_REQUIRES_NEW_APPROVED_DESIGN')
         return 'DECLARED_DECORATIVE'
     # Hash-bound review can scope a legacy decorative change. A generic object
@@ -45,3 +50,33 @@ def permit_display_color(identity, field, old, new, bindings, review):
     if len(matches) != 1:
         raise GateError('COLOR_MEANING_UNKNOWN_EXPLICIT_DECORATIVE_REVIEW_REQUIRED: ' + identity)
     return 'REVIEWED_DECORATIVE'
+
+
+def prepare_reencoding(contract, graph, request):
+    """Reencode an explicitly authorized role and every bound legend together.
+
+    Does not infer identity from colour and does not recolour microscopy channels.
+    Cross-figure consistency remains a delivery-scope check, never claimed here.
+    """
+    import copy
+    bindings=check_roles(contract,graph)
+    changed={(row['object_id'],key):value for row in request.get('changes',[]) for key,value in row.get('fields',{}).items()}
+    permitted={};updated=copy.deepcopy(contract);seen=set()
+    for rule in request.get('color_reencoding',[]):
+        role=rule.get('role')
+        if not role or role in seen or rule.get('scope')!='current_scene' or not rule.get('authorization'):
+            raise GateError('COLOR_REENCODING_AUTHORIZATION_REQUIRED')
+        seen.add(role);rows=[r for r in updated['bindings'] if r.get('kind')=='scientific' and r.get('role')==role]
+        if not rows:raise GateError('COLOR_REENCODING_ROLE_MISSING')
+        new=rule.get('to')
+        if not isinstance(new,str) or not re.fullmatch('#[0-9a-fA-F]{6}',new):raise GateError('COLOR_REENCODING_VALUE_INVALID')
+        for row in rows:
+            if row.get('protected_channel') or row.get('encoding_domain') in ('microscopy_channel','measured_pseudocolor'):
+                raise GateError('MEASUREMENT_CHANNEL_REENCODING_NOT_DISPLAY_ONLY')
+            if (rule.get('from') or '').upper()!=row['value'].upper():raise GateError('COLOR_REENCODING_PARENT_CONFLICT')
+            for identity in [row['object_id'],*row.get('legend_object_ids',[])]:
+                key=(identity,row['field']);target=(changed.get(key) or '')
+                if not isinstance(target,str) or target.upper()!=new.upper():raise GateError('COLOR_REENCODING_INCOMPLETE_LEGEND_OR_OBJECT: '+identity)
+                permitted[key]=new
+            row['value']=new
+    return permitted,updated

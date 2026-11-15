@@ -12,6 +12,7 @@ def dependency_paths(scene_path):
     paths={scene_path,*[base/name for name in SIDECARS if (base/name).is_file()]}
     spec=read(base/'FigureSpec.json');binding=read(base/'scientific_binding.json')
     refs=[v['path'] for v in spec['metadata']['sources']]+[binding['source_file']['path']]
+    refs.extend(r['source']['path'] for r in binding.get('certainty_disclosures',[]) if r.get('location')=='caption_file')
     if (base/'retained_assets.json').is_file():refs.extend(r['source']['path'] for r in read(base/'retained_assets.json')['assets'])
     if (base/'reconstruction_map.json').is_file():refs.append(read(base/'reconstruction_map.json')['source']['path'])
     if (base/'evidence_map.json').is_file():refs.extend(r['path'] for r in read(base/'evidence_map.json')['source_blocks'])

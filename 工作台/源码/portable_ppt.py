@@ -69,10 +69,15 @@ def validate_supported(g):
     if g['asset_refs'] or g['clipping']:raise GateError('PORTABLE_GRAPH_ASSET_OR_CLIP_UNSUPPORTED_USE_EXPLICIT_RETAINED_ASSETS')
     if g['canvas']['unit']!='px' or g['canvas']['origin']!='TOP_LEFT':raise GateError('PORTABLE_COORDINATE_UNSUPPORTED')
     items=sorted([*g['objects'],*g['arrow_objects'],*g['text_objects']],key=lambda o:o['z_order'])
-    if any(o['geometry']['kind'] not in ('RECT','ELLIPSE','TEXT','POLYLINE') for o in items):raise GateError('PORTABLE_GEOMETRY_UNSUPPORTED_USE_EXISTING_NATIVE_ROUTE')
+    if any(o['geometry']['kind'] not in ('RECT','ELLIPSE','TEXT','POLYLINE','PATH') for o in items):raise GateError('PORTABLE_GEOMETRY_UNSUPPORTED_USE_EXISTING_NATIVE_ROUTE')
     for obj in items:
         d=obj['geometry']['data'];style=g['style_tokens'][obj['style_token']]
-        if style.get('opacity',1) not in (1,None):raise GateError('PORTABLE_OPACITY_UNSUPPORTED')
+        from design_styles import validate_style
+        validate_style(style)
+        if obj['geometry']['kind']=='PATH':
+            from vector_paths import path_commands
+            path_commands(d.get('d'))
+        if obj['geometry']['kind']=='TEXT' and style.get('fill_gradient'):raise GateError('TEXT_GRADIENT_REQUIRES_NATIVE_TEXT_ROUTE')
         if obj in g['arrow_objects'] and d.get('encoding') not in ('solid_arrow','dashed_arrow','line'):raise GateError('PORTABLE_ARROW_SEMANTICS_UNSUPPORTED')
 
 
@@ -122,6 +127,29 @@ def draw_scene(prs, g, checked, scene_path):
         if style.get('stroke') and style.get('stroke_width',0)>0:
             shape.line.color.rgb=color(style['stroke']);shape.line.width=Pt(style['stroke_width']*scale)
         else:shape.line.fill.background()
+        from design_styles import validate_style
+        validate_style(style)
+        opacity=style.get('opacity',1)
+        if style.get('fill_gradient'):
+            gradient=style['fill_gradient'];fill=shape.fill;fill.gradient()
+            grad=sppr.find('{http://schemas.openxmlformats.org/drawingml/2006/main}gradFill')
+            for child in list(grad):grad.remove(child)
+            stops=OxmlElement('a:gsLst');grad.append(stops)
+            for row in gradient['stops']:
+                stop=OxmlElement('a:gs');stop.set('pos',str(round(row['offset']*100000)))
+                rgb=OxmlElement('a:srgbClr');rgb.set('val',row['color'].lstrip('#'))
+                alpha=OxmlElement('a:alpha');alpha.set('val',str(round(opacity*row.get('opacity',1)*100000)))
+                rgb.append(alpha);stop.append(rgb);stops.append(stop)
+            if gradient['kind']=='linear':
+                linear=OxmlElement('a:lin');linear.set('ang',str(round((gradient.get('angle_deg',0)%360)*60000)));linear.set('scaled','0');grad.append(linear)
+            else:
+                path=OxmlElement('a:path');path.set('path','circle');rect=OxmlElement('a:fillToRect')
+                cx,cy=gradient.get('center',[.5,.5])
+                for name,val in [('l',cx),('t',cy),('r',1-cx),('b',1-cy)]:rect.set(name,str(round(val*100000)))
+                path.append(rect);grad.append(path)
+        if opacity!=1:
+            for rgb in sppr.findall('.//{http://schemas.openxmlformats.org/drawingml/2006/main}solidFill/{http://schemas.openxmlformats.org/drawingml/2006/main}srgbClr'):
+                alpha=OxmlElement('a:alpha');alpha.set('val',str(round(opacity*100000)));rgb.append(alpha)
     for obj in items:
         identity=obj['id'];d=obj['geometry']['data'];kind=obj['geometry']['kind'];style=g['style_tokens'][obj['style_token']]
         x0,y0,x1,y1=obj['bbox']
@@ -134,9 +162,17 @@ def draw_scene(prs, g, checked, scene_path):
             paragraph=frame.paragraphs[0];paragraph.alignment={'start':PP_ALIGN.LEFT,'middle':PP_ALIGN.CENTER,'end':PP_ALIGN.RIGHT}[d['anchor']]
             paragraph.space_before=paragraph.space_after=Pt(0)
             run=paragraph.add_run();run.text=text;run.font.name=obj.get('font_family','Arial');run.font.size=Pt(size);run.font.color.rgb=color(style.get('fill') or '#263238')
+            if style.get('opacity',1)!=1:
+                rgb=run._r.get_or_add_rPr().find('.//{http://schemas.openxmlformats.org/drawingml/2006/main}srgbClr')
+                alpha=OxmlElement('a:alpha');alpha.set('val',str(round(style['opacity']*100000)));rgb.append(alpha)
             east_asian=OxmlElement('a:ea');east_asian.set('typeface','Microsoft YaHei');run._r.get_or_add_rPr().append(east_asian)
         elif kind in ('RECT','ELLIPSE'):
-            shape=slide.shapes.add_shape(MSO_AUTO_SHAPE_TYPE.RECTANGLE if kind=='RECT' else MSO_AUTO_SHAPE_TYPE.OVAL,Pt(d['x']*scale),Pt(d['y']*scale),Pt(d['width']*scale),Pt(d['height']*scale));paint(shape,style)
+            from vector_svg import ellipse_rect
+            x,y,w,h=(d['x'],d['y'],d['width'],d['height']) if kind=='RECT' else ellipse_rect(d)
+            shape=slide.shapes.add_shape(MSO_AUTO_SHAPE_TYPE.RECTANGLE if kind=='RECT' else MSO_AUTO_SHAPE_TYPE.OVAL,Pt(x*scale),Pt(y*scale),Pt(w*scale),Pt(h*scale));paint(shape,style)
+        elif kind=='PATH':
+            from vector_paths import draw_path
+            shape=draw_path(slide,d,obj['bbox'],scale);paint(shape,style)
         else:
             points=d['points']
             if identity in plans:

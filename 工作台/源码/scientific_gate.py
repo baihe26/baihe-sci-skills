@@ -28,6 +28,34 @@ def resolve_file(base, ref):
     return p.resolve() if p.is_absolute() else (Path(base) / p).resolve()
 
 
+def certainty_disclosures(spec, plan, binding, base):
+    """Check where a working-model qualifier is actually supplied.
+
+    Line style alone is not the evidence level. This verifies identity and the
+    declared text, not whether a particular wording persuades a scientific reader.
+    """
+    relations=indexed(spec['relationships']);elements=indexed(plan['elements']);covered=set();records=[]
+    for row in binding.get('certainty_disclosures', []):
+        ids=row.get('relation_ids', [])
+        if not ids or not set(ids)<=set(relations) or not isinstance(row.get('text'),str) or not row['text'].strip():
+            fail('CERTAINTY_DISCLOSURE_INVALID',row)
+        for identity in ids:
+            same(relations[identity]['certainty'],row.get('evidence_level'),'DISCLOSURE_CERTAINTY_CONFLICT')
+        location=row.get('location')
+        if location in ('title','legend','caption_object'):
+            identity=row.get('object_id','').removeprefix('AI_')
+            if identity not in elements or elements[identity]['kind']!='TEXT':fail('DISCLOSURE_TEXT_OBJECT_MISSING',identity)
+            same(elements[identity]['data']['text'],row['text'],'DISCLOSURE_TEXT_CONFLICT')
+        elif location=='caption_file':
+            ref=row.get('source',{});path=resolve_file(base,ref.get('path',''))
+            if not path.is_file() or not ref.get('sha256'):fail('DISCLOSURE_CAPTION_SOURCE_REQUIRED',row)
+            same(ref['sha256'],sha(path),'DISCLOSURE_CAPTION_CHANGED')
+            if row['text'] not in path.read_text(encoding='utf-8-sig'):fail('DISCLOSURE_CAPTION_TEXT_MISSING',row)
+        else:fail('DISCLOSURE_LOCATION_INVALID',location)
+        covered.update(ids);records.append(dict(relation_ids=ids,location=location,text=row['text'],final_visibility='REQUIRES_FINAL_ARTIFACT_REVIEW'))
+    return covered,records
+
+
 def validate_design(spec, plan, binding, spec_base, binding_base):
     """Run before creating previews or native output; never repair a contradiction."""
     meta = spec['metadata']
@@ -76,6 +104,7 @@ def validate_design(spec, plan, binding, spec_base, binding_base):
     routes = indexed(spec['routes'], 'relationship_id')
     for rows in (bound_relations, planned, routes):
         same(set(relations), set(rows), 'RELATION_SET_CONFLICT')
+    disclosed,disclosure_records=certainty_disclosures(spec,plan,binding,binding_base)
     for identity, r in relations.items():
         b, q, route = bound_relations[identity], planned[identity], routes[identity]
         for key in ('source', 'target', 'relation_type', 'direction', 'certainty', 'visual_encoding', 'claim_id'):
@@ -84,7 +113,7 @@ def validate_design(spec, plan, binding, spec_base, binding_base):
         if r['source'] not in entities or r['target'] not in entities or r['claim_id'] not in claims:
             fail('RELATION_ID_UNRESOLVED', identity)
         same(r['certainty'], claims[r['claim_id']]['evidence_level'], 'CLAIM_RELATION_CERTAINTY_CONFLICT')
-        if r['certainty'] in ('HYPOTHESIZED', 'INFERRED') and r['visual_encoding'] in ('solid_arrow', 'inhibition_bar'):
+        if r['certainty'] in ('HYPOTHESIZED', 'INFERRED') and r['visual_encoding'] in ('solid_arrow', 'inhibition_bar') and identity not in disclosed:
             fail('HYPOTHESIS_UPGRADED', identity)
         for key, target in (('source', 'source'), ('target', 'target'), ('relation_type', 'predicate'),
                             ('certainty', 'epistemic_status'), ('visual_encoding', 'encoding')):
@@ -101,7 +130,7 @@ def validate_design(spec, plan, binding, spec_base, binding_base):
         if not set(element.get('scientific_refs', [])) <= known_refs:
             fail('ELEMENT_SCIENTIFIC_REF_UNRESOLVED', element['id'])
     return dict(status='PASS', scientific_truth='NOT_ASSESSED', claims=len(claims), relations=len(relations),
-                source_sha256=sha(p), contract_sha256=digest(dict(spec=spec, plan=plan, binding=binding)))
+                source_sha256=sha(p), contract_sha256=digest(dict(spec=spec, plan=plan, binding=binding)),certainty_disclosures=disclosure_records)
 
 
 def validate_scene(spec, plan, graph):
@@ -141,12 +170,17 @@ def validate_scene(spec, plan, graph):
         native = primitives[identity]
         same(element['kind'], native['geometry']['kind'], 'SCENE_ELEMENT_KIND_CONFLICT')
         style = graph['style_tokens'][native['style_token']]
+        from design_styles import validate_style
+        validate_style(style)
         for field in ('fill', 'stroke'):
             # The frozen compiler intentionally emits TEXT as live glyph fill,
             # ignoring its plan stroke. Preserve that established representation.
             if field == 'stroke' and element['kind'] == 'TEXT':
                 continue
             same(element.get(field), style.get(field), 'SCENE_ELEMENT_STYLE_CONFLICT/' + field)
+        same(element.get('opacity',1),style.get('opacity',1),'SCENE_ELEMENT_OPACITY_CONFLICT')
+        same(element.get('fill_gradient'),style.get('fill_gradient'),'SCENE_ELEMENT_GRADIENT_CONFLICT')
+        same(element.get('stroke_width',0),style.get('stroke_width',0),'SCENE_ELEMENT_STROKE_WIDTH_CONFLICT')
         expected_data = dict(element['data'], dash=element.get('dash'))
         same(expected_data, native['geometry']['data'], 'SCENE_ELEMENT_CONTENT_CONFLICT')
         same(element['scientific_refs'], native['scientific_refs'], 'SCENE_ELEMENT_REF_CONFLICT')
@@ -164,6 +198,12 @@ def validate_scene(spec, plan, graph):
             same(expected, observed, 'SCENE_RELATION_CONFLICT')
         if not {r['id'], r['claim_id']} <= set(a['scientific_refs']):
             fail('SCENE_CLAIM_CONFLICT', r['id'])
+        style=graph['style_tokens'][a['style_token']]
+        from design_styles import validate_style
+        validate_style(style)
+        for key,value in planned[r['id']].get('style',{}).items():
+            if key not in ('stroke','stroke_width','opacity'):fail('RELATION_STYLE_FIELD_INVALID',key)
+            same(value,style.get(key),'SCENE_RELATION_STYLE_CONFLICT')
     return dict(status='PASS', entity_to_scene=mapping, scientific_truth='NOT_ASSESSED')
 
 

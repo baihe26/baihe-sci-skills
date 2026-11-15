@@ -41,4 +41,53 @@ def render_bundle(bundle,out):
         source_values_equal=fresh['source_all_values_equal'] and opened['source_all_values_equal'],persistence=persist,exports=qa,semantic_qa=semantic_qa,native_edit_probe=read(out/'independent_reopen/native_edit/edit_report.json'),
         native_readback=True,visual='PENDING',author_acceptance='PENDING',status='NATIVE_RUN_COMPLETE_PENDING_REVIEW')
     save(out/'整合验证.json',report);return report
-if __name__=='__main__':print(json.dumps(render_bundle(sys.argv[1],sys.argv[2]),ensure_ascii=False,indent=2))
+def run_plot_task(task_path, out, execute=False):
+    """Real-table / existing-Origin route; the frozen synthetic route stays intact."""
+    from plot_sources import inspect_plot_task
+    task_path = Path(task_path).resolve()
+    report = inspect_plot_task(task_path)
+    request = read(task_path)
+    if request['operation'] == 'render_table':
+        from plot_runtime import prepare_native
+        # Validate actual active engine roles and supported style before COM.
+        _, _, manifest, prepared = prepare_native(task_path)
+        report.update(template_id=manifest.id, native_plan_digest=prepared.plan_digest,
+                      physical_style_requested=request.get('physical_style', {}),
+                      status='SOURCE_TABLES_AND_NATIVE_PLAN_VERIFIED_READY_FOR_NATIVE_RENDER')
+    out = writable(out)
+    if out.exists():
+        raise FileExistsError(out)
+    if not execute:
+        save(out/'绘图接入核对.json', report)
+        return report
+    return _execute_plot_task(task_path, out, request, report)
+
+
+@single_writer
+def _execute_plot_task(task_path, out, request, report):
+    from plot_sources import inspect_plot_task
+    out.mkdir(parents=True)
+    save(out/'绘图接入核对.json', report)
+    shutil.copy2(task_path, out/'绘图任务记录.json')
+    modes = ['render'] if request['operation'] == 'render_table' else ['revise', 'reopen']
+    for mode in modes:
+        if sha(task_path) != report['task_sha256']:
+            raise GateError('PLOT_TASK_CHANGED: 任务记录在原生运行前改变，保留输出并重新核对。')
+        with (out/(mode+'运行.log')).open('x',encoding='utf-8') as log:
+            result = subprocess.run([str(ORIGIN_PY), str(ROOT/'源码/plot_native_worker.py'), mode,
+                                     str(task_path), str(out)], stdout=log, stderr=subprocess.STDOUT,
+                                    env=dict(os.environ, PYTHONUTF8='1'))
+        if result.returncode:
+            raise GateError('PLOT_NATIVE_RUN_FAILED: 请查 '+str(out/(mode+'运行.log'))+'；保留产物对账，不自动重跑。')
+    recheck = inspect_plot_task(task_path)
+    final = read(out/('原生生产结果.json' if request['operation'] == 'render_table' else '重开记录.json'))
+    final['source_recheck'] = recheck
+    save(out/'绘图交付核对.json', final)
+    return final
+
+
+if __name__=='__main__':
+    if sys.argv[1:2] == ['--plot-task']:
+        print(json.dumps(run_plot_task(sys.argv[2],sys.argv[3],execute='--execute-plot' in sys.argv[4:]),ensure_ascii=False,indent=2))
+    else:
+        print(json.dumps(render_bundle(sys.argv[1],sys.argv[2]),ensure_ascii=False,indent=2))

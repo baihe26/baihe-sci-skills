@@ -13,8 +13,9 @@ that every cosmetic field is permanently locked. A separately confirmed user req
 series colors, physical line widths, fill transparency, a safe page/aspect ratio, or legend
 show/hide, borderless, or position may replace only a field supported and read back by the current
 XPS renderer. Unsupported fields retain this profile or are rejected explicitly. A reference image
-alone never authorizes an override, and the user may still resize panels or move editable legends
-during later manuscript assembly.
+alone never changes scientific identity. Existing task authorization can cover display
+adaptation without another cosmetic approval. Editable legends still need to be placed
+without overlap before final delivery; later assembly is not an excuse for an unfinished panel.
 
 - Use the shared verified Origin page, layer, font, line width, and border defaults unless a
   confirmed cosmetic field passes its XPS-specific capability and readback gate.
@@ -26,7 +27,9 @@ during later manuscript assembly.
   follow the shared Origin contract: axis titles `26 pt`, visible tick labels
   `24 pt`, legend `24 pt`, visible curves `5 pt`, and borders `3 pt`. The right
   edge remains `99.01%`.
-- Display binding energy in the conventional XPS direction: high eV on the left, low eV on the right.
+- Display the energy kind and direction from the confirmed preparation. Binding-energy
+  spectra normally decrease from left to right; a kinetic-energy input must keep its
+  correct title/numerical coordinates unless an evidenced conversion is applied.
 - Compute X and Y axis limits from the actual input data. Keep the source min/max
   unchanged in the analysis record, but add symmetric X display padding equal to
   the smaller of `0.25 × major step` and `3% × source span` (clamp a non-negative
@@ -37,7 +40,8 @@ during later manuscript assembly.
   "Y labels hidden" rule for this adaptive template.
 - Keep Y minor ticks hidden unless a later measured dataset requires them.
 - Show X-axis numbers, major ticks, and minor ticks. Tick labels must sit on major ticks.
-- Legend entries must come from the source CSV column names, not hard-coded C 1s chemistry labels.
+- Legend entries must come from source columns or an evidenced source-to-display-name
+  mapping, not hard-coded C 1s chemistry labels.
 - Raw/experimental series defaults to a restrained dark blue editable Origin
   line, not open-circle scatter. It keeps the shared `5 pt` curve width unless an explicit width
   override has passed the current XPS renderer/readback gate.
@@ -75,5 +79,8 @@ during later manuscript assembly.
   panel/template is added later.
 - Success requires an editable non-empty OPJU, PNG/PDF/TIF exports, Origin readback
   of page/layer/axes/text sizes/visible line widths, and human visual inspection for
-  clipping, wrong axes, wrong ticks, or anomalous lines. Legend overlap is not a
-  failure because the legend remains editable and may be moved later in the OPJU.
+  clipping, wrong axes, wrong ticks, anomalous lines, or legend/label overlap.
+  Editability does not waive final visual repair. All historical font/line/page
+  values above are a compatible large-page profile, not universal journal-panel
+  requirements; use current physical-size style values supported by the renderer
+  and verify them by native readback and actual-size inspection.
