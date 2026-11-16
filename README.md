@@ -2,7 +2,7 @@
 
 从科研数据图、科学图设计，到可编辑矢量与科研汇报的本地技能系列。
 
-**当前版本：0.7.0。** 五个技能、共享工作台和脱敏后的配套引擎源码已随仓库提供。Windows x64下载后运行“安装与检查.cmd”，自动准备独立Python和锁定依赖；无需另取私有引擎。Origin、Illustrator、PowerPoint及其商业许可仍需自行具备。生成、原生重开/编辑、视觉与科学接受分别验收。
+**当前工作台版本：0.7.0。** 五个工作台技能、共享工作台和脱敏后的配套引擎源码已随仓库提供。Windows x64下载后运行“安装与检查.cmd”，自动准备独立Python和锁定依赖；无需另取私有引擎。Origin、Illustrator、PowerPoint及其商业许可仍需自行具备。生成、原生重开/编辑、视觉与科学接受分别验收。
 
 0.7补强人工父本和有效范围、完整数组与真实数据入口、多轮几何修订、可编辑渐变/透明/曲线、实际PPT缩放与遮挡候选、来源备注及交付包对应。先读[本轮改良与验证](文档/0.7改良与验证.md)。原有工位、selected B、V03、冻结Designer和原生路线保留；作者偏好和单项目例外不会变成所有任务的固定规则。
 
@@ -13,6 +13,9 @@
 |[`baihe-sci-design`](skills/baihe-sci-design/SKILL.md)|科学内容理解、构型与机制设计、FigureSpec与施工交付|
 |[`baihe-sci-vector`](skills/baihe-sci-vector/SKILL.md)|忠实重建或按批准设计生产，AI/PPT原生对象与局部编辑|
 |[`baihe-sci-slides`](skills/baihe-sci-slides/SKILL.md)|科研汇报、原生文字、媒体完整性、稳定引用和局部修订|
+|[`baihe-group-meeting-literature-report`](skills/baihe-group-meeting-literature-report/SKILL.md)|白河组会文献专题汇报，从本地文献到正式 PPT、标记讲解版、逐页讲稿与难点页讲法|
+
+白河组会文献专题汇报是独立的说明型技能，可以让 Codex 直接读取其技能目录，无需安装共享工作台。实际生成和检查文件依赖当前环境的文档与演示工具。
 
 ## 开始使用
 

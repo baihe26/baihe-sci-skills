@@ -1,0 +1,4 @@
+interface:
+  display_name: "白河组会文献专题汇报skill"
+  short_description: "从本地文献、原图和课题问题制作组会正式汇报、标记讲解版、逐页讲稿及难点页指导。"
+  default_prompt: "用 $baihe-group-meeting-literature-report，根据这个本地文献目录和我的课题问题，做成正式 PPT、标记讲解版和逐页讲稿，并教我怎么讲关键难点页。"
